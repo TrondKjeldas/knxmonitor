@@ -527,7 +527,7 @@ if __name__ == "__main__":
                 break
             idx += 1
 
-    knx = KnxParser("enheter2.xml", "groupaddresses.csv",
+    knx = KnxParser("enheter.xml", "groupaddresses.csv",
                     options.dumpGAtable, options.flanksOnly, types)
     
     basetime = 0

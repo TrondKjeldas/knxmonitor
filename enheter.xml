@@ -1,2 +1,258 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<root><columns><colName nr="1">Adresse</colName><colName nr="2">Rom</colName><colName nr="3">Funksjon</colName><colName nr="4">Beskrivelse</colName><colName nr="5">Applikasjonsprogram</colName><colName nr="6">Programflagg</colName><colName nr="7">Produsent</colName><colName nr="8">Bestillingsnummer</colName><colName nr="9">Produkt</colName></columns><rows><row><colValue nr="1">1.1.8</colValue><colValue nr="2"></colValue><colValue nr="3">Utendørs værstasjon</colValue><colValue nr="4">Værstasjon</colValue><colValue nr="5">Værstasjon B00911</colValue><colValue nr="6">Adr/-/-/-/Cfg</colValue><colValue nr="7">GIRA Giersiepen</colValue><colValue nr="8">2150 04</colValue><colValue nr="9">Værstasjon standard</colValue></row><row><colValue nr="1">1.1.17</colValue><colValue nr="2">Fyrrom u.etg</colValue><colValue nr="3"></colValue><colValue nr="4">Varmeaktuator u.etg</colValue><colValue nr="5">Av/på PBM 206701</colValue><colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue><colValue nr="7">GIRA Giersiepen</colValue><colValue nr="8">1018 00</colValue><colValue nr="9">Varmeaktuator 6-kanaler 0,05A tavlemontert</colValue></row><row><colValue nr="1">1.1.16</colValue><colValue nr="2">Arbeidsrom 1.etg</colValue><colValue nr="3"></colValue><colValue nr="4">Varmeaktuator 1.etg </colValue><colValue nr="5">Av/på PBM 206701</colValue><colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue><colValue nr="7">GIRA Giersiepen</colValue><colValue nr="8">1018 00</colValue><colValue nr="9">Varmeaktuator 6-kanaler 0,05A tavlemontert</colValue></row><row><colValue nr="1">1.1.22</colValue><colValue nr="2">WC</colValue><colValue nr="3"></colValue><colValue nr="4">Forstillingsorgan 5 Sløyfe Loftstue</colValue><colValue nr="5">forstillingsorgan med 2 binære innganger A00D02</colValue><colValue nr="6">Adr/-/-/-/Cfg</colValue><colValue nr="7">GIRA Giersiepen</colValue><colValue nr="8">1097 00</colValue><colValue nr="9">forstillingsorgan 2.0</colValue></row><row><colValue nr="1">1.1.21</colValue><colValue nr="2">WC</colValue><colValue nr="3"></colValue><colValue nr="4">Forstillingsorgan 4 Sløyfe Sov øst</colValue><colValue nr="5">forstillingsorgan med 2 binære innganger A00D02</colValue><colValue nr="6">Adr/-/-/-/Cfg</colValue><colValue nr="7">GIRA Giersiepen</colValue><colValue nr="8">1097 00</colValue><colValue nr="9">forstillingsorgan 2.0</colValue></row><row><colValue nr="1">1.1.20</colValue><colValue nr="2">WC</colValue><colValue nr="3"></colValue><colValue nr="4">Forstillingsorgan 3 Sløyfe Sov vest</colValue><colValue nr="5">forstillingsorgan med 2 binære innganger A00D02</colValue><colValue nr="6">Adr/-/-/-/Cfg</colValue><colValue nr="7">GIRA Giersiepen</colValue><colValue nr="8">1097 00</colValue><colValue nr="9">forstillingsorgan 2.0</colValue></row><row><colValue nr="1">1.1.19</colValue><colValue nr="2">WC</colValue><colValue nr="3"></colValue><colValue nr="4">Forstillingsorgan 2 Sløyfe hovedsoverom</colValue><colValue nr="5">forstillingsorgan med 2 binære innganger A00D02</colValue><colValue nr="6">Adr/-/-/-/Cfg</colValue><colValue nr="7">GIRA Giersiepen</colValue><colValue nr="8">1097 00</colValue><colValue nr="9">forstillingsorgan 2.0</colValue></row><row><colValue nr="1">1.1.18</colValue><colValue nr="2">WC</colValue><colValue nr="3"></colValue><colValue nr="4">Forstillingsorgan 1 Sløyfe Bad</colValue><colValue nr="5">forstillingsorgan med 2 binære innganger A00D02</colValue><colValue nr="6">Adr/-/-/-/Cfg</colValue><colValue nr="7">GIRA Giersiepen</colValue><colValue nr="8">1097 00</colValue><colValue nr="9">forstillingsorgan 2.0</colValue></row><row><colValue nr="1">1.1.14</colValue><colValue nr="2">Hovedfordeling</colValue><colValue nr="3"></colValue><colValue nr="4">Dimmer 3 </colValue><colValue nr="5">Dimmen 301A11</colValue><colValue nr="6">Adr/-/Par/Grp/Cfg</colValue><colValue nr="7">GIRA Giersiepen</colValue><colValue nr="8">1043 00</colValue><colValue nr="9">Universal-dimmeraktuator 4-dobbel 210 W REG</colValue></row><row><colValue nr="1">1.1.6</colValue><colValue nr="2">Underfordeling WC</colValue><colValue nr="3"></colValue><colValue nr="4">Dimmer 21</colValue><colValue nr="5">Dimmen 301A11</colValue><colValue nr="6">Adr/-/-/-/Cfg</colValue><colValue nr="7">GIRA Giersiepen</colValue><colValue nr="8">1043 00</colValue><colValue nr="9">Universal-dimmeraktuator 4-dobbel 210 W REG</colValue></row><row><colValue nr="1">1.1.4</colValue><colValue nr="2">Underfordeling WC</colValue><colValue nr="3"></colValue><colValue nr="4">Dimmer 20</colValue><colValue nr="5">dimming 301501</colValue><colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue><colValue nr="7">GIRA Giersiepen</colValue><colValue nr="8">103200</colValue><colValue nr="9">universal dimmeaktor 2-kanal tavlemontert</colValue></row><row><colValue nr="1">1.1.5</colValue><colValue nr="2">Hovedfordeling</colValue><colValue nr="3"></colValue><colValue nr="4">Dimmer 2</colValue><colValue nr="5">dimming 301501</colValue><colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue><colValue nr="7">GIRA Giersiepen</colValue><colValue nr="8">103200</colValue><colValue nr="9">universal dimmeaktor 2-kanal tavlemontert</colValue></row><row><colValue nr="1">1.1.7</colValue><colValue nr="2">Hovedfordeling</colValue><colValue nr="3"></colValue><colValue nr="4">Dimmer 1</colValue><colValue nr="5">Dimmen 301A11</colValue><colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue><colValue nr="7">GIRA Giersiepen</colValue><colValue nr="8">1043 00</colValue><colValue nr="9">Universal-dimmeraktuator 4-dobbel 210 W REG</colValue></row><row><colValue nr="1">1.1.15</colValue><colValue nr="2">WC</colValue><colValue nr="3"></colValue><colValue nr="4">Bryter WC 2 etg</colValue><colValue nr="5">multifunksjon TS 2 108E01</colValue><colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue><colValue nr="7">GIRA Giersiepen</colValue><colValue nr="8">1061 00</colValue><colValue nr="9">trykknapp 2, 1-kanaler multifunksjon</colValue></row><row><colValue nr="1">1.1.12</colValue><colValue nr="2">Loftstue 2.etg</colValue><colValue nr="3"></colValue><colValue nr="4">Bryter vegg stue 2.etg </colValue><colValue nr="5">Multifunktion plus 180202</colValue><colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue><colValue nr="7">GIRA Giersiepen</colValue><colValue nr="8">1052  xx</colValue><colValue nr="9">Tastsensor 2 plus 2fach V2</colValue></row><row><colValue nr="1">1.1.9</colValue><colValue nr="2">Stue 1.etg</colValue><colValue nr="3"></colValue><colValue nr="4">Bryter vegg stue 1.etg </colValue><colValue nr="5">Multifunktion plus 180202</colValue><colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue><colValue nr="7">GIRA Giersiepen</colValue><colValue nr="8">1052  xx</colValue><colValue nr="9">Tastsensor 2 plus 2fach V2</colValue></row><row><colValue nr="1">1.1.2</colValue><colValue nr="2">Kjøkken 1.etg</colValue><colValue nr="3"></colValue><colValue nr="4">Bryter v/verandadør kjøkken 1.etg</colValue><colValue nr="5">Multifunktion plus 180202</colValue><colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue><colValue nr="7">GIRA Giersiepen</colValue><colValue nr="8">1052  xx</colValue><colValue nr="9">Tastsensor 2 plus 2fach V2</colValue></row><row><colValue nr="1">1.1.3</colValue><colValue nr="2">Bad 2.etg</colValue><colValue nr="3"></colValue><colValue nr="4">Bryter v/dør bad 2.etg</colValue><colValue nr="5">Multifunktion plus 180202</colValue><colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue><colValue nr="7">GIRA Giersiepen</colValue><colValue nr="8">1052  xx</colValue><colValue nr="9">Tastsensor 2 plus 2fach V2</colValue></row><row><colValue nr="1">1.1.13</colValue><colValue nr="2">Hovedsoverom 2.etg</colValue><colValue nr="3"></colValue><colValue nr="4">Bryter soverom 1</colValue><colValue nr="5">Multifunktion plus 180502</colValue><colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue><colValue nr="7">GIRA Giersiepen</colValue><colValue nr="8">1055  xx</colValue><colValue nr="9">Tastsensor 2 plus 5fach V2</colValue></row><row><colValue nr="1">1.1.10</colValue><colValue nr="2">Vindfang 1.etg</colValue><colValue nr="3"></colValue><colValue nr="4">Bryter inngang</colValue><colValue nr="5">Multifunktion plus 180202</colValue><colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue><colValue nr="7">GIRA Giersiepen</colValue><colValue nr="8">1052  xx</colValue><colValue nr="9">Tastsensor 2 plus 2fach V2</colValue></row><row><colValue nr="1">1.1.1</colValue><colValue nr="2">Gang 1.etg</colValue><colValue nr="3"></colValue><colValue nr="4">InfoTerminal</colValue><colValue nr="5">InfoTerminal Touch 590101</colValue><colValue nr="6">Adr/Prg/-/-/Cfg</colValue><colValue nr="7">GIRA Giersiepen</colValue><colValue nr="8">2072 xx</colValue><colValue nr="9">InfoTerminal Touch</colValue></row><row><colValue nr="1">1.1.11</colValue><colValue nr="2">Kjøkken 1.etg</colValue><colValue nr="3"></colValue><colValue nr="4"></colValue><colValue nr="5">multifunksjon TS 2 107801</colValue><colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue><colValue nr="7">GIRA Giersiepen</colValue><colValue nr="8">1063 00</colValue><colValue nr="9">trykknapp 2, 3-kanaler multifunksjon</colValue></row></rows></root>
+<root>
+  <columns>
+    <colName nr="1">Adresse</colName>
+    <colName nr="2">Rom</colName>
+    <colName nr="3">Funksjon</colName>
+    <colName nr="4">Beskrivelse</colName>
+    <colName nr="5">Applikasjonsprogram</colName>
+    <colName nr="6">Programflagg</colName>
+    <colName nr="7">Produsent</colName>
+    <colName nr="8">Bestillingsnummer</colName>
+    <colName nr="9">Produkt</colName>
+  </columns>
+  <rows>
+    <row>
+      <colValue nr="1">1.1.8</colValue>
+      <colValue nr="2"/>
+      <colValue nr="3">Utendørs værstasjon</colValue>
+      <colValue nr="4">Værstasjon</colValue>
+      <colValue nr="5">Værstasjon B00911</colValue>
+      <colValue nr="6">Adr/-/-/-/Cfg</colValue>
+      <colValue nr="7">GIRA Giersiepen</colValue>
+      <colValue nr="8">2150 04</colValue>
+      <colValue nr="9">Værstasjon standard</colValue>
+    </row>
+    <row>
+      <colValue nr="1">1.1.17</colValue>
+      <colValue nr="2">Fyrrom u.etg</colValue>
+      <colValue nr="3"/>
+      <colValue nr="4">Varmeaktuator u.etg</colValue>
+      <colValue nr="5">Av/på PBM 206701</colValue>
+      <colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue>
+      <colValue nr="7">GIRA Giersiepen</colValue>
+      <colValue nr="8">1018 00</colValue>
+      <colValue nr="9">Varmeaktuator 6-kanaler 0,05A tavlemontert</colValue>
+    </row>
+    <row>
+      <colValue nr="1">1.1.16</colValue>
+      <colValue nr="2">Arbeidsrom 1.etg</colValue>
+      <colValue nr="3"/>
+      <colValue nr="4">Varmeaktuator 1.etg </colValue>
+      <colValue nr="5">Av/på PBM 206701</colValue>
+      <colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue>
+      <colValue nr="7">GIRA Giersiepen</colValue>
+      <colValue nr="8">1018 00</colValue>
+      <colValue nr="9">Varmeaktuator 6-kanaler 0,05A tavlemontert</colValue>
+    </row>
+    <row>
+      <colValue nr="1">1.1.22</colValue>
+      <colValue nr="2">WC</colValue>
+      <colValue nr="3"/>
+      <colValue nr="4">Forstillingsorgan 5 Sløyfe Loftstue</colValue>
+      <colValue nr="5">forstillingsorgan med 2 binære innganger A00D02</colValue>
+      <colValue nr="6">Adr/-/-/-/Cfg</colValue>
+      <colValue nr="7">GIRA Giersiepen</colValue>
+      <colValue nr="8">1097 00</colValue>
+      <colValue nr="9">forstillingsorgan 2.0</colValue>
+    </row>
+    <row>
+      <colValue nr="1">1.1.21</colValue>
+      <colValue nr="2">WC</colValue>
+      <colValue nr="3"/>
+      <colValue nr="4">Forstillingsorgan 4 Sløyfe Sov øst</colValue>
+      <colValue nr="5">forstillingsorgan med 2 binære innganger A00D02</colValue>
+      <colValue nr="6">Adr/-/-/-/Cfg</colValue>
+      <colValue nr="7">GIRA Giersiepen</colValue>
+      <colValue nr="8">1097 00</colValue>
+      <colValue nr="9">forstillingsorgan 2.0</colValue>
+    </row>
+    <row>
+      <colValue nr="1">1.1.20</colValue>
+      <colValue nr="2">WC</colValue>
+      <colValue nr="3"/>
+      <colValue nr="4">Forstillingsorgan 3 Sløyfe Sov vest</colValue>
+      <colValue nr="5">forstillingsorgan med 2 binære innganger A00D02</colValue>
+      <colValue nr="6">Adr/-/-/-/Cfg</colValue>
+      <colValue nr="7">GIRA Giersiepen</colValue>
+      <colValue nr="8">1097 00</colValue>
+      <colValue nr="9">forstillingsorgan 2.0</colValue>
+    </row>
+    <row>
+      <colValue nr="1">1.1.19</colValue>
+      <colValue nr="2">WC</colValue>
+      <colValue nr="3"/>
+      <colValue nr="4">Forstillingsorgan 2 Sløyfe hovedsoverom</colValue>
+      <colValue nr="5">forstillingsorgan med 2 binære innganger A00D02</colValue>
+      <colValue nr="6">Adr/-/-/-/Cfg</colValue>
+      <colValue nr="7">GIRA Giersiepen</colValue>
+      <colValue nr="8">1097 00</colValue>
+      <colValue nr="9">forstillingsorgan 2.0</colValue>
+    </row>
+    <row>
+      <colValue nr="1">1.1.18</colValue>
+      <colValue nr="2">WC</colValue>
+      <colValue nr="3"/>
+      <colValue nr="4">Forstillingsorgan 1 Sløyfe Bad</colValue>
+      <colValue nr="5">forstillingsorgan med 2 binære innganger A00D02</colValue>
+      <colValue nr="6">Adr/-/-/-/Cfg</colValue>
+      <colValue nr="7">GIRA Giersiepen</colValue>
+      <colValue nr="8">1097 00</colValue>
+      <colValue nr="9">forstillingsorgan 2.0</colValue>
+    </row>
+    <row>
+      <colValue nr="1">1.1.14</colValue>
+      <colValue nr="2">Hovedfordeling</colValue>
+      <colValue nr="3"/>
+      <colValue nr="4">Dimmer 3 </colValue>
+      <colValue nr="5">Dimmen 301A11</colValue>
+      <colValue nr="6">Adr/-/Par/Grp/Cfg</colValue>
+      <colValue nr="7">GIRA Giersiepen</colValue>
+      <colValue nr="8">1043 00</colValue>
+      <colValue nr="9">Universal-dimmeraktuator 4-dobbel 210 W REG</colValue>
+    </row>
+    <row>
+      <colValue nr="1">1.1.6</colValue>
+      <colValue nr="2">Underfordeling WC</colValue>
+      <colValue nr="3"/>
+      <colValue nr="4">Dimmer 21</colValue>
+      <colValue nr="5">Dimmen 301A11</colValue>
+      <colValue nr="6">Adr/-/-/-/Cfg</colValue>
+      <colValue nr="7">GIRA Giersiepen</colValue>
+      <colValue nr="8">1043 00</colValue>
+      <colValue nr="9">Universal-dimmeraktuator 4-dobbel 210 W REG</colValue>
+    </row>
+    <row>
+      <colValue nr="1">1.1.4</colValue>
+      <colValue nr="2">Underfordeling WC</colValue>
+      <colValue nr="3"/>
+      <colValue nr="4">Dimmer 20</colValue>
+      <colValue nr="5">dimming 301501</colValue>
+      <colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue>
+      <colValue nr="7">GIRA Giersiepen</colValue>
+      <colValue nr="8">103200</colValue>
+      <colValue nr="9">universal dimmeaktor 2-kanal tavlemontert</colValue>
+    </row>
+    <row>
+      <colValue nr="1">1.1.5</colValue>
+      <colValue nr="2">Hovedfordeling</colValue>
+      <colValue nr="3"/>
+      <colValue nr="4">Dimmer 2</colValue>
+      <colValue nr="5">dimming 301501</colValue>
+      <colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue>
+      <colValue nr="7">GIRA Giersiepen</colValue>
+      <colValue nr="8">103200</colValue>
+      <colValue nr="9">universal dimmeaktor 2-kanal tavlemontert</colValue>
+    </row>
+    <row>
+      <colValue nr="1">1.1.7</colValue>
+      <colValue nr="2">Hovedfordeling</colValue>
+      <colValue nr="3"/>
+      <colValue nr="4">Dimmer 1</colValue>
+      <colValue nr="5">Dimmen 301A11</colValue>
+      <colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue>
+      <colValue nr="7">GIRA Giersiepen</colValue>
+      <colValue nr="8">1043 00</colValue>
+      <colValue nr="9">Universal-dimmeraktuator 4-dobbel 210 W REG</colValue>
+    </row>
+    <row>
+      <colValue nr="1">1.1.15</colValue>
+      <colValue nr="2">WC</colValue>
+      <colValue nr="3"/>
+      <colValue nr="4">Bryter WC 2 etg</colValue>
+      <colValue nr="5">multifunksjon TS 2 108E01</colValue>
+      <colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue>
+      <colValue nr="7">GIRA Giersiepen</colValue>
+      <colValue nr="8">1061 00</colValue>
+      <colValue nr="9">trykknapp 2, 1-kanaler multifunksjon</colValue>
+    </row>
+    <row>
+      <colValue nr="1">1.1.12</colValue>
+      <colValue nr="2">Loftstue 2.etg</colValue>
+      <colValue nr="3"/>
+      <colValue nr="4">Bryter vegg stue 2.etg </colValue>
+      <colValue nr="5">Multifunktion plus 180202</colValue>
+      <colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue>
+      <colValue nr="7">GIRA Giersiepen</colValue>
+      <colValue nr="8">1052  xx</colValue>
+      <colValue nr="9">Tastsensor 2 plus 2fach V2</colValue>
+    </row>
+    <row>
+      <colValue nr="1">1.1.9</colValue>
+      <colValue nr="2">Stue 1.etg</colValue>
+      <colValue nr="3"/>
+      <colValue nr="4">Bryter vegg stue 1.etg </colValue>
+      <colValue nr="5">Multifunktion plus 180202</colValue>
+      <colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue>
+      <colValue nr="7">GIRA Giersiepen</colValue>
+      <colValue nr="8">1052  xx</colValue>
+      <colValue nr="9">Tastsensor 2 plus 2fach V2</colValue>
+    </row>
+    <row>
+      <colValue nr="1">1.1.2</colValue>
+      <colValue nr="2">Kjøkken 1.etg</colValue>
+      <colValue nr="3"/>
+      <colValue nr="4">Bryter v/verandadør kjøkken 1.etg</colValue>
+      <colValue nr="5">Multifunktion plus 180202</colValue>
+      <colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue>
+      <colValue nr="7">GIRA Giersiepen</colValue>
+      <colValue nr="8">1052  xx</colValue>
+      <colValue nr="9">Tastsensor 2 plus 2fach V2</colValue>
+    </row>
+    <row>
+      <colValue nr="1">1.1.3</colValue>
+      <colValue nr="2">Bad 2.etg</colValue>
+      <colValue nr="3"/>
+      <colValue nr="4">Bryter v/dør bad 2.etg</colValue>
+      <colValue nr="5">Multifunktion plus 180202</colValue>
+      <colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue>
+      <colValue nr="7">GIRA Giersiepen</colValue>
+      <colValue nr="8">1052  xx</colValue>
+      <colValue nr="9">Tastsensor 2 plus 2fach V2</colValue>
+    </row>
+    <row>
+      <colValue nr="1">1.1.13</colValue>
+      <colValue nr="2">Hovedsoverom 2.etg</colValue>
+      <colValue nr="3"/>
+      <colValue nr="4">Bryter soverom 1</colValue>
+      <colValue nr="5">Multifunktion plus 180502</colValue>
+      <colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue>
+      <colValue nr="7">GIRA Giersiepen</colValue>
+      <colValue nr="8">1055  xx</colValue>
+      <colValue nr="9">Tastsensor 2 plus 5fach V2</colValue>
+    </row>
+    <row>
+      <colValue nr="1">1.1.10</colValue>
+      <colValue nr="2">Vindfang 1.etg</colValue>
+      <colValue nr="3"/>
+      <colValue nr="4">Bryter inngang</colValue>
+      <colValue nr="5">Multifunktion plus 180202</colValue>
+      <colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue>
+      <colValue nr="7">GIRA Giersiepen</colValue>
+      <colValue nr="8">1052  xx</colValue>
+      <colValue nr="9">Tastsensor 2 plus 2fach V2</colValue>
+    </row>
+    <row>
+      <colValue nr="1">1.1.1</colValue>
+      <colValue nr="2">Gang 1.etg</colValue>
+      <colValue nr="3"/>
+      <colValue nr="4">InfoTerminal</colValue>
+      <colValue nr="5">InfoTerminal Touch 590101</colValue>
+      <colValue nr="6">Adr/Prg/-/-/Cfg</colValue>
+      <colValue nr="7">GIRA Giersiepen</colValue>
+      <colValue nr="8">2072 xx</colValue>
+      <colValue nr="9">InfoTerminal Touch</colValue>
+    </row>
+    <row>
+      <colValue nr="1">1.1.11</colValue>
+      <colValue nr="2">Kjøkken 1.etg</colValue>
+      <colValue nr="3"/>
+      <colValue nr="4"/>
+      <colValue nr="5">multifunksjon TS 2 107801</colValue>
+      <colValue nr="6">Adr/Prg/Par/Grp/Cfg</colValue>
+      <colValue nr="7">GIRA Giersiepen</colValue>
+      <colValue nr="8">1063 00</colValue>
+      <colValue nr="9">trykknapp 2, 3-kanaler multifunksjon</colValue>
+    </row>
+  </rows>
+</root>
