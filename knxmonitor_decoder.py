@@ -16,14 +16,12 @@ class KnxPdu(object):
 
         self.devDict = devdict
         self.groupDict = groupdict
-        self.text = pdu_text
-    
-    def getFrom(self, devkey):
-        text = self.text
+
+        # Do parsing up front...
+        self.text = pdu_text[pdu_text.find(" from ")+6:]
+
         try:
-            s = text[text.find(" from ")+6:]
-            s = s[:s.find(" ")]
-            fromaddr = s
+            s, rest = self.text.split(" ", 1) #[:self.text.find(" ")]
             
             # Sanity check
             
@@ -35,84 +33,45 @@ class KnxPdu(object):
                 raise KnxParseException
             if int(c) < 0 or int(c) > 0xFF:
                 raise KnxParseException
-            
         except:
             # Something failed, but we only want to cause
             # one type of exception...
             raise KnxParseException
     
-        if s in self.devDict.keys():
-            s = self.devDict[s][devkey]
-
-            s = "%s(%s)" %(s, fromaddr)
-        return unicode(s)
-
-    def getTo(self, gkey):
-        text = self.text
         try:
-            s = text[text.find(" to ")+4:]
-            s = s[:s.find(" ")]
-            toaddr = s
-            
-            # Sanity check
-            
-            a,b,c = s.split("/")
-            
-            if int(a) < 0 or int(a) > 0x1F:
-                raise KnxParseException
-            if int(b) < 0 or int(b) > 0x7:
-                raise KnxParseException
-            if int(c) < 0 or int(c) > 0xFF:
-                raise KnxParseException
-        
-        except:
-            # Something failed, but we only want to cause
-            # one type of exception...
-            raise KnxParseException
+            s = "%s(%s)" %(self.devDict[s]["Beskrivelse"], s)
+        except KeyError:
+            s = "(%s)" %(s)
 
-        if s in self.groupDict.keys():
-            s = self.groupDict[s][gkey]
+        self.fromadr = s
+
+        # Receiving group address
+        tmp, self.toaddr, rest = rest.split(" ", 2) #s[:s.find(" ")]
+
+        #print rest
+        # Value
+
+        if ("GroupValue_Read" in rest):
+            self.value = "(read)"
+        else:
+            tmp, s = rest[rest.find("GroupValue_") + 14:].split(" ", 1)
+            self.value = s.strip()
+            while not self.value[-1].isalnum():
+                self.value = self.value[:-1]
+
+        #print "(%s)"%self.value
+        
+    def getFrom(self):
             
-        return unicode(toaddr), unicode(s.decode("utf-8"))
+        return self.fromadr
+
+    def getTo(self):
+        
+        return self.toaddr #unicode(self.toaddr)
     
     def getValue(self):
-        text = self.text
-        try:
-            l = text.strip().split()
-            #print str(l).encode("utf-8")
-            l2 = []
-            s =""
-            # Throw away last chunk, if its the \x00 terminator...
-            x = l.pop()
-            if x != '\x00':
-                l.append(x)
-            while True:
-                x = l.pop()
-                try:
-                    y = int(x,16)
-                except ValueError:
-                    # Ok, hit a non-hex value, that must
-                    # mean that we are finished...
-                    break
-                l2.append(x)
-            l2.reverse()
-            for x in l2:
-                s += "%s " %x
-        except:
-            # Something failed, but we only want to cause
-            # one type of exception...
-            raise KnxParseException
-        s = s.strip()
-
-        if ("GroupValue_Read" in text) and (len(s) < 1):
-            return ""
-
-        if len(s) < 2:
-            print "error, no value: %s" %text
             
-        # if len(s) < 1:
-        #    print text
-        return unicode(s)
+        return self.value #unicode(s)
 
 
 class KnxAddressStream(object):
@@ -347,6 +306,21 @@ class KnxParser(object):
                       "middle" : middle,
                       "sub" : sub,
                       "address" : address }
+
+            # Sanity check, skip non-valid addresses
+            # print address
+            try:
+                a,b,c = address.split("/")
+            
+                if int(a) < 0 or int(a) > 0x1F:
+                    continue
+                if int(b) < 0 or int(b) > 0x7:
+                    continue
+                if int(c) < 0 or int(c) > 0xFF:
+                    continue
+            except ValueError:
+                continue
+                
             
             self.groupDict[address] = gdict
 
@@ -400,18 +374,15 @@ class KnxParser(object):
 
         pdu = KnxPdu(self.devDict, self.groupDict, text)
         
-        sender = pdu.getFrom("Beskrivelse")
-        receiver_raw, receiver = pdu.getTo("sub")
+        sender = pdu.getFrom()
+        receiver_raw = pdu.getTo()
 
         value = pdu.getValue()
         
-        if ("GroupValue_Read" in text) and (len(value) < 1):
-            value = "(read)"
-
         try:
             self.knxAddrStream[receiver_raw].addTelegram(seq, timestamp, sender, value)
         except KeyError:
-            print "unknown address, skipping: %s (%s)" %(receiver_raw, receiver)
+            print "unknown address, skipping: %s" %receiver_raw
 
 
     def printStreams(self, groupAddrs):
