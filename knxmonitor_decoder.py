@@ -1,4 +1,5 @@
 import sys
+import codecs
 import xml.etree.ElementTree as ET
 import csv
 import time
@@ -11,7 +12,39 @@ verbose = False
 def printVerbose(str):
     if verbose:
         print str
-        
+
+
+class UTF8Recoder:
+    """
+    Iterator that reads an encoded stream and reencodes the input to UTF-8
+    """
+    def __init__(self, f, encoding):
+        self.reader = codecs.getreader(encoding)(f)
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        return self.reader.next().encode("utf-8")
+
+class UnicodeReader:
+    """
+    A CSV reader which will iterate over lines in the CSV file "f",
+    which is encoded in the given encoding.
+    """
+
+    def __init__(self, f, dialect=csv.excel, encoding="utf-8", **kwds):
+        f = UTF8Recoder(f, encoding)
+        self.reader = csv.reader(f, dialect=dialect, **kwds)
+
+    def next(self):
+        row = self.reader.next()
+        return [unicode(s, "utf-8") for s in row]
+
+    def __iter__(self):
+        return self
+
+
 class KnxParseException(Exception):
     pass
 
@@ -49,16 +82,17 @@ class KnxPdu(object):
         except KeyError:
             s = "(%s)" %(s)
 
-        self.fromadr = s
+        self.fromadr = unicode(s)
 
         # Receiving group address
-        tmp, self.toaddr, rest = rest.split(" ", 2) #s[:s.find(" ")]
-
+        tmp, toaddr, rest = rest.split(" ", 2) #s[:s.find(" ")]
+        self.toaddr = unicode(toaddr)
+        
         #print rest
         # Value
 
         if ("GroupValue_Read" in rest):
-            self.value = "(read)"
+            self.value = u"(read)"
         else:
             tmp, s = rest[rest.find("GroupValue_") + 14:].split(" ", 1)
             self.value = s.strip()
@@ -232,18 +266,28 @@ class KnxAddressStream(object):
                 self.errorOut("to long receiver: %s(%d)" %(receiver, len(receiver)))
 
             try:
-                print "%s: %50s -> %60s(%s): %s" %(ts, sender, receiver.decode("utf-8"),
-                                                   self.address, value)
-            except UnicodeDecodeError:
-                print "%s"%ts.decode("utf-8")
-                print "%s"%sender
-                print "%s"%receiver.decode("utf-8")
-                print "%s"%self.address.decode("utf-8")
-                print "%s"%value.decode("utf-8")
-                print "(%s) %s: %50s -> %60s(%s): %s" %(seq,ts, sender, receiver.decode("utf-8"),
-                                                        self.address, value)
-                sys.exit(1)
-
+                outstr = "%s: %50s -> %60s(%s): %s" %(ts, sender, receiver,
+                                                      self.address, value)
+                print outstr
+            except UnicodeEncodeError,err:
+                #print "%s"%ts.decode("utf-8")
+                #print "%s"%sender
+                #print "%s"%receiver.decode("utf-8")
+                #print "%s"%self.address.decode("utf-8")
+                #print "%s"%value.decode("utf-8")
+                #print "(%s) %s: %50s -> %60s(%s): %s" %(seq,ts, sender, receiver.decode("utf-8"),
+                #                                        self.address, value)
+                raise err
+            except UnicodeDecodeError,err:
+                #print "%s"%ts.decode("utf-8")
+                #print "%s"%sender
+                #print "%s"%receiver.decode("utf-8")
+                #print "%s"%self.address.decode("utf-8")
+                #print "%s"%value.decode("utf-8")
+                #print "(%s) %s: %50s -> %60s(%s): %s" %(seq,ts, sender, receiver.decode("utf-8"),
+                #                                        self.address, value)
+                raise err
+                    
         # Do we have more to print?
         self.nextidx += 1
         if self.nextidx >= len(self.telegrams):
@@ -290,7 +334,6 @@ class KnxAddressStream(object):
 
         return plotData, self.addrInfo["sub"]
 
-
 class KnxParser(object):
 
     devDict   = {}
@@ -308,8 +351,8 @@ class KnxParser(object):
 
     def loadGroupAddrs(self, filename, dump, types, flanksOnly):
     
-        reader = csv.reader(open(filename, "rb"), delimiter=";")
-
+        #reader = csv.reader(open(filename, "rb"), delimiter=";")
+        reader = UnicodeReader(open(filename, "rb"), delimiter=";")
         for main,middle,sub,address in reader:
             gdict = { "main" : main,
                       "middle" : middle,
@@ -472,6 +515,79 @@ class KnxParser(object):
         raw_input('Please press return to exit...\n')
 
 
+def readParseAndPrint(devicesfilename, groupaddrfilename, infilenames,
+                      dumpGAtable, groupAddrs, types, flanksOnly, tail, plot):
+
+    #
+    # Read in all the files...
+    #
+    lines = []
+    for infilename in infilenames:
+        try:
+            inf = open(infilename, "r")
+        except IOError:
+            print "%s: Unable to open file: %s" %(sys.argv[0], infilename)
+            sys.exit(1);
+        except:
+            op.print_help()
+            sys.exit(1);
+    
+            print "Reading file: %s" % infilename
+        lines.extend(inf.readlines())
+
+        inf.close()
+
+    print "Creating parser..."
+    knx = KnxParser(devicesfilename, groupaddrfilename,
+                    dumpGAtable, flanksOnly, types)
+    
+
+    if tail != 0:
+        if tail < len(lines):
+            lines = lines[len(lines) - tail :]
+            
+    #
+    # Parsing the input...
+    #
+    basetime = 0
+    lineNo = 0
+    for line in lines:
+        # Skip empty lines...
+        if len(line.strip()) < 1:
+            continue
+
+        lineNo += 1
+        
+        # Split timestamp from rest...
+        try:
+            timestamp, pdu = line.split(":LPDU:")
+        except ValueError:
+            timestamp, pdu = line.split("LPDU:")
+
+        try:
+            if basetime == 0:
+                basetime = time.mktime(time.strptime(timestamp, "%a %b %d %H:%M:%S %Y"))
+                # print timestamp
+                knx.setTimeBase(basetime)
+        except ValueError:
+            printVerbose("timestamp error: %s" %timestamp)
+            
+        knx.parseVbusOutput(lineNo, timestamp, pdu)
+
+        if lineNo % 10000 == 0:
+            print "Parsed %d lines..." %lineNo
+    print "Parsed %d lines..." %lineNo
+    
+
+    #
+    # Ok, file(s) read and parsed
+    #
+
+    if not plot:
+        knx.printStreams(groupAddrs)
+    else:
+
+        knx.plotStreams(groupAddrs)
 
 if __name__ == "__main__":
 
@@ -519,77 +635,13 @@ if __name__ == "__main__":
                 break
             idx += 1
 
-    #
-    # Read in all the files...
-    #
-    lines = []
-    for infilename in options.infilenames:
-        try:
-            inf = open(infilename, "r")
-        except IOError:
-            print "%s: Unable to open file: %s" %(sys.argv[0], infilename)
-            sys.exit(1);
-        except:
-            op.print_help()
-            sys.exit(1);
-    
-        print "Reading file: %s" % infilename
-        lines.extend(inf.readlines())
+    # All output variants will likly support utf-8...
+    sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 
-        inf.close()
-
-
-    print "Creating parser..."
-    knx = KnxParser("enheter.xml", "groupaddresses.csv",
-                    options.dumpGAtable, options.flanksOnly, types)
-    
-
-    if options.tail != 0:
-        if options.tail < len(lines):
-            lines = lines[len(lines) - options.tail :]
-            
-    #
-    # Parsing the input...
-    #
-    basetime = 0
-    lineNo = 0
-    for line in lines:
-        # Skip empty lines...
-        if len(line.strip()) < 1:
-            continue
-
-        lineNo += 1
-        
-        # Split timestamp from rest...
-        try:
-            timestamp, pdu = line.split(":LPDU:")
-        except ValueError:
-            timestamp, pdu = line.split("LPDU:")
-
-        try:
-            if basetime == 0:
-                basetime = time.mktime(time.strptime(timestamp, "%a %b %d %H:%M:%S %Y"))
-                # print timestamp
-                knx.setTimeBase(basetime)
-        except ValueError:
-            printVerbose("timestamp error: %s" %timestamp)
-            
-        knx.parseVbusOutput(lineNo, timestamp, pdu)
-
-        if lineNo % 10000 == 0:
-            print "Parsed %d lines..." %lineNo
-    print "Parsed %d lines..." %lineNo
-    
-
-    #
-    # Ok, file(s) read and parsed
-    #
-
-    if not options.plot:
-        knx.printStreams(options.groupAddrs)
-    else:
-
-        knx.plotStreams(options.groupAddrs)
+    readParseAndPrint("enheter.xml", "groupaddresses.csv",
+                      options.infilenames, options.dumpGAtable,
+                      options.groupAddrs, types, options.flanksOnly,
+                      options.tail, options.plot)
 
 # All temperatures:
 # python knxmonitor_decoder.py -i knx_log.hex.1 -i knx_log.hex.1  -g 1/3/1 -t temp -g 1/3/0 -t temp  -g 1/3/5 -t temp  -g 2/3/0 -t temp  -g 2/3/1 -t temp   -g 2/3/2 -t temp -p  -g 3/2/0 -t temp -p
@@ -597,3 +649,4 @@ if __name__ == "__main__":
 
 # Bad 2 etg
 # python knxmonitor_decoder.py -i knx_log.hex.1 -i knx_log.hex  -g 2/6/0 -t % -g 2/3/0 -t temp -g 3/2/0 -t temp -f -p
+
