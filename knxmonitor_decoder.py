@@ -6,6 +6,12 @@ import math
 from optparse import OptionParser
 import Gnuplot
 
+verbose = False
+
+def printVerbose(str):
+    if verbose:
+        print str
+        
 class KnxParseException(Exception):
     pass
 
@@ -56,6 +62,9 @@ class KnxPdu(object):
         else:
             tmp, s = rest[rest.find("GroupValue_") + 14:].split(" ", 1)
             self.value = s.strip()
+            i = self.value.find("(small)")
+            if i != -1:
+                self.value = self.value[i+8:]
             while not self.value[-1].isalnum():
                 self.value = self.value[:-1]
 
@@ -85,6 +94,11 @@ class KnxAddressStream(object):
         
         self.telegrams = []
 
+    def errorExit(self, str):
+
+        print "%s: %s" %(self.address, str)
+        sys.exit(1)
+
     #
     # Temp
     #
@@ -103,8 +117,7 @@ class KnxAddressStream(object):
     def val2temp(self, val):
         
         if len(val) != 5:
-            print "error, value is not 16bit: %s" %val
-            sys.exit(1)
+            self.errorOut("error, value is not 16bit: %s" %val)
 
         z,x = val.split(" ")
 
@@ -129,8 +142,7 @@ class KnxAddressStream(object):
     def val2percent(self, val):
         
         if len(val) != 2:
-            print "error, value is not 8bit: %s" %val
-            sys.exit(1)
+            self.errorOut("error, value is not 8bit: %s" %val)
 
         f = float(int(val, 16)) / 2.55
         
@@ -146,8 +158,7 @@ class KnxAddressStream(object):
     def val2time(self, val):
 
         if len(val) != 8:
-            print "error, value is not 24bit: %s" %val
-            sys.exit(1)
+            self.errorOut("error, value is not 24bit: %s" %val)
             
         dh,m,s = val.split(" ")
 
@@ -216,11 +227,9 @@ class KnxAddressStream(object):
             self.lastValue[sender] = value
 
             if len(sender)>50:
-                print "to long sender: %s(%d)" %(sender, len(sender))
-                sys.exit(1)
+                self.errorOut("to long sender: %s(%d)" %(sender, len(sender)))
             if len(receiver)>60:
-                print "to long receiver: %s(%d)" %(receiver, len(receiver))
-                sys.exit(1)
+                self.errorOut("to long receiver: %s(%d)" %(receiver, len(receiver)))
 
             try:
                 print "%s: %50s -> %60s(%s): %s" %(ts, sender, receiver.decode("utf-8"),
@@ -254,14 +263,14 @@ class KnxAddressStream(object):
             try:
                 timedata = time.mktime(time.strptime(ts))
             except ValueError:
-                print "timestamp error: %s" %ts
+                printVerbose("timestamp error: %s" %ts)
                 skip = True
             
             if self.type == "time":
                 try:
                     val = time.mktime(time.strptime("2010 "+value, "%Y %a %H:%M:%S")) - basetime
                 except ValueError:
-                    print "value error: %s" %value
+                    printVerbose("value error: %s" %value)
                     skip = True
             else:
                 try:
@@ -272,7 +281,7 @@ class KnxAddressStream(object):
                     try:
                         val = float(value)
                     except ValueError:
-                        print "value error: %s" %value
+                        printVerbose("value error: %s" %value)
                         skip = True
 
             if not skip:
@@ -325,14 +334,7 @@ class KnxParser(object):
             self.groupDict[address] = gdict
 
         if dump:
-            print "Group addresses:"
-            keys = self.groupDict.keys()
-            keys.sort()
-            for k in keys:
-                print "%8s - %s %s %s" %(self.groupDict[k]["address"],
-                                         self.groupDict[k]["main"],
-                                         self.groupDict[k]["middle"],
-                                         self.groupDict[k]["sub"])
+            self.dumpGaTable()
             sys.exit(0)
 
         # Populate streams dictionary
@@ -365,6 +367,17 @@ class KnxParser(object):
             for c in cols:
                 ddict[layout[c.attrib["nr"]]] = c.text
             self.devDict[ddict["Adresse"]] = ddict
+
+    def dumpGaTable(self):
+        
+        print "Group addresses:"
+        keys = self.groupDict.keys()
+        keys.sort()
+        for k in keys:
+            print "%8s - %s %s %s" %(self.groupDict[k]["address"],
+                                     self.groupDict[k]["main"],
+                                     self.groupDict[k]["middle"],
+                                     self.groupDict[k]["sub"])
         
     def setTimeBase(self, basetime):
 
@@ -382,7 +395,7 @@ class KnxParser(object):
         try:
             self.knxAddrStream[receiver_raw].addTelegram(seq, timestamp, sender, value)
         except KeyError:
-            print "unknown address, skipping: %s" %receiver_raw
+            printVerbose("unknown address, skipping: %s" %receiver_raw)
 
 
     def printStreams(self, groupAddrs):
@@ -448,6 +461,7 @@ class KnxParser(object):
         plotter('set format x "%d/%m"')
         plotter('set style data linespoints')
         plotter('set grid')
+        plotter('set key bottom left')
         
         #plotter.plot(data, data2)
         plotter.plot(gdata[0])
@@ -455,7 +469,7 @@ class KnxParser(object):
             plotter.replot(g)
         # g.plot([ ("Sep 29 19:15:22 2010", 1.1), ("Sep 29 19:15:32 2010", 5.8) ], using=1)
         # g.plot([[0,1.1], [1,5.8], [2,3.3], [3,4.2]])
-        raw_input('Please press return to continue...\n')
+        raw_input('Please press return to exit...\n')
 
 
 
@@ -463,29 +477,36 @@ if __name__ == "__main__":
 
     op = OptionParser()
 
+    op.add_option("-d", "--dump-group-addresses", dest="dumpGAtable", action="store_true",
+                  help="dump group address table and exit")
+
     op.add_option("-i", "--input", dest="infilenames", action="append",
                   help="read log from  FILE", metavar="<FILE>")
 
     op.add_option("-g", "--group-address", dest="groupAddrs", type="string", action="append",
                   help="print only this group address(es) (can be repeated)", metavar="<GROUP ADDR>")
 
-    op.add_option("-d", "--dump-group-addresses", dest="dumpGAtable", action="store_true",
-                  help="dump group address table and exit")
+    op.add_option("-t", "--type", dest="types", action="append", choices=["%", "time", "temp"],
+                  help="convert value to specified type", metavar="<TYPE>")
 
     op.add_option("-f", "--flanks-only", dest="flanksOnly", action="store_true",
-                  help="only print messages when values has changed since last message")
+                  help="only print telegrams when values has changed since last telegram")
 
     op.add_option("-p", "--plot", dest="plot", action="store_true",
                   help="plot chart of data")
 
-    op.add_option("-t", "--type", dest="types", action="append", choices=["%", "time", "temp"],
-                  help="convert value to specified type")
+    op.add_option("-v", "--verbose", dest="verbose", action="store_true",
+                  help="print more information, warnings, and error messages")
+
+    op.add_option("--tail", dest="tail", type="int", metavar="<NUM>", default=0,
+                  help="print only the last NUM number of telegrams")
 
     options, args = op.parse_args()
 
     # print options
     # sys.exit(1)
-
+    verbose = options.verbose
+    
     # Associate any 'type' option with the specified group address
     types = {}
     if options.groupAddrs != None:
@@ -498,11 +519,10 @@ if __name__ == "__main__":
                 break
             idx += 1
 
-    knx = KnxParser("enheter.xml", "groupaddresses.csv",
-                    options.dumpGAtable, options.flanksOnly, types)
-    
-    basetime = 0
-    lineNo = 0
+    #
+    # Read in all the files...
+    #
+    lines = []
     for infilename in options.infilenames:
         try:
             inf = open(infilename, "r")
@@ -513,33 +533,53 @@ if __name__ == "__main__":
             op.print_help()
             sys.exit(1);
     
-        lines = inf.readlines()
-        print "Started reading file: %s" % infilename
-        for line in lines:
-            # Skip empty lines...
-            if len(line.strip()) < 1:
-                continue
+        print "Reading file: %s" % infilename
+        lines.extend(inf.readlines())
 
-            lineNo += 1
-        
-            # Split timestamp from rest...
-            try:
-                timestamp, pdu = line.split(":LPDU:")
-            except ValueError:
-                timestamp, pdu = line.split("LPDU:")
-
-            try:
-                if basetime == 0:
-                    basetime = time.mktime(time.strptime(timestamp, "%a %b %d %H:%M:%S %Y"))
-                    # print timestamp
-                    knx.setTimeBase(basetime)
-            except ValueError:
-                print "timestamp error: %s" %timestamp
-
-            knx.parseVbusOutput(lineNo, timestamp, pdu)
-
-        print "Finished reading file: %s" % infilename
         inf.close()
+
+
+    print "Creating parser..."
+    knx = KnxParser("enheter.xml", "groupaddresses.csv",
+                    options.dumpGAtable, options.flanksOnly, types)
+    
+
+    if options.tail != 0:
+        if options.tail < len(lines):
+            lines = lines[len(lines) - options.tail :]
+            
+    #
+    # Parsing the input...
+    #
+    basetime = 0
+    lineNo = 0
+    for line in lines:
+        # Skip empty lines...
+        if len(line.strip()) < 1:
+            continue
+
+        lineNo += 1
+        
+        # Split timestamp from rest...
+        try:
+            timestamp, pdu = line.split(":LPDU:")
+        except ValueError:
+            timestamp, pdu = line.split("LPDU:")
+
+        try:
+            if basetime == 0:
+                basetime = time.mktime(time.strptime(timestamp, "%a %b %d %H:%M:%S %Y"))
+                # print timestamp
+                knx.setTimeBase(basetime)
+        except ValueError:
+            printVerbose("timestamp error: %s" %timestamp)
+            
+        knx.parseVbusOutput(lineNo, timestamp, pdu)
+
+        if lineNo % 10000 == 0:
+            print "Parsed %d lines..." %lineNo
+    print "Parsed %d lines..." %lineNo
+    
 
     #
     # Ok, file(s) read and parsed
@@ -547,14 +587,13 @@ if __name__ == "__main__":
 
     if not options.plot:
         knx.printStreams(options.groupAddrs)
-
     else:
 
         knx.plotStreams(options.groupAddrs)
 
 # All temperatures:
-# python knxpdu_parser.py -i knx_log.hex.1 -i knx_log.hex.1  -g 1/3/1 -t temp -g 1/3/0 -t temp  -g 1/3/5 -t temp  -g 2/3/0 -t temp  -g 2/3/1 -t temp   -g 2/3/2 -t temp -p  -g 3/2/0 -t temp -p
+# python knxmonitor_decoder.py -i knx_log.hex.1 -i knx_log.hex.1  -g 1/3/1 -t temp -g 1/3/0 -t temp  -g 1/3/5 -t temp  -g 2/3/0 -t temp  -g 2/3/1 -t temp   -g 2/3/2 -t temp -p  -g 3/2/0 -t temp -p
 
 
 # Bad 2 etg
-# python knxpdu_parser.py -i knx_log.hex.1 -i knx_log.hex  -g 2/6/0 -t % -g 2/3/0 -t temp -g 3/2/0 -t temp -f -p
+# python knxmonitor_decoder.py -i knx_log.hex.1 -i knx_log.hex  -g 2/6/0 -t % -g 2/3/0 -t temp -g 3/2/0 -t temp -f -p
