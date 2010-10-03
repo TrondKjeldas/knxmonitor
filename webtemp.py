@@ -14,8 +14,7 @@ def index():
 
     return "specify where: ute, etg1, etg2, alle"
 
-
-def _doIt(gAddrs, types, imgfile):
+def _doIt(req, gAddrs, types, imgfile):
 
     if inModPython:
         basedir = u"/var/www/pythontest/"
@@ -39,12 +38,14 @@ def _doIt(gAddrs, types, imgfile):
     #sys.stdout = old
 
     if inModPython:
+        req.content_type = "image/png"
         # Read image file
         f = open(imgfile)
         string = f.read()
+
     return string
 
-def alle():
+def alle(req):
 
     if inModPython:
         imgfile = "/tmp/alletemp.png"
@@ -58,9 +59,9 @@ def alle():
         types[g] = "temp"
 
 
-    return _doIt(gAddrs, types, imgfile)
+    return _doIt(req, gAddrs, types, imgfile)
     
-def ute():
+def ute(req):
 
     if inModPython:
         imgfile = "/tmp/utetemp.png"
@@ -70,9 +71,9 @@ def ute():
     gAddrs    = ["3/2/0"]
     types     = { "3/2/0" : "temp" }
 
-    return _doIt(gAddrs, types, imgfile)
+    return _doIt(req, gAddrs, types, imgfile)
 
-def etg1():
+def etg1(req):
 
     if inModPython:
         imgfile = "/tmp/1etgtemp.png"
@@ -84,9 +85,9 @@ def etg1():
     for g in gAddrs:
         types[g] = "temp"
 
-    return _doIt(gAddrs, types, imgfile)
+    return _doIt(req, gAddrs, types, imgfile)
 
-def etg2():
+def etg2(req):
 
     if inModPython:
         imgfile = "/tmp/2etgtemp.png"
@@ -98,7 +99,7 @@ def etg2():
     for g in gAddrs:
         types[g] = "temp"
 
-    return _doIt(gAddrs, types, imgfile)
+    return _doIt(req, gAddrs, types, imgfile)
 
 
 if __name__ == "__main__":
