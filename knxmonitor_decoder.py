@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 import csv
 import time
 import math
-from optparse import OptionParser
+from optparse import OptionParser, OptionValueError
 import Gnuplot
 
 verbose = False
@@ -151,7 +151,7 @@ class KnxAddressStream(object):
     def val2temp(self, val):
         
         if len(val) != 5:
-            self.errorOut("error, value is not 16bit: %s" %val)
+            self.errorExit("error, value is not 16bit: %s" %val)
 
         z,x = val.split(" ")
 
@@ -176,7 +176,7 @@ class KnxAddressStream(object):
     def val2percent(self, val):
         
         if len(val) != 2:
-            self.errorOut("error, value is not 8bit: %s" %val)
+            self.errorExit("error, value is not 8bit: %s" %val)
 
         f = float(int(val, 16)) / 2.55
         
@@ -192,7 +192,7 @@ class KnxAddressStream(object):
     def val2time(self, val):
 
         if len(val) != 8:
-            self.errorOut("error, value is not 24bit: %s" %val)
+            self.errorExit("error, value is not 24bit: %s" %val)
             
         dh,m,s = val.split(" ")
 
@@ -261,9 +261,9 @@ class KnxAddressStream(object):
             self.lastValue[sender] = value
 
             if len(sender)>50:
-                self.errorOut("to long sender: %s(%d)" %(sender, len(sender)))
+                self.errorExit("to long sender: %s(%d)" %(sender, len(sender)))
             if len(receiver)>60:
-                self.errorOut("to long receiver: %s(%d)" %(receiver, len(receiver)))
+                self.errorExit("to long receiver: %s(%d)" %(receiver, len(receiver)))
 
             try:
                 outstr = "%s: %50s -> %60s(%s): %s" %(ts, sender, receiver,
@@ -462,7 +462,7 @@ class KnxParser(object):
             # Step sequence number
             seq += 1
 
-    def plotStreams(self, groupAddrs):
+    def plotStreams(self, groupAddrs, genImage=""):
 
         if groupAddrs == None:
             # Logically, "none" means all :)
@@ -490,9 +490,8 @@ class KnxParser(object):
                 #                      [ 11.1, 15.8, 14.2, 11.4, 15.2, 12.3 ],
                 #                      using='1:2', title="set2" )
                 #data = Gnuplot.Data( ("Sep 29 19:15:22 2010", 1.1), ("Sep 29 19:15:32 2010", 5.8), using='1:2 ' )
-
                 gdata.append(Gnuplot.Data( plotData[ga],
-                                           using='1:2 smooth unique', title=title ))
+                                           using='1:2 smooth unique', title=title.encode("utf-8") ))
                 
         plotter = Gnuplot.Gnuplot()
         #plotter.title(title) # (optional)
@@ -512,11 +511,17 @@ class KnxParser(object):
             plotter.replot(g)
         # g.plot([ ("Sep 29 19:15:22 2010", 1.1), ("Sep 29 19:15:32 2010", 5.8) ], using=1)
         # g.plot([[0,1.1], [1,5.8], [2,3.3], [3,4.2]])
-        raw_input('Please press return to exit...\n')
 
+        if genImage != "":
+            plotter('set terminal png color')
+            plotter('set output "%s"' %genImage)
+            plotter.replot()
+        else:
+            raw_input('Please press return to exit...\n')
+            
 
 def readParseAndPrint(devicesfilename, groupaddrfilename, infilenames,
-                      dumpGAtable, groupAddrs, types, flanksOnly, tail, plot):
+                      dumpGAtable, groupAddrs, types, flanksOnly, tail, plot, plotImage=""):
 
     #
     # Read in all the files...
@@ -587,9 +592,48 @@ def readParseAndPrint(devicesfilename, groupaddrfilename, infilenames,
         knx.printStreams(groupAddrs)
     else:
 
-        knx.plotStreams(groupAddrs)
+        knx.plotStreams(groupAddrs, plotImage)
 
 if __name__ == "__main__":
+
+    groupAddrs = []
+    types      = {}
+    
+    def groupAddr_callback(option, opt_str, value, parser):
+        assert value is None
+        value = []
+
+        def floatable(str):
+            try:
+                float(str)
+                return True
+            except ValueError:
+                return False
+
+        for arg in parser.rargs:
+            # stop on --foo like options
+            if arg[:2] == "--" and len(arg) > 2:
+                break
+            # stop on -a, but not on -3 or -3.0
+            if arg[:1] == "-" and len(arg) > 1 and not floatable(arg):
+                break
+            value.append(arg)
+
+        del parser.rargs[:len(value)]
+
+        if len(value) == 0:
+            raise OptionValueError("-g option requires one or two arguments")
+        
+        groupAddrs.append(value[0])
+        
+        if len(value) > 1:
+            t = value[1]
+            if t not in ["temp", "time", "%"]:
+                raise OptionValueError("type argument for group addresses must "
+                                       "be either 'temp', 'time', or '%%', not: %s" %t)
+            types[value[0]] = t
+
+        
 
     op = OptionParser()
 
@@ -599,11 +643,15 @@ if __name__ == "__main__":
     op.add_option("-i", "--input", dest="infilenames", action="append",
                   help="read log from  FILE", metavar="<FILE>")
 
-    op.add_option("-g", "--group-address", dest="groupAddrs", type="string", action="append",
-                  help="print only this group address(es) (can be repeated)", metavar="<GROUP ADDR>")
+    #op.add_option("-g", "--group-address", dest="groupAddrs", type="string", action="append",
+    #              help="print only this group address(es) (can be repeated)", metavar="<GROUP ADDR>")
 
-    op.add_option("-t", "--type", dest="types", action="append", choices=["%", "time", "temp"],
-                  help="convert value to specified type", metavar="<TYPE>")
+    op.add_option("-g", "--group-address", action="callback", callback=groupAddr_callback,
+                  help="Specify which group address(es) to print, and optionally "
+                  "what type to convert the value to")
+
+    #op.add_option("-t", "--type", dest="types", action="append", choices=["%", "time", "temp"],
+    #              help="convert value to specified type", metavar="<TYPE>")
 
     op.add_option("-f", "--flanks-only", dest="flanksOnly", action="store_true",
                   help="only print telegrams when values has changed since last telegram")
@@ -619,34 +667,25 @@ if __name__ == "__main__":
 
     options, args = op.parse_args()
 
-    # print options
-    # sys.exit(1)
+    #print options
+    #print groupAddrs
+    #print types
+    #sys.exit(1)
+
     verbose = options.verbose
     
-    # Associate any 'type' option with the specified group address
-    types = {}
-    if options.groupAddrs != None:
-        idx = 0
-        for g in options.groupAddrs:
-            try:
-                types[g] = options.types[idx]
-            except:
-                # must be out of --type options...
-                break
-            idx += 1
-
     # All output variants will likly support utf-8...
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 
     readParseAndPrint("enheter.xml", "groupaddresses.csv",
                       options.infilenames, options.dumpGAtable,
-                      options.groupAddrs, types, options.flanksOnly,
+                      groupAddrs, types, options.flanksOnly,
                       options.tail, options.plot)
 
 # All temperatures:
-# python knxmonitor_decoder.py -i knx_log.hex.1 -i knx_log.hex.1  -g 1/3/1 -t temp -g 1/3/0 -t temp  -g 1/3/5 -t temp  -g 2/3/0 -t temp  -g 2/3/1 -t temp   -g 2/3/2 -t temp -p  -g 3/2/0 -t temp -p
+# python knxmonitor_decoder.py -i knx_log.hex.1 -i knx_log.hex.1  -g 1/3/1 temp -g 1/3/0 temp  -g 1/3/5 temp  -g 2/3/0 temp  -g 2/3/1 temp   -g 2/3/2 temp -g 3/2/0 temp -p
 
 
 # Bad 2 etg
-# python knxmonitor_decoder.py -i knx_log.hex.1 -i knx_log.hex  -g 2/6/0 -t % -g 2/3/0 -t temp -g 3/2/0 -t temp -f -p
+# python knxmonitor_decoder.py -i knx_log.hex.1 -i knx_log.hex  -g 2/6/0 % -g 2/3/0 temp -g 3/2/0 temp -f -p
 
