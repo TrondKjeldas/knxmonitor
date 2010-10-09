@@ -107,5 +107,5 @@ if __name__ == "__main__":
     # All output variants will likly support utf-8...
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 
-    s = ute()
+    s = ute(None)
     print s
