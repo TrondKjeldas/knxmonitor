@@ -205,6 +205,20 @@ class KnxAddressStream(object):
         
         return "%s %s:%s:%s" %(days[d],h,m,s)
 
+    def val2onoff(self, val):
+
+        if len(val) != 2:
+            self.errorExit("error, value is not 8bit: %s" %val)
+
+        if val != "00" and val != "01":
+            self.errorExit("error, onoff type only handles 00 or 01, not: %s" %val)
+
+        if val == "00":
+            return "0"
+        else:
+            return "1"
+
+            
     def addTelegram(self, seq, timestamp, sender, value):
 
         # Don't try to decode (read) telegrams...
@@ -218,6 +232,9 @@ class KnxAddressStream(object):
             elif self.type == "time":
                 # print s
                 s = self.val2time(value)
+            elif self.type == "onoff":
+                # print s
+                s = self.val2onoff(value)                
             else:
                 s = value
         else:
@@ -297,7 +314,11 @@ class KnxAddressStream(object):
 
     def preparePlotData(self, basetime):
 
-        plotData = []
+        plotData = { "data"   : [],
+                     "params" : "",
+                     "title"  : self.addrInfo["sub"],
+                     "style"  : "linespoints" }
+
         for t in self.telegrams:
 
             seq, ts, sender, value = t
@@ -330,9 +351,18 @@ class KnxAddressStream(object):
 
             if not skip:
                 # g.plot([[0,1.1], [1,5.8], [2,3.3], [3,4.2]])
-                plotData.append([timedata, val])
+                plotData["data"].append([timedata, val])
 
-        return plotData, self.addrInfo["sub"]
+
+        # Only smooth data of type 'temp' or '%'
+        if self.type in ["temp", "%"]:
+            smooth = "smooth unique"
+        else:
+            smooth = ""
+
+        plotData["params"] = '1:2  %s' % smooth
+
+        return plotData
 
 class KnxParser(object):
 
@@ -468,13 +498,12 @@ class KnxParser(object):
             # Logically, "none" means all :)
             groupAddrs = self.knxAddrStream.keys()
 
-        plotData = {}
         plotter = {}
         gdata = []
         for ga in groupAddrs:
-            plotData[ga], title = self.knxAddrStream[ga].preparePlotData(self.basetime)
+            plotData = self.knxAddrStream[ga].preparePlotData(self.basetime)
 
-            if len(plotData[ga]) > 0:
+            if len(plotData["data"]) > 0:
                 
                 # g.plot(plotData)
                 # timedata = [ time.mktime(time.strptime(x)) for x in ["Wed Sep 29 19:15:22 2010",
@@ -490,19 +519,25 @@ class KnxParser(object):
                 #                      [ 11.1, 15.8, 14.2, 11.4, 15.2, 12.3 ],
                 #                      using='1:2', title="set2" )
                 #data = Gnuplot.Data( ("Sep 29 19:15:22 2010", 1.1), ("Sep 29 19:15:32 2010", 5.8), using='1:2 ' )
-                gdata.append(Gnuplot.Data( plotData[ga],
-                                           using='1:2 smooth unique', title=title.encode("utf-8") ))
+                #print plotData["data"]
+                #print plotData["params"]
+                kwarg = { "using" : plotData["params"],
+                          "title" : plotData["title"].encode("utf-8"),
+                          "with" : plotData["style"] }
+                gdata.append(Gnuplot.Data( plotData["data"], **kwarg ))
                 
-        plotter = Gnuplot.Gnuplot()
+        plotter = Gnuplot.Gnuplot(debug=1)
         #plotter.title(title) # (optional)
-        plotter('set data style linespoints') # give gnuplot an arbitrary command
+        #plotter('set data style linespoints') # give gnuplot an arbitrary command
+        #plotter('set data style linespoints') # give gnuplot an arbitrary command
         plotter('set xdata time')
         # g('set timefmt "%m %d %H:%M:%S"')
         plotter('set timefmt "%s"')
         # g('set format x "%d %b %H:%M"')
         plotter('set format x "%d/%m"')
-        plotter('set style data linespoints')
+        #plotter('set style data linespoints')
         plotter('set grid')
+        plotter('set style fill solid')
         plotter('set key bottom left')
         
         #plotter.plot(data, data2)
@@ -628,9 +663,9 @@ if __name__ == "__main__":
         
         if len(value) > 1:
             t = value[1]
-            if t not in ["temp", "time", "%"]:
+            if t not in ["onoff", "temp", "time", "%"]:
                 raise OptionValueError("type argument for group addresses must "
-                                       "be either 'temp', 'time', or '%%', not: %s" %t)
+                                       "be either 'onoff', 'temp', 'time', or '%%', not: %s" %t)
             types[value[0]] = t
 
         
