@@ -148,24 +148,48 @@ class KnxAddressStream(object):
     # E = 1
     #dec 23,34
     #
-    def val2temp(self, val):
+    def val2tempOld(self, val):
         
         if len(val) != 5:
             self.errorExit("error, value is not 16bit: %s" %val)
 
         z,x = val.split(" ")
-
+        
         e = (int(z,16) & 0x78) >> 3
         m = (int(z,16) & 0x7)<<8 | int(x,16)
-
+        
         val2 = (0.01*float(m))*math.pow(2, e)
-
+        
         #if val2 < 10:
         #    print val
         #    print e
         #    print z
         return val2.__format__(".2f")
     
+
+    def val2temp(self, val):
+        z,x = val.split(" ")
+        i = (int(z,16)*256) + int(x,16)
+        s = (i & 0x8000) >> 15
+        e = (i & 0x7800) >> 11
+        m = i & 0x7FF
+        if s == 1:
+            m2 = (~(m-1)) & 0x7ff
+            #print m2
+            m2 = -m2
+            #print m2
+        else:
+            m2 = m
+        val2 = float((1<<e)*0.01*m2)
+        if s == 10:
+            print "e %x" %e
+            print "%X" %m
+            print "%X (%d, %d)" %(m2,m2,val2)
+            print "%f" %val2
+            sys.exit(1)
+        #print "e = %x" %e
+        return val2.__format__(".2f")
+
 
     # Varme styring %
     #
@@ -320,11 +344,11 @@ class KnxAddressStream(object):
                      "style"  : "linespoints" }
 
         for t in self.telegrams:
-
-            seq, ts, sender, value = t
             
+            seq, ts, sender, value = t
+
             skip = False
-        
+            
             try:
                 timedata = time.mktime(time.strptime(ts))
             except ValueError:
@@ -350,17 +374,16 @@ class KnxAddressStream(object):
                         skip = True
 
             if not skip:
-                # g.plot([[0,1.1], [1,5.8], [2,3.3], [3,4.2]])
-                plotData["data"].append([timedata, val])
+                plotData["data"].append([timedata, val ])
 
 
         # Only smooth data of type 'temp' or '%'
         if self.type in ["temp", "%"]:
-            smooth = "smooth unique"
+            plotData["smoothing"] = " smooth unique"
         else:
-            smooth = ""
+            plotData["smoothing"] = ""
 
-        plotData["params"] = '1:2  %s' % smooth
+        plotData["params"] = '1:2 '
 
         return plotData
 
@@ -504,48 +527,23 @@ class KnxParser(object):
             plotData = self.knxAddrStream[ga].preparePlotData(self.basetime)
 
             if len(plotData["data"]) > 0:
-                
-                # g.plot(plotData)
-                # timedata = [ time.mktime(time.strptime(x)) for x in ["Wed Sep 29 19:15:22 2010",
-                #                                                     "Wed Sep 29 19:16:22 2010",
-                #                                                     "Wed Sep 29 19:17:22 2010",
-                #                                                     "Wed Sep 29 19:18:22 2010",
-                #                                                     "Wed Sep 29 19:19:22 2010",
-                #                                                     "Wed Sep 29 19:20:22 2010"] ]
-                #data = Gnuplot.Data( timedata,
-                #                     [ 1.1, 5.8, 4.2, 1.4, 5.2, 2.3 ],
-                #                     using='1:2', title="set1")
-                #data2 = Gnuplot.Data( timedata,
-                #                      [ 11.1, 15.8, 14.2, 11.4, 15.2, 12.3 ],
-                #                      using='1:2', title="set2" )
-                #data = Gnuplot.Data( ("Sep 29 19:15:22 2010", 1.1), ("Sep 29 19:15:32 2010", 5.8), using='1:2 ' )
-                #print plotData["data"]
-                #print plotData["params"]
+
                 kwarg = { "using" : plotData["params"],
                           "title" : plotData["title"].encode("utf-8"),
-                          "with" : plotData["style"] }
+                          "with" : plotData["style"] + plotData["smoothing"] }
                 gdata.append(Gnuplot.Data( plotData["data"], **kwarg ))
                 
         plotter = Gnuplot.Gnuplot(debug=1)
-        #plotter.title(title) # (optional)
-        #plotter('set data style linespoints') # give gnuplot an arbitrary command
-        #plotter('set data style linespoints') # give gnuplot an arbitrary command
         plotter('set xdata time')
-        # g('set timefmt "%m %d %H:%M:%S"')
         plotter('set timefmt "%s"')
-        # g('set format x "%d %b %H:%M"')
         plotter('set format x "%d/%m"')
-        #plotter('set style data linespoints')
         plotter('set grid')
-        plotter('set style fill solid')
-        plotter('set key bottom left')
+        #plotter('set style fill solid')
+        #plotter('set key bottom left')
         
-        #plotter.plot(data, data2)
         plotter.plot(gdata[0])
         for g in gdata[1:]:
             plotter.replot(g)
-        # g.plot([ ("Sep 29 19:15:22 2010", 1.1), ("Sep 29 19:15:32 2010", 5.8) ], using=1)
-        # g.plot([[0,1.1], [1,5.8], [2,3.3], [3,4.2]])
 
         if genImage != "":
             plotter('set terminal png color')
