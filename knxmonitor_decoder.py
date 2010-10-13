@@ -540,6 +540,10 @@ class KnxParser(object):
         plotter('set grid')
         #plotter('set style fill solid')
         #plotter('set key bottom left')
+
+        if len(gdata) < 1:
+            print "No data.."
+            return
         
         plotter.plot(gdata[0])
         for g in gdata[1:]:
