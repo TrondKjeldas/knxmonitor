@@ -1,6 +1,6 @@
 
 import sys,os, string
-from knxmonitor_decoder import readParseAndPrint
+from knxmonitor_decoder import KnxLogViewer
 import StringIO
 import codecs
 try:
@@ -32,9 +32,21 @@ gAddrs = {"alle" : ["3/2/0", "1/3/0", "1/3/1", "1/3/2", "1/3/3", "1/3/4",
           #"2etg" : ["2/3/0", "2/3/1", "2/3/2", "2/3/3", "2/3/4"] }
           "2etg" : ["2/3/0", "2/3/1", "2/3/2"] }
 
+posGAddrs = { "1/3/0" : "1/2/11",
+              "1/3/1" : "1/2/6",
+              "1/3/5" : "1/2/10",
+              "2/3/0" : "2/6/0",
+              "2/3/1" : "2/6/1",
+              "2/3/2" : "2/6/2" }
+
+
+def _gaddr2name(gaddr):
+
+    return gaddr.translate(string.maketrans("/", "_"), "/")
+
 def _gaddr2imgfilename(gaddr):
 
-    return gaddr.translate(string.maketrans("/", "_"), "/") + "_image.png"
+    return _gaddr2name(gaddr) + "_image.png"
 
 def index(req):
 
@@ -42,11 +54,12 @@ def index(req):
 
     if refresh.lower() != "no":
         # Make sure all images are updated...
+        viewer_instance = None
         for k in images.keys():
             types     = {}
             for g in gAddrs[k]:
                 types[g] = "temp"
-            _doIt(req, False, k)        
+            viewer_instance = _doIt(req, False, k, viewer_instance)        
     
     
     s = """
@@ -66,8 +79,9 @@ def index(req):
 
     return s
 
-def _regenImage(gas, types, imgfile):
-    
+def _regenImage(logview_instance, gas, types, imgfile):
+
+    print "GAS: %s" %gas
     #
     # Only re-decode if one of the .hex files are newer than the image file
     #
@@ -82,12 +96,16 @@ def _regenImage(gas, types, imgfile):
     except OSError:
         # File probably does not exist...
         doit = True
-            
-    if doit:
-        readParseAndPrint(devices, groups, filenames, False,
-                          gas, types, True, 0, True, imgfile )
 
-def _doIt(req, retImg, key):
+    if doit:
+        if logview_instance == None:
+            logview_instance = KnxLogViewer(devices, groups, filenames,
+                                            False, types, True, 0)
+        logview_instance.plotLog(gas, imgfile)
+
+    return logview_instance
+
+def _doIt(req, retImg, key, viewer_instance=None):
     
     if inModPython:
         imgfile = images[key]
@@ -106,7 +124,8 @@ def _doIt(req, retImg, key):
     #old = sys.stdout
     #sys.stdout = StringIO.StringIO()
 
-    _regenImage(gAddrs[key], types, imgfile)
+    viewer_instance = _regenImage(viewer_instance,
+                                  gAddrs[key], types, imgfile)
 
     #string = sys.stdout.getvalue()
     #sys.stdout = old
@@ -118,6 +137,9 @@ def _doIt(req, retImg, key):
         string = f.read()
 
         return string
+    else:
+        return viewer_instance
+    
     
 
 def alle(req):
@@ -138,21 +160,78 @@ def etg2(req):
 
 def etg1_detailed(req):
 
-    return _doItDetailed("1etg")
+    return _floorDetailed("1etg")
 
 def etg2_detailed(req):
 
-    return _doItDetailed("2etg")
+    return _floorDetailed("2etg")
 
-def _doItDetailed(key):
+def _floorDetailed(key):
 
     mid = ""
+    logViewer = None
     for ga in gAddrs[key]:
         fname = _gaddr2imgfilename(ga)
-        print fname
-        print ga
-        _regenImage([ga], { ga : "temp" }, basedir + "../images/" + fname)
-        mid += '<img src="/images/%s" />\n' %fname
+        pGas = [ ga ]
+        typ  = { ga : "temp" }
+        logViewer = _regenImage(None, pGas, typ,
+                                basedir + "../images/" + fname)
+        mid += '     <a href="R%s_detailed"><img src="/images/%s" /></a>\n' %(_gaddr2name(ga),fname)
+     
+    s_pre = """
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="nob" lang="nob">
+  <head>
+    <title>Temperaturoversikt</title>
+  </head>
+  <body id="temperaturer" lang="nob">
+  """
+    s_post = """
+  </body>
+</html>
+    """
+
+    return s_pre + mid + s_post
+
+def R130_detailed(req):
+
+    return _roomDetailed("1/3/0")
+
+def R131_detailed(req):
+
+    return _roomDetailed("1/3/1")
+
+def R135_detailed(req):
+
+    return _roomDetailed("1/3/5")
+
+def R230_detailed(req):
+
+    return _roomDetailed("2/3/0")
+
+def R231_detailed(req):
+
+    return _roomDetailed("2/3/1")
+def R232_detailed(req):
+
+    return _roomDetailed("2/3/2")
+
+
+def _roomDetailed(ga):
+
+    mid = ""
+    logViewer = None
+    fname = _gaddr2imgfilename(ga)
+    pGas = [ ga ]
+    typ  = { ga : "temp" }
+    # Add actuator position, if present in table
+    if ga in posGAddrs.keys():
+        pGas.append(posGAddrs[ga])
+        typ[posGAddrs[ga]] = "%"
+        fname = _gaddr2imgfilename(posGAddrs[ga])
+    logViewer = _regenImage(None, pGas, typ,
+                            basedir + "../images/" + fname)
+    mid += '<img src="/images/%s" />\n' %fname
      
     s_pre = """
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
