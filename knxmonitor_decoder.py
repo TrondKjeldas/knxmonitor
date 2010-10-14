@@ -197,12 +197,14 @@ class KnxAddressStream(object):
     #bin   1001 1100
     #dec  156 / 2.55 = 61.17%
     #
-    def val2percent(self, val):
+    def val2percent(self, val, scaling):
         
         if len(val) != 2:
             self.errorExit("error, value is not 8bit: %s" %val)
 
-        f = float(int(val, 16)) / 2.55
+        s = int(scaling[1:]) if scaling != "%" else 1
+
+        f = (float(int(val, 16)) / 2.55)/s
         
         return f.__format__(".2f")
 
@@ -248,8 +250,8 @@ class KnxAddressStream(object):
         # Don't try to decode (read) telegrams...
         if value != "(read)":
             # Decode according to any specified type..
-            if self.type == "%":
-                s = self.val2percent(value)
+            if self.type != None and self.type[0] == "%":
+                s = self.val2percent(value, self.type)
             elif self.type == "temp":
                 # print s
                 s = self.val2temp(value)
@@ -378,7 +380,7 @@ class KnxAddressStream(object):
 
 
         # Only smooth data of type 'temp' or '%'
-        if self.type in ["temp", "%"]:
+        if (self.type in ["temp", "%"]) or (self.type != None and self.type[0] == "%"):
             plotData["smoothing"] = " smooth unique"
         else:
             plotData["smoothing"] = ""
@@ -515,7 +517,7 @@ class KnxParser(object):
             # Step sequence number
             seq += 1
 
-    def plotStreams(self, groupAddrs, genImage=""):
+    def plotStreams(self, groupAddrs, genImage="", addHorLine=None):
 
         if groupAddrs == None:
             # Logically, "none" means all :)
@@ -532,6 +534,22 @@ class KnxParser(object):
                           "title" : plotData["title"].encode("utf-8"),
                           "with" : plotData["style"] + plotData["smoothing"] }
                 gdata.append(Gnuplot.Data( plotData["data"], **kwarg ))
+
+                # Add a horisontal line, if requested
+                if addHorLine != None:
+                    startTime, tmp = plotData["data"][0]
+                    endTime, tmp   = plotData["data"][-1]
+
+                    kwarg = { "using" : "1:2",
+                              "title" : "horisontal line at %s" %addHorLine,
+                              "with" : "linespoints smooth unique" }
+                    gdata.append(Gnuplot.Data( [ [startTime, addHorLine],
+                                                 [endTime, addHorLine] ], **kwarg ))
+
+                    # Only want one line per image
+                    addHorLine = None
+
+                    
                 
         plotter = Gnuplot.Gnuplot(debug=1)
         plotter('set xdata time')
@@ -539,7 +557,7 @@ class KnxParser(object):
         plotter('set format x "%d/%m"')
         plotter('set grid')
         #plotter('set style fill solid')
-        #plotter('set key bottom left')
+        plotter('set key bottom left')
 
         if len(gdata) < 1:
             print "No data.."
@@ -557,80 +575,82 @@ class KnxParser(object):
             raw_input('Please press return to exit...\n')
             
 
-def readParseAndPrint(devicesfilename, groupaddrfilename, infilenames,
-                      dumpGAtable, groupAddrs, types, flanksOnly, tail, plot, plotImage=""):
+class KnxLogViewer(object):
 
-    #
-    # Read in all the files...
-    #
-    lines = []
-    for infilename in infilenames:
-        try:
-            inf = open(infilename, "r")
-        except IOError:
-            print "%s: Unable to open file: %s" %(sys.argv[0], infilename)
-            sys.exit(1);
-        except:
-            op.print_help()
-            sys.exit(1);
-    
+    def __init__(self, devicesfilename, groupaddrfilename, infilenames,
+                 dumpGAtable, types, flanksOnly, tail):
+
+        #
+        # Read in all the files...
+        #
+        lines = []
+        for infilename in infilenames:
+            try:
+                inf = open(infilename, "r")
+            except IOError:
+                print "%s: Unable to open file: %s" %(sys.argv[0], infilename)
+                sys.exit(1);
+            except:
+                op.print_help()
+                sys.exit(1);
+                
             print "Reading file: %s" % infilename
-        lines.extend(inf.readlines())
+            lines.extend(inf.readlines())
 
-        inf.close()
+            inf.close()
 
-    print "Creating parser..."
-    knx = KnxParser(devicesfilename, groupaddrfilename,
-                    dumpGAtable, flanksOnly, types)
+        print "Creating parser..."
+        self.knx = KnxParser(devicesfilename, groupaddrfilename,
+                             dumpGAtable, flanksOnly, types)
     
-
-    if tail != 0:
-        if tail < len(lines):
-            lines = lines[len(lines) - tail :]
-            
-    #
-    # Parsing the input...
-    #
-    basetime = 0
-    lineNo = 0
-    for line in lines:
-        # Skip empty lines...
-        if len(line.strip()) < 1:
-            continue
-
-        lineNo += 1
         
-        # Split timestamp from rest...
-        try:
-            timestamp, pdu = line.split(":LPDU:")
-        except ValueError:
-            timestamp, pdu = line.split("LPDU:")
-
-        try:
-            if basetime == 0:
-                basetime = time.mktime(time.strptime(timestamp, "%a %b %d %H:%M:%S %Y"))
-                # print timestamp
-                knx.setTimeBase(basetime)
-        except ValueError:
-            printVerbose("timestamp error: %s" %timestamp)
+        if tail != 0:
+            if tail < len(lines):
+                lines = lines[len(lines) - tail :]
             
-        knx.parseVbusOutput(lineNo, timestamp, pdu)
+        #
+        # Parsing the input...
+        #
+        basetime = 0
+        lineNo = 0
+        for line in lines:
+            # Skip empty lines...
+            if len(line.strip()) < 1:
+                continue
 
-        if lineNo % 10000 == 0:
-            print "Parsed %d lines..." %lineNo
-    print "Parsed %d lines..." %lineNo
+            lineNo += 1
+        
+            # Split timestamp from rest...
+            try:
+                timestamp, pdu = line.split(":LPDU:")
+            except ValueError:
+                timestamp, pdu = line.split("LPDU:")
+
+            try:
+                if basetime == 0:
+                    basetime = time.mktime(time.strptime(timestamp, "%a %b %d %H:%M:%S %Y"))
+                    # print timestamp
+                    self.knx.setTimeBase(basetime)
+            except ValueError:
+                printVerbose("timestamp error: %s" %timestamp)
+            
+            self.knx.parseVbusOutput(lineNo, timestamp, pdu)
+
+            if lineNo % 10000 == 0:
+                print "Parsed %d lines..." %lineNo
+        print "Parsed %d lines..." %lineNo
     
 
-    #
-    # Ok, file(s) read and parsed
-    #
+    def plotLog(self, groupAddrs, plotImage, addHorLine=None):
+        
+        self.knx.plotStreams(groupAddrs, plotImage, addHorLine)
+        
+    def printLog(self, groupAddrs):
 
-    if not plot:
-        knx.printStreams(groupAddrs)
-    else:
+        self.knx.printStreams(groupAddrs)
 
-        knx.plotStreams(groupAddrs, plotImage)
 
+    
 if __name__ == "__main__":
 
     groupAddrs = []
@@ -666,8 +686,10 @@ if __name__ == "__main__":
         if len(value) > 1:
             t = value[1]
             if t not in ["onoff", "temp", "time", "%"]:
-                raise OptionValueError("type argument for group addresses must "
-                                       "be either 'onoff', 'temp', 'time', or '%%', not: %s" %t)
+                # We also allow %<scaling factor>
+                if t[0] != "%" or not str.isdigit(t[1:]):
+                    raise OptionValueError("type argument for group addresses must "
+                                           "be either 'onoff', 'temp', 'time', or '%%[<x>]', not: %s" %t)
             types[value[0]] = t
 
         
@@ -714,10 +736,15 @@ if __name__ == "__main__":
     # All output variants will likly support utf-8...
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 
-    readParseAndPrint("enheter.xml", "groupaddresses.csv",
-                      options.infilenames, options.dumpGAtable,
-                      groupAddrs, types, options.flanksOnly,
-                      options.tail, options.plot)
+    knx = KnxLogViewer("enheter.xml", "groupaddresses.csv",
+                       options.infilenames, options.dumpGAtable,
+                       types, options.flanksOnly, options.tail)
+
+    if options.plot:
+        knx.plotLog(groupAddrs, "")
+    else:
+        knx.printLog(groupAddrs)
+
 
 # All temperatures:
 # python knxmonitor_decoder.py -i knx_log.hex.1 -i knx_log.hex.1  -g 1/3/1 temp -g 1/3/0 temp  -g 1/3/5 temp  -g 2/3/0 temp  -g 2/3/1 temp   -g 2/3/2 temp -g 3/2/0 temp -p
