@@ -236,8 +236,8 @@ class KnxAddressStream(object):
         if len(val) != 2:
             self.errorExit("error, value is not 8bit: %s" %val)
 
-        if val != "00" and val != "01":
-            self.errorExit("error, onoff type only handles 00 or 01, not: %s" %val)
+        # if val != "00" and val != "01":
+        #    self.errorExit("error, onoff type only handles 00 or 01, not: %s" %val)
 
         if val == "00":
             return "0"
@@ -526,8 +526,13 @@ class KnxParser(object):
         plotter = {}
         gdata = []
         for ga in groupAddrs:
-            plotData = self.knxAddrStream[ga].preparePlotData(self.basetime)
 
+            try:
+                plotData = self.knxAddrStream[ga].preparePlotData(self.basetime)
+            except KeyError:
+                # Not a valid group address, skip it...
+                continue
+            
             if len(plotData["data"]) > 0:
 
                 kwarg = { "using" : plotData["params"],

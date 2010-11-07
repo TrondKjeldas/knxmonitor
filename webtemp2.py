@@ -27,11 +27,13 @@ html_post = """
 
 
 floors = { "ute"     : { "rooms" : [ "ute" ] },
-           "kjeller" : { "rooms" : [] },
            "etg1"    : { "rooms" : [ "kjøkken", "stue", "vindfang" ] },
            "etg2"    : { "rooms" : [ "soverom", "bad", "stue2",
-                                     "soverom2", "soverom3" ] } }
-
+                                     "soverom2", "soverom3" ] },
+           "kjeller" : { "rooms" : [ "vaskerom", "kjellergang", "kjellerstue",
+                                     "kjellerstue(kant)", "hobbyrom",
+                                     "hjemmekino" ] } }
+           
 
 rooms = { "ute"      : { "temperature" : ("3/2/0", "temp"),
                          "want temp"   : ("",      "temp"),
@@ -64,7 +66,36 @@ rooms = { "ute"      : { "temperature" : ("3/2/0", "temp"),
 
           "soverom3"  : { "temperature" : ("2/3/4", "temp"),
                          "want temp"   : ("2/4/4", "temp"),
-                         "heating"     : ("2/6/4", "%3")     }  }
+                         "heating"     : ("2/6/4", "%3")     },
+
+          "vaskerom"  : { "temperature" : ("0/3/", "temp"),
+                          "want temp"   : ("0/4/", "temp"),
+                          "heating"     : ("0/2/3", "%3")     },
+
+          "kjellergang"  : { "temperature" : ("0/3/", "temp"),
+                             "want temp"   : ("0/4/", "temp"),
+                             "heating"     : ("0/2/0", "%3")     },
+
+          "kjellerstue"  : { "temperature" : ("0/3/", "%"),
+                             "want temp"   : ("0/4/", "temp"),
+                             "heating"     : ("0/2/4", "%3")     },
+
+          "kjellerstue(kant)"  : { # Need to fake something to get an image at all...
+                                   #"temperature" : ("0/3/", "temp"),
+                                   "temperature" : ("3/2/0", "temp"),
+                                   "want temp"   : ("0/4/", "temp"),
+                                   "heating"     : ("0/2/5", "onoff")     },
+
+          "hobbyrom"  : { "temperature" : ("0/3/", "temp"),
+                          "want temp"   : ("0/4/", "temp"),
+                          "heating"     : ("0/2/2", "%3")     },
+
+          "hjemmekino"  : { "temperature" : ("0/3/", "temp"),
+                            "want temp"   : ("0/4/", "temp"),
+                            "heating"     : ("0/2/1", "%3")     },
+
+
+          }
 
 
 
