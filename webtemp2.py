@@ -29,7 +29,8 @@ html_post = """
 floors = { "ute"     : { "rooms" : [ "ute" ] },
            "kjeller" : { "rooms" : [] },
            "etg1"    : { "rooms" : [ "kjøkken", "stue", "vindfang" ] },
-           "etg2"    : { "rooms" : [ "soverom", "bad", "stue2" ] } }
+           "etg2"    : { "rooms" : [ "soverom", "bad", "stue2",
+                                     "soverom2", "soverom3" ] } }
 
 
 rooms = { "ute"      : { "temperature" : ("3/2/0", "temp"),
@@ -44,15 +45,26 @@ rooms = { "ute"      : { "temperature" : ("3/2/0", "temp"),
           "vindfang" : { "temperature" : ("1/3/5", "temp"),
                          "want temp"   : ("1/4/5", "temp"),
                          "heating"     : ("1/2/5", "%3")},
+
           "bad"      : { "temperature" : ("2/3/0", "temp"),
                          "want temp"   : ("2/4/0", "temp"),
                          "heating"     : ("2/6/0", "%3")     },
-          "stue2"    : { "temperature" : ("2/3/1", "temp"),
+
+          "stue2"    : { "temperature" : ("2/3/2", "temp"),
+                         "want temp"   : ("2/4/2", "temp"),
+                         "heating"     : ("2/6/2", "%3")     },
+
+          "soverom"  : { "temperature" : ("2/3/1", "temp"),
                          "want temp"   : ("2/4/1", "temp"),
                          "heating"     : ("2/6/1", "%3")     },
-          "soverom"  : { "temperature" : ("2/3/2", "temp"),
-                         "want temp"   : ("2/4/2", "temp"),
-                         "heating"     : ("2/6/2", "%3")     }  }
+
+          "soverom2"  : { "temperature" : ("2/3/3", "temp"),
+                         "want temp"   : ("2/4/3", "temp"),
+                         "heating"     : ("2/6/3", "%3")     },
+
+          "soverom3"  : { "temperature" : ("2/3/4", "temp"),
+                         "want temp"   : ("2/4/4", "temp"),
+                         "heating"     : ("2/6/4", "%3")     }  }
 
 
 
