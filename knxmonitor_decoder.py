@@ -68,7 +68,7 @@ class KnxPdu(object):
             
             if int(a) < 0 or int(a) > 0x1F:
                 raise KnxParseException
-            if int(b) < 0 or int(b) > 0x7:
+            if int(b) < 0 or int(b) > 0x1F:
                 raise KnxParseException
             if int(c) < 0 or int(c) > 0xFF:
                 raise KnxParseException
@@ -483,6 +483,10 @@ class KnxParser(object):
 
     def parseVbusOutput(self, seq, timestamp, text):
 
+        # Skip programming related PDUs...
+        if text.find("Data system") != -1:
+            return
+        
         pdu = KnxPdu(self.devDict, self.groupDict, text)
         
         sender = pdu.getFrom()
@@ -638,9 +642,13 @@ class KnxLogViewer(object):
                     self.knx.setTimeBase(basetime)
             except ValueError:
                 printVerbose("timestamp error: %s" %timestamp)
-            
-            self.knx.parseVbusOutput(lineNo, timestamp, pdu)
 
+            try:
+                self.knx.parseVbusOutput(lineNo, timestamp, pdu)
+            except KnxParseException:
+                print "Failed: %s:  %s" %(lineNo, pdu)
+                sys.exit(1)
+            
             if lineNo % 10000 == 0:
                 print "Parsed %d lines..." %lineNo
         print "Parsed %d lines..." %lineNo
