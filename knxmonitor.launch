@@ -1,0 +1,21 @@
+#!/usr/bin/launchtool -C
+
+
+verbose = yes
+tag = knxmonitor
+
+
+command = python /home/trond/src/knxmonitor/knxmonitor.py
+user = trond
+daemon = yes
+
+wait times = 10
+good running time = 5
+ininite runs = yes
+
+launchtool output = file:/tmp/knxmonitor.log
+command output = file:/tmp/knxmonitor.log
+launchtool errors = file:/tmp/knxmonitor.errors
+command errors = file:/tmp/knxmonitor.errors
+
+
