@@ -3,8 +3,14 @@
 import sys
 import os
 import getopt
-import eibclient.eibclient
-from eibclient.common import *
+
+#import eibclient.eibclient
+#from eibclient.common import *
+from EIBConnection import EIBBuffer 
+from EIBConnection import EIBConnection
+
+
+
 import xml.etree.ElementTree as ET
 import csv
 import time
@@ -186,40 +192,47 @@ if __name__ == "__main__":
     if sys.argv[1] != "simul":
         try:
             outfile = open("knx_log.txt", "a")
-            outfile2 = open("knx_log.hex", "a")
+            outfile2 = open("knx_log_new.hex", "a")
         except:
             print "unable to open logfile"
             sys.exit(1)
         
         try:
-            con = eibclient.eibclient.EIBSocketURL (sys.argv[1])
-        except (Exception), e:
-            print e
-
-        if con == None:
-            print "Open failed";
+            con = EIBConnection()
+        except:
+            print "Could not instanciate EIBConnection";
             sys.exit(1);
 
-        if eibclient.eibclient.EIBOpenVBusmonitorText (con) == -1:
-            print "Open Busmonitor failed"
+        if con.EIBSocketURL(sys.argv[1]) != 0:
+            print "Could not connect to: %s" %sys.argv[1]
             sys.exit(1)
-    
+            
+        
+        if con.EIBOpenVBusmonitorText() != 0:
+            print "Could not open bus monitor";
+            # sys.exit(1)
+
+        buf = EIBBuffer()
         while 1:
-            buf = eibclient.eibclient.EIBGetBusmonitorPacket (con)
-            if len(buf) == 0:
+            length = con.EIBGetBusmonitorPacket (buf)
+            if length == 0:
                 print "Read failed"
                 sys.exit(1)
-            outfile2.write(time.ctime(time.time()) + ":" + buf[1] + "\n")
+            b = ""
+            for x in buf.buffer:
+                b += chr(x)
+
+            outfile2.write(time.ctime(time.time()) + ":" + b + "\n")
             outfile2.flush()
             try:
-                s = parseVbusOutput(buf[1])
+                s = parseVbusOutput(b)
             except KnxParseException:
                 # Failed to parse, just print the original instead...
                 
-                s  = "Parse error: %s" %buf
+                s  = "Parse error: %s" %b
             if len(s) > 1:
                 outfile.write(s.encode("utf-8") + "\n")
                 outfile.flush()
             print s
 
-        eibclient.EIBClose (con)
+        con.EIBClose()
