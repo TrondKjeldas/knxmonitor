@@ -68,8 +68,8 @@ rooms = { "ute"      : { "temperature" : ("3/2/0", "temp"),
                          "want temp"   : ("2/4/4", "temp"),
                          "heating"     : ("2/6/4", "%3")     },
 
-          "vaskerom"  : { "temperature" : ("0/3/", "temp"),
-                          "want temp"   : ("0/4/", "temp"),
+          "vaskerom"  : { "temperature" : ("0/3/3", "temp"),
+                          "want temp"   : ("0/4/3", "temp"),
                           "heating"     : ("0/2/3", "%3")     },
 
           "kjellergang"  : { "temperature" : ("0/3/", "temp"),
@@ -86,8 +86,8 @@ rooms = { "ute"      : { "temperature" : ("3/2/0", "temp"),
                                    "want temp"   : ("0/4/", "temp"),
                                    "heating"     : ("0/2/5", "onoff")     },
 
-          "hobbyrom"  : { "temperature" : ("0/3/", "temp"),
-                          "want temp"   : ("0/4/", "temp"),
+          "hobbyrom"  : { "temperature" : ("0/3/2", "temp"),
+                          "want temp"   : ("0/4/2", "temp"),
                           "heating"     : ("0/2/2", "%3")     },
 
           "hjemmekino"  : { "temperature" : ("0/3/", "temp"),
