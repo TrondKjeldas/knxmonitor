@@ -71,7 +71,7 @@ def parseVbusOutput(day, seq, timestamp, text):
     value = pdu.getValue()
     
     try:
-        if u"3/2/0" in receiver_raw and value != u"(read)":
+        if value != u"(read)":
             days[day-1].addTelegram(seq, timestamp, sender, value)
         pass
     except KeyError:
@@ -84,13 +84,28 @@ if __name__ == "__main__":
     types      = {}
     
     verbose = True
-    
+
+    try:
+        gaddr = sys.argv[1]
+    except:
+        gaddr = u"3/2/0"
+
     # All output variants will likly support utf-8...
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 
     loadGroupAddrs("groupaddresses.csv") #"enheter.xml")#, "groupaddresses.csv"):
 
-    infilenames = sys.argv[1:]
+    infilenames = [ "knx_log_September_2010.hex",
+                    "knx_log_October_2010.hex",
+                    "knx_log_November_2010.hex",
+                    "knx_log_December_2010.hex",
+                    "knx_log_January_2011.hex",
+                    "knx_log_February_2011.hex",
+                    "knx_log_March_2011.hex",
+                    "knx_log_April_2011.hex",
+                    "knx_log_May_2011.hex",
+                    "knx_log_June_2011.hex", ]
+#    infilenames = [ "temp.hex" ]
 
     #
     # Read in all the files...
@@ -120,11 +135,16 @@ if __name__ == "__main__":
     # Parsing the input...
     #
     day = 0
+    daycount = 0
     basetime = 0
     lineNo = 0
     for line in lines:
         # Skip empty lines...
         if len(line.strip()) < 1:
+            continue
+
+        #if wanted group address not in line:
+        if gaddr not in line:
             continue
 
         lineNo += 1
@@ -147,10 +167,10 @@ if __name__ == "__main__":
         if ts.tm_mday != day:
             # New day!
             day = ts.tm_mday
-            days.append(KnxAddressStream(u"3/2/0", groupDict[u"3/2/0"], "temp", False))
+            daycount += 1
+            days.append(KnxAddressStream(gaddr, groupDict[gaddr], "temp", False))
 
-
-        parseVbusOutput(day, lineNo, timestamp, pdu)
+        parseVbusOutput(daycount, lineNo, timestamp, pdu)
         try:
             pass
         except KnxParseException:
@@ -161,9 +181,65 @@ if __name__ == "__main__":
             print "Parsed %d lines..." %lineNo
     print "Parsed %d lines..." %lineNo
 
-
+    avg_temps = []
     for d in days:
-        print d.telegrams[0]
-        print d.telegrams[-1]
+        seq, ts, sender, value = d.telegrams[0]
+        #print d.telegrams[-1]
+        
+        def avg(t, t2):
+            seq, ts, sender, value = t
+            seq, ts, sender, value2 = t2
 
+            
+            avg = (float(value) + float(value2)) / 2
+
+            #print avg
+
+            return ("x",ts,"x","%f"%avg)
+
+        avg_temps.append(reduce(avg, d.telegrams))
+        #seq, ts, sender, value = reduce(avg, d.telegrams)
+        #print value
+        
+
+    plotter = {}
+    gdata = []
+
+    plotData = { "data"   : [],
+                 "smoothing" : " smooth unique",
+                 "params" : "1:2 ",
+                 "title"  : "Average temperature",
+                 "style"  : "linespoints" }
     
+    for t in avg_temps:
+        
+        seq, ts, sender, value = t
+        
+        skip = False
+            
+        timedata = time.mktime(time.strptime(ts))
+            
+        val = float(value)
+        
+        plotData["data"].append([timedata, val ])
+        
+    kwarg = { "using" : plotData["params"],
+              "title" : plotData["title"].encode("utf-8"),
+              "with" : plotData["style"] + plotData["smoothing"] }
+    gdata.append(Gnuplot.Data( plotData["data"], **kwarg ))
+
+    plotter = Gnuplot.Gnuplot(debug=1)
+    plotter('set xdata time')
+    plotter('set timefmt "%s"')
+    plotter('set format x "%d/%m"')
+    plotter('set grid')
+    #plotter('set style fill solid')
+    plotter('set key bottom left')
+
+    plotter.plot(gdata[0])
+    for g in gdata[1:]:
+        plotter.replot(g)
+
+    raw_input('Please press return to exit...\n')
+        
+        
