@@ -8,9 +8,21 @@ basedir = u"/var/www/pythontest/"
     
 devices   = basedir + u"enheter.xml"
 groups    = basedir + u"groupaddresses.csv"
-filenames = [ basedir + "knx_log.hex.1",
-              basedir + "knx_log.hex"]
-
+filenames = [ #basedir + "knx_log_September_2010.hex",
+              #basedir + "knx_log_October_2010.hex",
+              #basedir + "knx_log_November_2010.hex",
+              #basedir + "knx_log_December_2010.hex",
+              #basedir + "knx_log_January_2011.hex",
+              #basedir + "knx_log_February_2011.hex", 
+              #basedir + "knx_log_March_2011.hex",
+              #basedir + "knx_log_April_2011.hex",
+              #sedir + "knx_log_May_2011.hex",
+              #basedir + "knx_log_June_2011.hex",
+              #basedir + "knx_log_July_2011.hex",
+              #basedir + "knx_log_August_2011.hex",
+              #basedir + "knx_log_September_2011.hex",
+              #basedir + "knx_log_October_2011.hex",
+              basedir + "knx_log_November_2011.hex" ]
 
 html_pre = """
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
@@ -27,7 +39,7 @@ html_post = """
 
 
 floors = { "ute"     : { "rooms" : [ "ute" ] },
-           "etg1"    : { "rooms" : [ "kjøkken", "stue", "vindfang" ] },
+           "etg1"    : { "rooms" : [ "kjøkken", "arbeidsrom", "stue", "vindfang" ] },
            "etg2"    : { "rooms" : [ "soverom", "bad", "stue2",
                                      "soverom2", "soverom3" ] },
            "kjeller" : { "rooms" : [ "vaskerom", "kjellergang", "kjellerstue",
@@ -47,6 +59,10 @@ rooms = { "ute"      : { "temperature" : ("3/2/0", "temp"),
           "vindfang" : { "temperature" : ("1/3/5", "temp"),
                          "want temp"   : ("1/4/5", "temp"),
                          "heating"     : ("1/2/5", "%3")},
+
+          "arbeidsrom" : { "temperature" : ("1/3/3", "temp"),
+                           "want temp"   : ("1/4/3", "temp"),
+                           "heating"     : ("1/2/3", "%3")},
 
           "bad"      : { "temperature" : ("2/3/0", "temp"),
                          "want temp"   : ("2/4/0", "temp"),
@@ -72,12 +88,12 @@ rooms = { "ute"      : { "temperature" : ("3/2/0", "temp"),
                           "want temp"   : ("0/4/3", "temp"),
                           "heating"     : ("0/2/3", "%3")     },
 
-          "kjellergang"  : { "temperature" : ("0/3/", "temp"),
-                             "want temp"   : ("0/4/", "temp"),
+          "kjellergang"  : { "temperature" : ("0/3/0", "temp"),
+                             "want temp"   : ("0/4/0", "temp"),
                              "heating"     : ("0/2/0", "%3")     },
 
-          "kjellerstue"  : { "temperature" : ("0/3/", "%"),
-                             "want temp"   : ("0/4/", "temp"),
+          "kjellerstue"  : { "temperature" : ("0/3/1", "temp"),
+                             "want temp"   : ("0/4/1", "temp"),
                              "heating"     : ("0/2/4", "%3")     },
 
           "kjellerstue(kant)"  : { # Need to fake something to get an image at all...
