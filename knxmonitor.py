@@ -186,6 +186,10 @@ if __name__ == "__main__":
         print "usage: %s url" % sys.argv[0];
         sys.exit(1);
 
+    mons = [ "January", "February", "March", "April", "May", "June", "July",
+             "August", "September", "October", "November", "December" ]
+    mon = 100
+
     loadGroupAddrs("groupaddresses.csv")
     loadDeviceAddrs("enheter.xml")
 
@@ -212,18 +216,26 @@ if __name__ == "__main__":
             print "Could not open bus monitor";
             # sys.exit(1)
 
+        outfile3 = None
         buf = EIBBuffer()
         while 1:
             length = con.EIBGetBusmonitorPacket (buf)
+
             if length == 0:
                 print "Read failed"
                 sys.exit(1)
+
+            #timestamp = time.ctime(time.time())
+            #ts = time.strptime(timestamp, "%a %b %d %H:%M:%S %Y")
+            ts = time.localtime()
+
             b = ""
             for x in buf.buffer:
                 b += chr(x)
 
-            outfile2.write(time.ctime(time.time()) + ":" + b + "\n")
+            outfile2.write(time.asctime(ts) + ":" + b + "\n")
             outfile2.flush()
+
             try:
                 s = parseVbusOutput(b)
             except KnxParseException:
@@ -234,5 +246,18 @@ if __name__ == "__main__":
                 outfile.write(s.encode("utf-8") + "\n")
                 outfile.flush()
             print s
+
+            if ts.tm_mon != mon:
+                # New file!
+                mon = ts.tm_mon
+                ofname = "knx_log_%s_%s.hex" %(mons[mon-1], ts.tm_year)
+                print "New file: %s" %ofname
+
+                if outfile3:
+                    outfile3.close()
+                outfile3 = open(ofname, "a")
+            
+            outfile3.write(time.asctime(ts) + ":" + b + "\n")
+            outfile3.flush()
 
         con.EIBClose()
