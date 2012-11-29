@@ -4,37 +4,37 @@ import os, string
 
 from knxmonitor_decoder import KnxLogViewer
 
-basedir = u"/var/www/pythontest/files/"
+basedir = u"/var/www/pythontest/"
     
 devices   = basedir + u"enheter.xml"
 groups    = basedir + u"groupaddresses.csv"
-filenames = [ #basedir + "knx_log_September_2010.hex",
-              #basedir + "knx_log_October_2010.hex",
-              #basedir + "knx_log_November_2010.hex",
-              #basedir + "knx_log_December_2010.hex",
-              #basedir + "knx_log_January_2011.hex",
-              #basedir + "knx_log_February_2011.hex", 
-              #basedir + "knx_log_March_2011.hex",
-              #basedir + "knx_log_April_2011.hex",
-              #basedir + "knx_log_May_2011.hex",
-              #basedir + "knx_log_June_2011.hex",
-              #basedir + "knx_log_July_2011.hex",
-              #basedir + "knx_log_August_2011.hex",
-              #basedir + "knx_log_September_2011.hex",
-              #basedir + "knx_log_October_2011.hex",
-              #basedir + "knx_log_November_2011.hex",
-              #basedir + "knx_log_December_2011.hex",
-              #basedir + "knx_log_January_2012.hex",
-              #basedir + "knx_log_February_2012.hex",
-              #basedir + "knx_log_March_2012.hex",
-              #basedir + "knx_log_April_2012.hex",
-              #basedir + "knx_log_May_2012.hex",
-              #basedir + "knx_log_June_2012.hex",
-              #basedir + "knx_log_July_2012.hex",
-              #basedir + "knx_log_August_2012.hex",
-              #basedir + "knx_log_September_2012.hex",
-              #basedir + "knx_log_October_2012.hex",
-              basedir + "knx_log_November_2012.hex" ]
+filenames = [ #basedir + "files/knx_log_September_2010.hex",
+              #basedir + "files/knx_log_October_2010.hex",
+              #basedir + "files/knx_log_November_2010.hex",
+              #basedir + "files/knx_log_December_2010.hex",
+              #basedir + "files/knx_log_January_2011.hex",
+              #basedir + "files/knx_log_February_2011.hex", 
+              #basedir + "files/knx_log_March_2011.hex",
+              #basedir + "files/knx_log_April_2011.hex",
+              #basedir + "files/knx_log_May_2011.hex",
+              #basedir + "files/knx_log_June_2011.hex",
+              #basedir + "files/knx_log_July_2011.hex",
+              #basedir + "files/knx_log_August_2011.hex",
+              #basedir + "files/knx_log_September_2011.hex",
+              #basedir + "files/knx_log_October_2011.hex",
+              #basedir + "files/knx_log_November_2011.hex",
+              #basedir + "files/knx_log_December_2011.hex",
+              #basedir + "files/knx_log_January_2012.hex",
+              #basedir + "files/knx_log_February_2012.hex",
+              #basedir + "files/knx_log_March_2012.hex",
+              #basedir + "files/knx_log_April_2012.hex",
+              #basedir + "files/knx_log_May_2012.hex",
+              #basedir + "files/knx_log_June_2012.hex",
+              #basedir + "files/knx_log_July_2012.hex",
+              #basedir + "files/knx_log_August_2012.hex",
+              #basedir + "files/knx_log_September_2012.hex",
+              #basedir + "files/knx_log_October_2012.hex",
+              basedir + "files/knx_log_November_2012.hex" ]
 
 html_pre = """
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
@@ -125,7 +125,7 @@ rooms = { "ute"      : { "temperature" : ("3/2/0", "temp"),
 
           }
 
-
+add_message = ""
 
 def _gaddr2name(gaddr):
 
@@ -163,7 +163,7 @@ def index(req):
         mid +=  '<a href="floorShow?id=%s"><img src="/images/%s" /></a>\n' %(floor,fname)
 
 
-    return html_pre + mid + html_post
+    return html_pre + mid + add_message + html_post
 
 def floorShow(req):
 
@@ -183,11 +183,12 @@ def floorShow(req):
         
         mid +=  '<a href="webtemp2/roomShow?id=%s"><img src="/images/%s" /></a>\n' %(room,fname)
 
-    return html_pre + mid + html_post
+    return html_pre + mid + add_message + html_post
 
 
 def _regenImage(logview_instance, gas, types, imgfile, addHorLine=None):
 
+    global add_message
     #
     # Only re-decode if one of the .hex files are newer than the image file
     #
@@ -199,9 +200,14 @@ def _regenImage(logview_instance, gas, types, imgfile, addHorLine=None):
             s = os.stat(f)
             if imgtime < s.st_mtime:
                 doit = True
+		#add_message = "REGENERATED IMAGE"
+	    else:
+		#add_message = "USING LAST IMAGE"
+		pass
     except OSError:
         # File probably does not exist...
         doit = True
+ 	#add_message = "GENERATED IMAGE"
 
     if doit:
         if logview_instance == None:
