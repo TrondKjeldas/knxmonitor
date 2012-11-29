@@ -4,7 +4,7 @@ import os, string
 
 from knxmonitor_decoder import KnxLogViewer
 
-basedir = u"/var/www/pythontest/"
+basedir = u"/var/www/pythontest/files/"
     
 devices   = basedir + u"enheter.xml"
 groups    = basedir + u"groupaddresses.csv"
