@@ -1,6 +1,6 @@
 # coding=utf-8
 
-import os, string
+import os, string, time
 
 from knxmonitor_decoder import KnxLogViewer
 
@@ -8,7 +8,7 @@ basedir = u"/var/www/pythontest/"
     
 devices   = basedir + u"enheter.xml"
 groups    = basedir + u"groupaddresses.csv"
-filenames = [ #basedir + "files/knx_log_September_2010.hex",
+#filenames = [ #basedir + "files/knx_log_September_2010.hex",
               #basedir + "files/knx_log_October_2010.hex",
               #basedir + "files/knx_log_November_2010.hex",
               #basedir + "files/knx_log_December_2010.hex",
@@ -34,7 +34,27 @@ filenames = [ #basedir + "files/knx_log_September_2010.hex",
               #basedir + "files/knx_log_August_2012.hex",
               #basedir + "files/knx_log_September_2012.hex",
               #basedir + "files/knx_log_October_2012.hex",
-              basedir + "files/knx_log_November_2012.hex" ]
+ #             basedir + "files/knx_log_November_2012.hex" ]
+
+mons = [ "January", "February", "March", "April", "May", "June", "July",
+         "August", "September", "October", "November", "December" ]
+
+def mkfname(ts):
+
+    ofname = basedir + "files/knx_log_%s_%s.hex" %(mons[ts.tm_mon-1], ts.tm_year)
+    return ofname
+
+filenames = []
+ts = time.localtime()
+#ts = time.localtime(time.mktime(time.localtime())+(2*24*3600))
+filenames.append(mkfname(ts))
+
+# If less than 5 days into month, add last month as well...
+if ts.tm_mday < 5:
+    prev_month = mkfname(time.localtime(time.mktime(ts) - (3600*24*6)))
+    filenames.insert(0,prev_month)
+
+#print filenames
 
 html_pre = """
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
