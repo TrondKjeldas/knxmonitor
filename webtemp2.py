@@ -211,7 +211,7 @@ def floorShow(req):
         g2,t2 = rooms[room]["heating"]
         group_addresses = [ g1, g2 ]
         logHandler = _regenImage(logHandler, group_addresses, allTypes,
-                                 basedir + "../images/" + fname, [21,22,23])
+                                 basedir + "../images/" + fname, 23)
         
         mid +=  '<a href="webtemp2/roomShow?id=%s"><img src="/images/%s" /></a>\n' %(room,fname)
 
@@ -245,9 +245,18 @@ def _regenImage(logview_instance, gas, types, imgfile, addHorLine=None):
         if logview_instance == None:
             logview_instance = KnxLogViewer(devices, groups, filenames,
                                             False, types, True, 0, allGAs)
-        logview_instance.plotLog(gas, imgfile, addHorLine)
+
+        minVal,maxVal = logview_instance.getMinMaxValues(gas[0])
+
+        hl = [] # [addHorLine]
+        if minVal != None:
+            hl.append(minVal)
+        if maxVal != None:
+            hl.append(maxVal)
+            
+        logview_instance.plotLog(gas, imgfile, hl)
         
-        #add_message += "<p>" + logview_instance.getPerfData()
+        add_message += "<p>" + logview_instance.getPerfData() + "<p>%s, %s, %s<p>"%(str(gas), minVal,maxVal)
 
     return logview_instance
 
