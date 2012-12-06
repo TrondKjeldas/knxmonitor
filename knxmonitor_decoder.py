@@ -529,6 +529,7 @@ class KnxParser(object):
 
         plotter = {}
         gdata = []
+        plotData = None
         for ga in groupAddrs:
 
             try:
@@ -544,21 +545,22 @@ class KnxParser(object):
                           "with" : plotData["style"] + plotData["smoothing"] }
                 gdata.append(Gnuplot.Data( plotData["data"], **kwarg ))
 
-                # Add a horisontal line, if requested
-                if addHorLine != None:
-                    startTime, tmp = plotData["data"][0]
-                    endTime, tmp   = plotData["data"][-1]
+        # Add a horisontal line, if requested
+        if plotData != None and addHorLine != None:
+            try:
+                dummy = iter(addHorLine)
+            except TypeError:
+                addHorLine = [addHorLine]
+            for hl in addHorLine:
+                startTime, tmp = plotData["data"][0]
+                endTime, tmp   = plotData["data"][-1]
 
-                    kwarg = { "using" : "1:2",
-                              "title" : "horisontal line at %s" %addHorLine,
-                              "with" : "linespoints smooth unique" }
-                    gdata.append(Gnuplot.Data( [ [startTime, addHorLine],
-                                                 [endTime, addHorLine] ], **kwarg ))
-
-                    # Only want one line per image
-                    addHorLine = None
-
-                    
+                kwarg = { "using" : "1:2",
+                          "title" : "horisontal line at %s" %hl,
+                          "with" : "linespoints smooth unique" }
+                gdata.append(Gnuplot.Data( [ [startTime, hl],
+                                             [endTime, hl] ], **kwarg ))
+                        
                 
         plotter = Gnuplot.Gnuplot(debug=1)
         plotter('set xdata time')
@@ -587,7 +589,14 @@ class KnxParser(object):
 class KnxLogViewer(object):
 
     def __init__(self, devicesfilename, groupaddrfilename, infilenames,
-                 dumpGAtable, types, flanksOnly, tail):
+                 dumpGAtable, types, flanksOnly, tail, groupAddressSet = None):
+
+        self.delta = 0
+        self.delta2 = 0
+        self.pduCount = 0
+        self.pduSkipped = 0
+        self.dbgMsg = "groupAddressSet = %s" %str(groupAddressSet)
+        start = time.time()
 
         #
         # Read in all the files...
@@ -627,6 +636,17 @@ class KnxLogViewer(object):
             if len(line.strip()) < 1:
                 continue
 
+            # If filter specified, skip unwanted GAs
+            if groupAddressSet != None:
+                ignore = True
+                for ga in groupAddressSet:
+                    if line.find(ga) != -1:
+                        ignore = False
+                        break
+                if ignore:
+                    self.pduSkipped += 1
+                    continue
+                
             lineNo += 1
         
             # Split timestamp from rest...
@@ -645,6 +665,7 @@ class KnxLogViewer(object):
 
             try:
                 self.knx.parseVbusOutput(lineNo, timestamp, pdu)
+                self.pduCount += 1
             except KnxParseException:
                 print "Failed: %s:  %s" %(lineNo, pdu)
                 sys.exit(1)
@@ -652,11 +673,26 @@ class KnxLogViewer(object):
             if lineNo % 10000 == 0:
                 print "Parsed %d lines..." %lineNo
         print "Parsed %d lines..." %lineNo
+        self.dbgMsg += "Parsed %d lines..." %lineNo
+        
+        self.delta = time.time() - start
     
+    def getPerfData(self):
+
+        s = "<p>"
+        if self.delta != 0:
+            s += "KnxLogViewer: Time used for init:    %f (%d PDUs parsed, %d skipped)<p>" %(self.delta, self.pduCount, self.pduSkipped)
+            s += "Debug: %s<p>" %self.dbgMsg
+            self.delta = 0
+        s += "KnxLogViewer: Time used for plotgen: %f<p>" %self.delta2
+        s += "<p>"
+        return s
+
 
     def plotLog(self, groupAddrs, plotImage, addHorLine=None):
-        
+        start = time.time()
         self.knx.plotStreams(groupAddrs, plotImage, addHorLine)
+        self.delta2 = time.time() - start
         
     def printLog(self, groupAddrs):
 
