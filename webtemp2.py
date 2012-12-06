@@ -4,6 +4,8 @@ import os, string, time
 
 from knxmonitor_decoder import KnxLogViewer
 
+add_message = ""
+
 basedir = u"/var/www/pythontest/"
     
 devices   = basedir + u"enheter.xml"
@@ -50,6 +52,7 @@ ts = time.localtime()
 filenames.append(mkfname(ts))
 
 # If less than 5 days into month, add last month as well...
+#add_message = "mday = %d" % ts.tm_mday
 if ts.tm_mday < 5:
     prev_month = mkfname(time.localtime(time.mktime(ts) - (3600*24*6)))
     filenames.insert(0,prev_month)
@@ -71,8 +74,8 @@ html_post = """
 
 
 floors = { "ute"     : { "rooms" : [ "ute" ] },
-           "etg1"    : { "rooms" : [ "kjøkken", "arbeidsrom", "stue", "vindfang" ] },
-           "etg2"    : { "rooms" : [ "soverom", "bad", "stue2",
+           "etg1"    : { "rooms" : [ "kjøkken", "arbeidsrom", "stue", "vindfang", "bad" ] },
+           "etg2"    : { "rooms" : [ "soverom", "bad2", "stue2",
                                      "soverom2", "soverom3" ] },
            "kjeller" : { "rooms" : [ "vaskerom", "kjellergang", "kjellerstue",
                                      "kjellerstue(kant)", "hobbyrom",
@@ -80,8 +83,8 @@ floors = { "ute"     : { "rooms" : [ "ute" ] },
            
 
 rooms = { "ute"      : { "temperature" : ("3/2/0", "temp"),
-                         "want temp"   : ("",      "temp"),
-                         "heating"     : ("","%3")           },
+                         "want temp"   : ("x/x/x", "temp"),
+                         "heating"     : ("x/x/x", "%3")           },
           "kjøkken"  : { "temperature" : ("1/3/0", "temp"),
                          "want temp"   : ("1/4/0", "temp"),
                          "heating"     : ("1/2/0", "%3")},
@@ -92,11 +95,16 @@ rooms = { "ute"      : { "temperature" : ("3/2/0", "temp"),
                          "want temp"   : ("1/4/5", "temp"),
                          "heating"     : ("1/2/5", "%3")},
 
+          "bad"      : { "temperature" : ("1/3/4", "temp"),
+                         "want temp"   : ("1/4/4", "temp"),
+                         "heating"     : ("1/2/9", "%3")},
+
+
           "arbeidsrom" : { "temperature" : ("1/3/3", "temp"),
                            "want temp"   : ("1/4/3", "temp"),
                            "heating"     : ("1/2/3", "%3")},
 
-          "bad"      : { "temperature" : ("2/3/0", "temp"),
+          "bad2"      : { "temperature" : ("2/3/0", "temp"),
                          "want temp"   : ("2/4/0", "temp"),
                          "heating"     : ("2/6/0", "%3")     },
 
@@ -140,12 +148,21 @@ rooms = { "ute"      : { "temperature" : ("3/2/0", "temp"),
 
           "hjemmekino"  : { "temperature" : ("0/3/", "temp"),
                             "want temp"   : ("0/4/", "temp"),
-                            "heating"     : ("0/2/1", "%3")     },
+                            "heating"     : ("0/2/7", "%3")     },
 
 
           }
 
-add_message = ""
+allTypes = {}
+allGAs = []
+for floor in floors.keys():
+    for room in floors[floor]["rooms"]:
+        g1,t1 = rooms[room]["temperature"]
+        g2,t2 = rooms[room]["heating"]
+        allTypes[g1] = t1
+        allTypes[g2] = t2
+        allGAs.append(g1)
+        allGAs.append(g2)
 
 def _gaddr2name(gaddr):
 
@@ -170,14 +187,11 @@ def index(req):
         
         fname = _mkfname(floor + ".png")
         group_addresses = []
-        types = {}
         for room in floors[floor]["rooms"]:
             group_addr, typ = rooms[room]["temperature"]
-            types[group_addr] = typ
-            #return "%s %s" %(ga, types)
             group_addresses.append(group_addr)
                 
-        logHandler = _regenImage(None, group_addresses, types,
+        logHandler = _regenImage(logHandler, group_addresses, allTypes,
                                  basedir + "../images/" + fname)
         
         mid +=  '<a href="floorShow?id=%s"><img src="/images/%s" /></a>\n' %(floor,fname)
@@ -195,11 +209,9 @@ def floorShow(req):
         fname = _mkfname(room + ".png")
         g1,t1 = rooms[room]["temperature"]
         g2,t2 = rooms[room]["heating"]
-        #g3,t3 = rooms[room]["want temp"]
         group_addresses = [ g1, g2 ]
-        types = { g1 : t1, g2 : t2 }
-        logHandler = _regenImage(None, group_addresses, types,
-                                 basedir + "../images/" + fname, 22)
+        logHandler = _regenImage(logHandler, group_addresses, allTypes,
+                                 basedir + "../images/" + fname, [21,22,23])
         
         mid +=  '<a href="webtemp2/roomShow?id=%s"><img src="/images/%s" /></a>\n' %(room,fname)
 
@@ -232,8 +244,10 @@ def _regenImage(logview_instance, gas, types, imgfile, addHorLine=None):
     if doit:
         if logview_instance == None:
             logview_instance = KnxLogViewer(devices, groups, filenames,
-                                            False, types, True, 0)
+                                            False, types, True, 0, allGAs)
         logview_instance.plotLog(gas, imgfile, addHorLine)
+        
+        #add_message += "<p>" + logview_instance.getPerfData()
 
     return logview_instance
 
