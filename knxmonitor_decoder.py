@@ -9,6 +9,8 @@ import Gnuplot
 
 verbose = False
 
+globDbgMsg = ""
+
 def printVerbose(str):
     if verbose:
         print str
@@ -125,7 +127,9 @@ class KnxAddressStream(object):
         self.addrInfo   = addressInfo
         self.type       = type
         self.flanksOnly = flanksOnly
-        
+        self.maxVal    = None
+        self.minVal    = None
+
         self.telegrams = []
 
     def errorExit(self, str):
@@ -255,6 +259,10 @@ class KnxAddressStream(object):
             elif self.type == "temp":
                 # print s
                 s = self.val2temp(value)
+                if self.minVal == None or float(self.minVal) > float(s):
+                    self.minVal = s
+                if self.maxVal == None or float(self.maxVal) < float(s):
+                    self.maxVal = s
             elif self.type == "time":
                 # print s
                 s = self.val2time(value)
@@ -500,6 +508,15 @@ class KnxParser(object):
             printVerbose("unknown address, skipping: %s" %receiver_raw)
 
 
+    def getStreamMinMaxValues(self, groupAddr):
+        
+        try:
+            min = self.knxAddrStream[groupAddr].minVal
+            max = self.knxAddrStream[groupAddr].maxVal
+            return min,max
+        except:
+            return None,None
+
     def printStreams(self, groupAddrs):
 
         if groupAddrs == None:
@@ -530,6 +547,8 @@ class KnxParser(object):
         plotter = {}
         gdata = []
         plotData = None
+        endTime = 0.0
+        startTime = time.time() + (3600*24*365*10)
         for ga in groupAddrs:
 
             try:
@@ -540,6 +559,12 @@ class KnxParser(object):
             
             if len(plotData["data"]) > 0:
 
+                st, tmp = plotData["data"][0]
+                et, tmp = plotData["data"][-1]
+                if st < startTime:
+                    startTime = st
+                if et > endTime:
+                    endTime = et
                 kwarg = { "using" : plotData["params"],
                           "title" : plotData["title"].encode("utf-8"),
                           "with" : plotData["style"] + plotData["smoothing"] }
@@ -552,8 +577,6 @@ class KnxParser(object):
             except TypeError:
                 addHorLine = [addHorLine]
             for hl in addHorLine:
-                startTime, tmp = plotData["data"][0]
-                endTime, tmp   = plotData["data"][-1]
 
                 kwarg = { "using" : "1:2",
                           "title" : "horisontal line at %s" %hl,
@@ -585,6 +608,8 @@ class KnxParser(object):
         else:
             raw_input('Please press return to exit...\n')
             
+    
+
 
 class KnxLogViewer(object):
 
@@ -682,12 +707,14 @@ class KnxLogViewer(object):
         s = "<p>"
         if self.delta != 0:
             s += "KnxLogViewer: Time used for init:    %f (%d PDUs parsed, %d skipped)<p>" %(self.delta, self.pduCount, self.pduSkipped)
-            s += "Debug: %s<p>" %self.dbgMsg
+            s += "Debug: %s<p>GlobalDebug:%s<p>" %(self.dbgMsg, globDbgMsg)
             self.delta = 0
         s += "KnxLogViewer: Time used for plotgen: %f<p>" %self.delta2
         s += "<p>"
         return s
 
+    def getMinMaxValues(self, groupAddr):
+        return self.knx.getStreamMinMaxValues(groupAddr)
 
     def plotLog(self, groupAddrs, plotImage, addHorLine=None):
         start = time.time()
