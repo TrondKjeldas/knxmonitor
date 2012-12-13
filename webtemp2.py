@@ -41,23 +41,24 @@ groups    = basedir + u"groupaddresses.csv"
 mons = [ "January", "February", "March", "April", "May", "June", "July",
          "August", "September", "October", "November", "December" ]
 
-def mkfname(ts):
+def _mkinfname(ts):
 
     ofname = basedir + "files/knx_log_%s_%s.hex" %(mons[ts.tm_mon-1], ts.tm_year)
     return ofname
 
-filenames = []
-ts = time.localtime()
-#ts = time.localtime(time.mktime(time.localtime())+(2*24*3600))
-filenames.append(mkfname(ts))
+def _getFileNames(threshold):
+    filenames = []
+    ts = time.localtime()
+    #ts = time.localtime(time.mktime(time.localtime())+(2*24*3600))
+    filenames.append(_mkinfname(ts))
 
-# If less than 5 days into month, add last month as well...
-#add_message = "mday = %d" % ts.tm_mday
-if ts.tm_mday < 5:
-    prev_month = mkfname(time.localtime(time.mktime(ts) - (3600*24*6)))
-    filenames.insert(0,prev_month)
+    # If less than "threshold" days into month, add last month as well...
+    #add_message = "mday = %d" % ts.tm_mday
+    if ts.tm_mday < threshold:
+        prev_month = _mkinfname(time.localtime(time.mktime(ts) - (3600*24*6)))
+        filenames.insert(0,prev_month)
 
-#print filenames
+    return filenames
 
 html_pre = """
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
@@ -140,7 +141,8 @@ rooms = { "ute"      : { "temperature" : ("3/2/0", "temp"),
                                    #"temperature" : ("0/3/", "temp"),
                                    "temperature" : ("3/2/0", "temp"),
                                    "want temp"   : ("0/4/", "temp"),
-                                   "heating"     : ("0/2/5", "onoff")     },
+                                  # "heating"     : ("0/2/5", "onoff")     },
+                                   "heating"     : ("0/2/11", "%3")     },
 
           "hobbyrom"  : { "temperature" : ("0/3/2", "temp"),
                           "want temp"   : ("0/4/2", "temp"),
@@ -178,6 +180,7 @@ def _mkfname(s):
 
 def index(req):
 
+    filenames = _getFileNames(int(req.form.getfirst('threshold','5')))
     mid = ""
     logHandler = None
     for floor in floors.keys():
@@ -191,7 +194,7 @@ def index(req):
             group_addr, typ = rooms[room]["temperature"]
             group_addresses.append(group_addr)
                 
-        logHandler = _regenImage(logHandler, group_addresses, allTypes,
+        logHandler = _regenImage(filenames, logHandler, group_addresses, allTypes,
                                  basedir + "../images/" + fname)
         
         mid +=  '<a href="floorShow?id=%s"><img src="/images/%s" /></a>\n' %(floor,fname)
@@ -202,7 +205,10 @@ def index(req):
 def floorShow(req):
 
     floor = req.form.getfirst('id','')
-
+    threshold = req.form.getfirst('threshold','5')
+    filenames = _getFileNames(int(threshold))
+    global add_message
+    add_message += str(threshold) + "_" + str(filenames)
     mid = ""
     logHandler = None
     for room in floors[floor]["rooms"]:
@@ -210,7 +216,7 @@ def floorShow(req):
         g1,t1 = rooms[room]["temperature"]
         g2,t2 = rooms[room]["heating"]
         group_addresses = [ g1, g2 ]
-        logHandler = _regenImage(logHandler, group_addresses, allTypes,
+        logHandler = _regenImage(filenames, logHandler, group_addresses, allTypes,
                                  basedir + "../images/" + fname, 23)
         
         mid +=  '<a href="webtemp2/roomShow?id=%s"><img src="/images/%s" /></a>\n' %(room,fname)
@@ -218,7 +224,7 @@ def floorShow(req):
     return html_pre + mid + add_message + html_post
 
 
-def _regenImage(logview_instance, gas, types, imgfile, addHorLine=None):
+def _regenImage(filenames, logview_instance, gas, types, imgfile, addHorLine=None):
 
     global add_message
     #
@@ -248,15 +254,16 @@ def _regenImage(logview_instance, gas, types, imgfile, addHorLine=None):
 
         minVal,maxVal = logview_instance.getMinMaxValues(gas[0])
 
-        hl = [] # [addHorLine]
-        if minVal != None:
-            hl.append(minVal)
-        if maxVal != None:
-            hl.append(maxVal)
-            
-        logview_instance.plotLog(gas, imgfile, hl)
+        if addHorLine != None:
+            addHorLine = [] # [addHorLine]
+            if minVal != None:
+                addHorLine.append(minVal)
+            if maxVal != None:
+                addHorLine.append(maxVal)
+
+        logview_instance.plotLog(gas, imgfile, addHorLine)
         
-        add_message += "<p>" + logview_instance.getPerfData() + "<p>%s, %s, %s<p>"%(str(gas), minVal,maxVal)
+        #add_message += "<p>" + logview_instance.getPerfData() + "<p>%s, %s, %s<p>"%(str(gas), minVal,maxVal)
 
     return logview_instance
 
