@@ -2,10 +2,17 @@ import sys
 import codecs
 import xml.etree.ElementTree as ET
 import csv
-import time
+from time import time, mktime, strptime
 import math
 from optparse import OptionParser, OptionValueError
 import Gnuplot
+import hashlib
+
+
+from knxmonitor_stream import KnxAddressStream, setVerbose as stream_setVerbose
+from knxmonitor_pdu    import KnxPdu
+
+
 
 verbose = False
 
@@ -49,353 +56,6 @@ class UnicodeReader:
 
 class KnxParseException(Exception):
     pass
-
-
-class KnxPdu(object):
-
-    def __init__(self, devdict, groupdict, pdu_text):
-
-        self.devDict = devdict
-        self.groupDict = groupdict
-
-        # Do parsing up front...
-        self.text = pdu_text[pdu_text.find(" from ")+6:]
-
-        try:
-            s, rest = self.text.split(" ", 1) #[:self.text.find(" ")]
-            
-            # Sanity check
-            
-            a,b,c = s.split(".")
-            
-            if int(a) < 0 or int(a) > 0x1F:
-                raise KnxParseException
-            if int(b) < 0 or int(b) > 0x1F:
-                raise KnxParseException
-            if int(c) < 0 or int(c) > 0xFF:
-                raise KnxParseException
-        except:
-            # Something failed, but we only want to cause
-            # one type of exception...
-            raise KnxParseException
-    
-        try:
-            s = "%s(%s)" %(self.devDict[s]["Beskrivelse"], s)
-        except KeyError:
-            s = "(%s)" %(s)
-
-        self.fromadr = unicode(s)
-
-        # Receiving group address
-        tmp, toaddr, rest = rest.split(" ", 2) #s[:s.find(" ")]
-        self.toaddr = unicode(toaddr)
-        
-        #print rest
-        # Value
-
-        if ("GroupValue_Read" in rest):
-            self.value = u"(read)"
-        else:
-            tmp, s = rest[rest.find("GroupValue_") + 14:].split(" ", 1)
-            self.value = s.strip()
-            i = self.value.find("(small)")
-            if i != -1:
-                self.value = self.value[i+8:]
-            while not self.value[-1].isalnum():
-                self.value = self.value[:-1]
-
-        #print "(%s)"%self.value
-        
-    def getFrom(self):
-            
-        return self.fromadr
-
-    def getTo(self):
-        
-        return self.toaddr #unicode(self.toaddr)
-    
-    def getValue(self):
-            
-        return self.value #unicode(s)
-
-
-class KnxAddressStream(object):
-
-    def __init__(self, address, addressInfo, type, flanksOnly):
-
-        self.address    = address
-        self.addrInfo   = addressInfo
-        self.type       = type
-        self.flanksOnly = flanksOnly
-        self.maxVal    = None
-        self.minVal    = None
-
-        self.telegrams = []
-
-    def errorExit(self, str):
-
-        print "%s: %s" %(self.address, str)
-        sys.exit(1)
-
-    #
-    # Temp
-    #
-    #hex    07        F9
-    #bin  0000 0111  1111 1001
-    #
-    #hex    0C        8F
-    #bin  0000 1100  1000 1111
-    #
-    # (0,01*M*)2^E 
-    #
-    # M = 100 1000 1111
-    # E = 1
-    #dec 23,34
-    #
-    def val2tempOld(self, val):
-        
-        if len(val) != 5:
-            self.errorExit("error, value is not 16bit: %s" %val)
-
-        z,x = val.split(" ")
-        
-        e = (int(z,16) & 0x78) >> 3
-        m = (int(z,16) & 0x7)<<8 | int(x,16)
-        
-        val2 = (0.01*float(m))*math.pow(2, e)
-        
-        #if val2 < 10:
-        #    print val
-        #    print e
-        #    print z
-        return val2.__format__(".2f")
-    
-
-    def val2temp(self, val):
-        z,x = val.split(" ")
-        i = (int(z,16)*256) + int(x,16)
-        s = (i & 0x8000) >> 15
-        e = (i & 0x7800) >> 11
-        m = i & 0x7FF
-        if s == 1:
-            m2 = (~(m-1)) & 0x7ff
-            #print m2
-            m2 = -m2
-            #print m2
-        else:
-            m2 = m
-        val2 = float((1<<e)*0.01*m2)
-        if s == 10:
-            print "e %x" %e
-            print "%X" %m
-            print "%X (%d, %d)" %(m2,m2,val2)
-            print "%f" %val2
-            sys.exit(1)
-        #print "e = %x" %e
-        return val2.__format__(".2f")
-
-
-    # Varme styring %
-    #
-    #hex     9C
-    #bin   1001 1100
-    #dec  156 / 2.55 = 61.17%
-    #
-    def val2percent(self, val, scaling):
-        
-        if len(val) != 2:
-            self.errorExit("error, value is not 8bit: %s" %val)
-
-        s = int(scaling[1:]) if scaling != "%" else 1
-
-        f = (float(int(val, 16)) / 2.55)/s
-        
-        return f.__format__(".2f")
-
- 
-    #  
-    # Tid:
-    #
-    # hex    75         32      00
-    # bin  0111 0101 0011 0101 0000 0000
-    # dec    21        53       00
-    def val2time(self, val):
-
-        if len(val) != 8:
-            self.errorExit("error, value is not 24bit: %s" %val)
-            
-        dh,m,s = val.split(" ")
-
-        s = int(s,16) & 0x3f
-        m = int(m,16) & 0x3f
-        h = int(dh,16) & 0x1f
-        d = (int(dh,16) & 0xe0) >> 5
-        
-        days = ["no day","mon","tue","wed","thu","fri","sat","sun"]
-        
-        return "%s %s:%s:%s" %(days[d],h,m,s)
-
-    def val2onoff(self, val):
-
-        if len(val) != 2:
-            self.errorExit("error, value is not 8bit: %s" %val)
-
-        # if val != "00" and val != "01":
-        #    self.errorExit("error, onoff type only handles 00 or 01, not: %s" %val)
-
-        if val == "00":
-            return "0"
-        else:
-            return "1"
-
-            
-    def addTelegram(self, seq, timestamp, sender, value):
-
-        # Don't try to decode (read) telegrams...
-        if value != "(read)":
-            # Decode according to any specified type..
-            if self.type != None and self.type[0] == "%":
-                s = self.val2percent(value, self.type)
-            elif self.type == "temp":
-                # print s
-                s = self.val2temp(value)
-                if self.minVal == None or float(self.minVal) > float(s):
-                    self.minVal = s
-                if self.maxVal == None or float(self.maxVal) < float(s):
-                    self.maxVal = s
-            elif self.type == "time":
-                # print s
-                s = self.val2time(value)
-            elif self.type == "onoff":
-                # print s
-                s = self.val2onoff(value)                
-            else:
-                s = value
-        else:
-            s = value
-
-        self.telegrams.append((seq, timestamp, sender, s))
-
-    def prepareSynchronizedPrints(self):
-
-        self.nextidx = 0
-        self.lastValue = {}
-        
-    def printTelegrams(self, printseq):
-
-        # Check if we have more telegrams to print...
-        if self.nextidx >= len(self.telegrams):
-           return False
-           
-        seq, ts, sender, value = self.telegrams[self.nextidx]
-
-        #
-        # Check if its our turn to print...
-        #
-        if seq != printseq:
-            # Nope
-            return True
-
-        receiver = self.addrInfo["sub"]
-
-        #print "entering: %8s -> %s   %s" %(self.address, printseq, self.telegrams[self.nextidx])
-        
-        #
-        # Ok, if we get this far we are supposed to print something
-        #
-
-        # If only printing changes, we must check if a value has changed
-        if sender not in self.lastValue.keys():
-            self.lastValue[sender] = None
-            
-        if not self.flanksOnly or (self.flanksOnly and value != self.lastValue[sender]):
-            self.lastValue[sender] = value
-
-            if len(sender)>50:
-                self.errorExit("to long sender: %s(%d)" %(sender, len(sender)))
-            if len(receiver)>60:
-                self.errorExit("to long receiver: %s(%d)" %(receiver, len(receiver)))
-
-            try:
-                outstr = "%s: %50s -> %60s(%s): %s" %(ts, sender, receiver,
-                                                      self.address, value)
-                print outstr
-            except UnicodeEncodeError,err:
-                #print "%s"%ts.decode("utf-8")
-                #print "%s"%sender
-                #print "%s"%receiver.decode("utf-8")
-                #print "%s"%self.address.decode("utf-8")
-                #print "%s"%value.decode("utf-8")
-                #print "(%s) %s: %50s -> %60s(%s): %s" %(seq,ts, sender, receiver.decode("utf-8"),
-                #                                        self.address, value)
-                raise err
-            except UnicodeDecodeError,err:
-                #print "%s"%ts.decode("utf-8")
-                #print "%s"%sender
-                #print "%s"%receiver.decode("utf-8")
-                #print "%s"%self.address.decode("utf-8")
-                #print "%s"%value.decode("utf-8")
-                #print "(%s) %s: %50s -> %60s(%s): %s" %(seq,ts, sender, receiver.decode("utf-8"),
-                #                                        self.address, value)
-                raise err
-                    
-        # Do we have more to print?
-        self.nextidx += 1
-        if self.nextidx >= len(self.telegrams):
-            return False
-        # Not done yet
-        return True
-
-    def preparePlotData(self, basetime):
-
-        plotData = { "data"   : [],
-                     "params" : "",
-                     "title"  : self.addrInfo["sub"],
-                     "style"  : "linespoints" }
-
-        for t in self.telegrams:
-            
-            seq, ts, sender, value = t
-
-            skip = False
-            
-            try:
-                timedata = time.mktime(time.strptime(ts))
-            except ValueError:
-                printVerbose("timestamp error: %s" %ts)
-                skip = True
-            
-            if self.type == "time":
-                try:
-                    val = time.mktime(time.strptime("2010 "+value, "%Y %a %H:%M:%S")) - basetime
-                except ValueError:
-                    printVerbose("value error: %s" %value)
-                    skip = True
-            else:
-                try:
-                    # Assume hex value
-                    val = float(int(value, 16))
-                except ValueError:
-                    # Then try float directly
-                    try:
-                        val = float(value)
-                    except ValueError:
-                        printVerbose("value error: %s" %value)
-                        skip = True
-
-            if not skip:
-                plotData["data"].append([timedata, val ])
-
-
-        # Only smooth data of type 'temp' or '%'
-        if (self.type in ["temp", "%"]) or (self.type != None and self.type[0] == "%"):
-            plotData["smoothing"] = " smooth unique"
-        else:
-            plotData["smoothing"] = ""
-
-        plotData["params"] = '1:2 '
-
-        return plotData
 
 class KnxParser(object):
 
@@ -496,16 +156,35 @@ class KnxParser(object):
             return
         
         pdu = KnxPdu(self.devDict, self.groupDict, text)
-        
-        sender = pdu.getFrom()
-        receiver_raw = pdu.getTo()
 
-        value = pdu.getValue()
-        
+        tstamp = strptime(timestamp, "%a %b %d %H:%M:%S %Y")
         try:
-            self.knxAddrStream[receiver_raw].addTelegram(seq, timestamp, sender, value)
+            self.knxAddrStream[pdu.getTo()].addTelegram(seq, tstamp, pdu)
         except KeyError:
-            printVerbose("unknown address, skipping: %s" %receiver_raw)
+            printVerbose("unknown address, skipping: %s" %pdu.getTo())
+
+    def storeCachedInput(self, filename, startline):
+
+        of = open(filename, "w")
+        
+        groupAddrs = self.knxAddrStream.keys()
+        
+        for g in groupAddrs:
+            self.knxAddrStream[g].prepareSynchronizedPrints()
+
+        seq = startline
+        more = True
+        while more:
+            more = False
+            for g in groupAddrs:
+                hasMore = self.knxAddrStream[g].storeCachedInput(seq, of)
+                more = more or hasMore
+
+
+            # Step sequence number
+            seq += 1
+
+        of.close()
 
 
     def getStreamMinMaxValues(self, groupAddr):
@@ -516,6 +195,7 @@ class KnxParser(object):
             return min,max
         except:
             return None,None
+
 
     def printStreams(self, groupAddrs):
 
@@ -548,7 +228,7 @@ class KnxParser(object):
         gdata = []
         plotData = None
         endTime = 0.0
-        startTime = time.time() + (3600*24*365*10)
+        startTime = time() + (3600*24*365*10)
         for ga in groupAddrs:
 
             try:
@@ -613,34 +293,77 @@ class KnxParser(object):
 
 class KnxLogViewer(object):
 
+    def _readLinesFromFileOrCache(self, infilename):
+
+        try:
+            inf = open(infilename, "r")
+        except IOError:
+            print "%s: Unable to open file: %s" %(sys.argv[0], infilename)
+            sys.exit(1);
+        except:
+            op.print_help()
+            sys.exit(1);
+
+        print "Reading file: %s" % infilename
+        l =  inf.readlines()
+        inf.close()
+        
+        # Ok, so now we have the file content. However, parsing it
+        # is expensive, so look for an already parsed cache of the file.
+        # The cache files are named using the md5 of the original file,
+        # so get that first...
+
+        hsh = hashlib.md5()
+        for ll in l:
+            hsh.update(ll)
+
+        cachename = hsh.hexdigest()+".hex"
+        try:
+            inf = open(cachename, "r")
+            clines = inf.readlines()
+            # sanity check...
+            if len(clines) == len(l):
+                # Ok, seems good...
+                print "Using cached input for file %s" %infilename
+                return (None, clines)
+        except IOError:
+            # No luck in getting cached input, just use the new...
+            pass
+        
+        return (cachename, l)
+        
+
     def __init__(self, devicesfilename, groupaddrfilename, infilenames,
-                 dumpGAtable, types, flanksOnly, tail, groupAddressSet = None):
+                 dumpGAtable, types, flanksOnly, tail, groupAddressSet = None,
+                 hourly_avg = False):
 
         self.delta = 0
         self.delta2 = 0
         self.pduCount = 0
         self.pduSkipped = 0
+        self.h_avg = hourly_avg if hourly_avg != None else False
         self.dbgMsg = "groupAddressSet = %s" %str(groupAddressSet)
-        start = time.time()
+        start = time()
 
         #
         # Read in all the files...
         #
-        lines = []
+        lines =  []
+        lines_meta = []
+        start = 1
         for infilename in infilenames:
-            try:
-                inf = open(infilename, "r")
-            except IOError:
-                print "%s: Unable to open file: %s" %(sys.argv[0], infilename)
-                sys.exit(1);
-            except:
-                op.print_help()
-                sys.exit(1);
-                
-            print "Reading file: %s" % infilename
-            lines.extend(inf.readlines())
+            cachename, ll = self._readLinesFromFileOrCache(infilename)
+            lines.extend(ll)
+            lines_meta.append( (infilename, cachename,
+                                start, start + len(ll) ) )
+            start = len(ll)
 
-            inf.close()
+            
+            
+        #print len(lines)
+        #print lines_meta
+        #sys.exit(0)
+
 
         print "Creating parser..."
         self.knx = KnxParser(devicesfilename, groupaddrfilename,
@@ -656,6 +379,8 @@ class KnxLogViewer(object):
         #
         basetime = 0
         lineNo = 0
+        meta = lines_meta.pop(0)
+        #print meta
         for line in lines:
             # Skip empty lines...
             if len(line.strip()) < 1:
@@ -673,34 +398,59 @@ class KnxLogViewer(object):
                     continue
                 
             lineNo += 1
-        
-            # Split timestamp from rest...
-            try:
-                timestamp, pdu = line.split(":LPDU:")
-            except ValueError:
-                timestamp, pdu = line.split("LPDU:")
 
-            try:
-                if basetime == 0:
-                    basetime = time.mktime(time.strptime(timestamp, "%a %b %d %H:%M:%S %Y"))
-                    # print timestamp
-                    self.knx.setTimeBase(basetime)
-            except ValueError:
-                printVerbose("timestamp error: %s" %timestamp)
+            # Differentiate between parsing new files and loading cached input
+            if line[:2] == "@@":
+                print "loading: %s" %line.strip().decode("utf-8")
+            else:
+                # Split timestamp from rest...
+                try:
+                    timestamp, pdu = line.split(":LPDU:")
+                except ValueError:
+                    timestamp, pdu = line.split("LPDU:")
 
-            try:
-                self.knx.parseVbusOutput(lineNo, timestamp, pdu)
-                self.pduCount += 1
-            except KnxParseException:
-                print "Failed: %s:  %s" %(lineNo, pdu)
-                sys.exit(1)
-            
+                try:
+                    if basetime == 0:
+                        basetime = mktime(strptime(timestamp,
+                                                "%a %b %d %H:%M:%S %Y"))
+                        # print timestamp
+                        self.knx.setTimeBase(basetime)
+                except ValueError:
+                    printVerbose("timestamp error: %s" %timestamp)
+
+                try:
+                    self.knx.parseVbusOutput(lineNo, timestamp, pdu)
+                    self.pduCount += 1
+                except KnxParseException:
+                    print "Failed: %s:  %s" %(lineNo, pdu)
+                    sys.exit(1)
+
+
+            # Check if we are into a new file, in which case we should
+            # potentially update the cache file for the last file...
+            # Note that the --tail option disables creation of cache files
+            if (tail == 0) and lineNo == meta[3]:
+                if meta[1] != None:
+                    print "update cache file for %s (%s) at %s" %(meta[0],
+                                                                  meta[1],
+                                                                  lineNo)
+                    self.knx.storeCachedInput(meta[1], meta[2])
+                # Shift meta data to new file...
+                try:
+                    meta = lines_meta.pop(0)
+                    print "new meta: " + str(meta)
+                except:
+                    print "no more meta (%s)" %lineNo
+                    meta = (None, None, None, None)
+                    
+                
             if lineNo % 10000 == 0:
                 print "Parsed %d lines..." %lineNo
+                
         print "Parsed %d lines..." %lineNo
         self.dbgMsg += "Parsed %d lines..." %lineNo
         
-        self.delta = time.time() - start
+        self.delta = time() - start
     
     def getPerfData(self):
 
@@ -717,9 +467,9 @@ class KnxLogViewer(object):
         return self.knx.getStreamMinMaxValues(groupAddr)
 
     def plotLog(self, groupAddrs, plotImage, addHorLine=None):
-        start = time.time()
+        start = time()
         self.knx.plotStreams(groupAddrs, plotImage, addHorLine)
-        self.delta2 = time.time() - start
+        self.delta2 = time() - start
         
     def printLog(self, groupAddrs):
 
@@ -764,32 +514,32 @@ if __name__ == "__main__":
             if t not in ["onoff", "temp", "time", "%"]:
                 # We also allow %<scaling factor>
                 if t[0] != "%" or not str.isdigit(t[1:]):
-                    raise OptionValueError("type argument for group addresses must "
-                                           "be either 'onoff', 'temp', 'time', or '%%[<x>]', not: %s" %t)
+                    raise OptionValueError("type argument for group "
+                                           "addresses must "
+                                           "be either 'onoff', 'temp', "
+                                           "'time', or '%%[<x>]', not: %s" %t)
             types[value[0]] = t
 
         
 
     op = OptionParser()
 
-    op.add_option("-d", "--dump-group-addresses", dest="dumpGAtable", action="store_true",
+    op.add_option("-d", "--dump-group-addresses",
+                  dest="dumpGAtable", action="store_true",
                   help="dump group address table and exit")
 
     op.add_option("-i", "--input", dest="infilenames", action="append",
                   help="read log from  FILE", metavar="<FILE>")
 
-    #op.add_option("-g", "--group-address", dest="groupAddrs", type="string", action="append",
-    #              help="print only this group address(es) (can be repeated)", metavar="<GROUP ADDR>")
+    op.add_option("-g", "--group-address", action="callback",
+                  callback=groupAddr_callback,
+                  help=("Specify which group address(es) to print, "
+                        "and optionally what type to convert the value to"))
 
-    op.add_option("-g", "--group-address", action="callback", callback=groupAddr_callback,
-                  help="Specify which group address(es) to print, and optionally "
-                  "what type to convert the value to")
-
-    #op.add_option("-t", "--type", dest="types", action="append", choices=["%", "time", "temp"],
-    #              help="convert value to specified type", metavar="<TYPE>")
-
-    op.add_option("-f", "--flanks-only", dest="flanksOnly", action="store_true",
-                  help="only print telegrams when values has changed since last telegram")
+    op.add_option("-f", "--flanks-only", dest="flanksOnly",
+                  action="store_true",
+                  help=("only print telegrams when values has "
+                        "changed since last telegram"))
 
     op.add_option("-p", "--plot", dest="plot", action="store_true",
                   help="plot chart of data")
@@ -797,8 +547,13 @@ if __name__ == "__main__":
     op.add_option("-v", "--verbose", dest="verbose", action="store_true",
                   help="print more information, warnings, and error messages")
 
-    op.add_option("--tail", dest="tail", type="int", metavar="<NUM>", default=0,
+    op.add_option("--tail", dest="tail",
+                  type="int", metavar="<NUM>", default=0,
                   help="print only the last NUM number of telegrams")
+
+    op.add_option("--hourly-avg", dest="hourly_avg",
+                  action="store_true",
+                  help="Average temperatures within the hour")
 
     options, args = op.parse_args()
 
@@ -808,13 +563,15 @@ if __name__ == "__main__":
     #sys.exit(1)
 
     verbose = options.verbose
+    stream_setVerbose(verbose)
     
     # All output variants will likly support utf-8...
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 
     knx = KnxLogViewer("enheter.xml", "groupaddresses.csv",
                        options.infilenames, options.dumpGAtable,
-                       types, options.flanksOnly, options.tail)
+                       types, options.flanksOnly, options.tail,
+                       None, options.hourly_avg)
 
     if options.plot:
         knx.plotLog(groupAddrs, "")
