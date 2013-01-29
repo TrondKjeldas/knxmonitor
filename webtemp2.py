@@ -1,4 +1,4 @@
-# coding=utf-8
+# coding=latin-1
 
 import os, string, time
 
@@ -7,7 +7,7 @@ from knxmonitor_decoder import KnxLogViewer
 add_message = ""
 
 basedir = u"/var/www/pythontest/"
-    
+
 devices   = basedir + u"enheter.xml"
 groups    = basedir + u"groupaddresses.csv"
 #filenames = [ #basedir + "files/knx_log_September_2010.hex",
@@ -15,7 +15,7 @@ groups    = basedir + u"groupaddresses.csv"
               #basedir + "files/knx_log_November_2010.hex",
               #basedir + "files/knx_log_December_2010.hex",
               #basedir + "files/knx_log_January_2011.hex",
-              #basedir + "files/knx_log_February_2011.hex", 
+              #basedir + "files/knx_log_February_2011.hex",
               #basedir + "files/knx_log_March_2011.hex",
               #basedir + "files/knx_log_April_2011.hex",
               #basedir + "files/knx_log_May_2011.hex",
@@ -61,7 +61,7 @@ def _getFileNames(threshold):
     return filenames
 
 html_pre = """
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="nob" lang="nob">
 <head>
 <title>Temperaturoversikt</title>
@@ -81,7 +81,7 @@ floors = { "ute"     : { "rooms" : [ "ute" ] },
            "kjeller" : { "rooms" : [ "vaskerom", "kjellergang", "kjellerstue",
                                      "kjellerstue(kant)", "hobbyrom",
                                      "hjemmekino" ] } }
-           
+
 
 rooms = { "ute"      : { "temperature" : ("3/2/0", "temp"),
                          "want temp"   : ("x/x/x", "temp"),
@@ -180,23 +180,24 @@ def _mkfname(s):
 
 def index(req):
 
-    filenames = _getFileNames(int(req.form.getfirst('threshold','5')))
+    thr = int(req.form.getfirst('threshold','7'))
+    filenames = _getFileNames(thr)
     mid = ""
     logHandler = None
     for floor in floors.keys():
 
         if len(floors[floor]["rooms"]) == 0:
             continue
-        
+
         fname = _mkfname(floor + ".png")
         group_addresses = []
         for room in floors[floor]["rooms"]:
             group_addr, typ = rooms[room]["temperature"]
             group_addresses.append(group_addr)
-                
+
         logHandler = _regenImage(filenames, logHandler, group_addresses, allTypes,
-                                 basedir + "../images/" + fname)
-        
+                                 basedir + "../images/" + fname, numDays=thr)
+
         mid +=  '<a href="floorShow?id=%s"><img src="/images/%s" /></a>\n' %(floor,fname)
 
 
@@ -205,10 +206,10 @@ def index(req):
 def floorShow(req):
 
     floor = req.form.getfirst('id','')
-    threshold = req.form.getfirst('threshold','5')
-    filenames = _getFileNames(int(threshold))
+    threshold = int(req.form.getfirst('threshold','7'))
+    filenames = _getFileNames(threshold)
     global add_message
-    add_message += str(threshold) + "_" + str(filenames)
+    #add_message += str(threshold) + "_" + str(filenames)
     mid = ""
     logHandler = None
     for room in floors[floor]["rooms"]:
@@ -217,14 +218,14 @@ def floorShow(req):
         g2,t2 = rooms[room]["heating"]
         group_addresses = [ g1, g2 ]
         logHandler = _regenImage(filenames, logHandler, group_addresses, allTypes,
-                                 basedir + "../images/" + fname, 23)
-        
+                                 basedir + "../images/" + fname, 23, threshold)
+
         mid +=  '<a href="webtemp2/roomShow?id=%s"><img src="/images/%s" /></a>\n' %(room,fname)
 
     return html_pre + mid + add_message + html_post
 
 
-def _regenImage(filenames, logview_instance, gas, types, imgfile, addHorLine=None):
+def _regenImage(filenames, logview_instance, gas, types, imgfile, addHorLine=None, numDays=None):
 
     global add_message
     #
@@ -249,8 +250,13 @@ def _regenImage(filenames, logview_instance, gas, types, imgfile, addHorLine=Non
 
     if doit:
         if logview_instance == None:
+            if numDays != None:
+                start_time = time.time() - (numDays*24*3600)
+            else:
+                start_time = None
+
             logview_instance = KnxLogViewer(devices, groups, filenames,
-                                            False, types, True, 0, allGAs)
+                                            False, types, True, 0, allGAs, start_time=start_time)
 
         minVal,maxVal = logview_instance.getMinMaxValues(gas[0])
 
@@ -262,7 +268,7 @@ def _regenImage(filenames, logview_instance, gas, types, imgfile, addHorLine=Non
                 addHorLine.append(maxVal)
 
         logview_instance.plotLog(gas, imgfile, addHorLine)
-        
+
         #add_message += "<p>" + logview_instance.getPerfData() + "<p>%s, %s, %s<p>"%(str(gas), minVal,maxVal)
 
     return logview_instance
