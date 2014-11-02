@@ -190,8 +190,8 @@ if __name__ == "__main__":
              "August", "September", "October", "November", "December" ]
     mon = 100
 
-    loadGroupAddrs("groupaddresses.csv")
-    loadDeviceAddrs("enheter.xml")
+    loadGroupAddrs("../knxmonitor/groupaddresses.csv")
+    loadDeviceAddrs("../knxmonitor/enheter.xml")
 
     if sys.argv[1] != "simul":
         try:
