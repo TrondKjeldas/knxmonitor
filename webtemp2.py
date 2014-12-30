@@ -10,33 +10,6 @@ basedir = u"/var/www/pythontest/"
 
 devices   = basedir + u"enheter.xml"
 groups    = basedir + u"groupaddresses.csv"
-#filenames = [ #basedir + "files/knx_log_September_2010.hex",
-              #basedir + "files/knx_log_October_2010.hex",
-              #basedir + "files/knx_log_November_2010.hex",
-              #basedir + "files/knx_log_December_2010.hex",
-              #basedir + "files/knx_log_January_2011.hex",
-              #basedir + "files/knx_log_February_2011.hex",
-              #basedir + "files/knx_log_March_2011.hex",
-              #basedir + "files/knx_log_April_2011.hex",
-              #basedir + "files/knx_log_May_2011.hex",
-              #basedir + "files/knx_log_June_2011.hex",
-              #basedir + "files/knx_log_July_2011.hex",
-              #basedir + "files/knx_log_August_2011.hex",
-              #basedir + "files/knx_log_September_2011.hex",
-              #basedir + "files/knx_log_October_2011.hex",
-              #basedir + "files/knx_log_November_2011.hex",
-              #basedir + "files/knx_log_December_2011.hex",
-              #basedir + "files/knx_log_January_2012.hex",
-              #basedir + "files/knx_log_February_2012.hex",
-              #basedir + "files/knx_log_March_2012.hex",
-              #basedir + "files/knx_log_April_2012.hex",
-              #basedir + "files/knx_log_May_2012.hex",
-              #basedir + "files/knx_log_June_2012.hex",
-              #basedir + "files/knx_log_July_2012.hex",
-              #basedir + "files/knx_log_August_2012.hex",
-              #basedir + "files/knx_log_September_2012.hex",
-              #basedir + "files/knx_log_October_2012.hex",
- #             basedir + "files/knx_log_November_2012.hex" ]
 
 mons = [ "January", "February", "March", "April", "May", "June", "July",
          "August", "September", "October", "November", "December" ]
