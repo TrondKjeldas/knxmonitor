@@ -22,14 +22,13 @@ def _mkinfname(ts):
 def _getFileNames(threshold):
     filenames = []
     ts = time.localtime()
-    #ts = time.localtime(time.mktime(time.localtime())+(2*24*3600))
-    filenames.append(_mkinfname(ts))
-
-    # If less than "threshold" days into month, add last month as well...
-    #add_message = "mday = %d" % ts.tm_mday
-    if ts.tm_mday < threshold:
-        prev_month = _mkinfname(time.localtime(time.mktime(ts) - (3600*24*6)))
-        filenames.insert(0,prev_month)
+    tmp = 0
+    while tmp < threshold:
+        prev_month = _mkinfname(time.localtime(time.mktime(ts) - (3600*24*(threshold-tmp))))
+        if prev_month not in filenames:
+            filenames.insert(0,prev_month)
+        tmp += 28 # Since all months are more than 28 days. If threshold is large enough
+                  # this will cause same month to be added twice, but that is handled below.
 
     return filenames
 
