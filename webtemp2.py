@@ -47,7 +47,7 @@ html_post = """
 
 
 floors = { "ute"     : { "rooms" : [ "ute" ] },
-           "etg1"    : { "rooms" : [ "kjøkken", "arbeidsrom", "stue", "vindfang", "bad" ] },
+           "etg1"    : { "rooms" : [ "kjÃ¸kken", "arbeidsrom", "stue", "vindfang", "bad" ] },
            "etg2"    : { "rooms" : [ "soverom", "bad2", "stue2",
                                      "soverom2", "soverom3" ] },
            "kjeller" : { "rooms" : [ "vaskerom", "kjellergang", "kjellerstue",
@@ -58,7 +58,7 @@ floors = { "ute"     : { "rooms" : [ "ute" ] },
 rooms = { "ute"      : { "temperature" : ("3/2/0", "temp"),
                          "want temp"   : ("x/x/x", "temp"),
                          "heating"     : ("x/x/x", "%3")           },
-          "kjøkken"  : { "temperature" : ("1/3/0", "temp"),
+          "kjÃ¸kken"  : { "temperature" : ("1/3/0", "temp"),
                          "want temp"   : ("1/4/0", "temp"),
                          "heating"     : ("1/2/0", "%3")},
           "stue"     : { "temperature" : ("1/3/1", "temp"),
@@ -148,7 +148,7 @@ def _gaddr2imgfilename(gaddr):
 
 def _mkfname(s):
 
-    return s.translate(string.maketrans("æøå", "aea"))
+    return s.translate(string.maketrans("Ã¦Ã¸Ã¥", "aea"))
 
 def index(req):
 
@@ -244,4 +244,3 @@ def _regenImage(filenames, logview_instance, gas, types, imgfile, addHorLine=Non
         #add_message += "<p>" + logview_instance.getPerfData() + "<p>%s, %s, %s<p>"%(str(gas), minVal,maxVal)
 
     return logview_instance
-
