@@ -3,10 +3,11 @@
 import sys
 import os
 import getopt
+import socket
 
 #import eibclient.eibclient
 #from eibclient.common import *
-from EIBConnection import EIBBuffer 
+from EIBConnection import EIBBuffer
 from EIBConnection import EIBConnection
 
 
@@ -36,7 +37,7 @@ def unicode_csv_reader(unicode_csv_data, dialect=csv.excel, **kwargs):
     for row in csv_reader:
         # decode UTF-8 back to Unicode, cell by cell:
         yield [unicode(cell, 'utf-8') for cell in row]
-        
+
 class KnxParseException(Exception):
     pass
 
@@ -47,50 +48,50 @@ def getFrom(text):
         fromaddr = s
 
         # Sanity check
-        
+
         a,b,c = s.split(".")
-        
+
         if int(a) < 0 or int(a) > 0x1F:
             raise KnxParseException
         if int(b) < 0 or int(b) > 0x7:
             raise KnxParseException
         if int(c) < 0 or int(c) > 0xFF:
             raise KnxParseException
-        
+
     except:
         # Something failed, but we only want to cause
         # one type of exception...
         raise KnxParseException
-    
+
     if s in devDict.keys():
         s = devDict[s]
-        
+
     s = "%s(%s)" %(s, fromaddr)
     return s
 
 def getTo(text):
-    
+
     try:
         s = text[text.find(" to ")+4:]
         s = s[:s.find(" ")]
         toaddr = s
-        
+
         # Sanity check
-        
+
         a,b,c = s.split("/")
-        
+
         if int(a) < 0 or int(a) > 0x1F:
             raise KnxParseException
         if int(b) < 0 or int(b) > 0x7:
             raise KnxParseException
         if int(c) < 0 or int(c) > 0xFF:
             raise KnxParseException
-        
+
     except:
         # Something failed, but we only want to cause
         # one type of exception...
         raise KnxParseException
-    
+
     if s in groupDict.keys():
         s = groupDict[s]
 
@@ -123,7 +124,7 @@ def getValue(text):
         # one type of exception...
         raise KnxParseException
     s = s.strip()
-    
+
     return s
 
 
@@ -138,17 +139,17 @@ def parseVbusOutput(text):
         # Failed in conversion...
         s = text
     return s
-    
+
 
 
 def loadGroupAddrs(filename):
-    
+
     #reader = csv.reader(codecs.EncodedFile(open(filename, "rb"),
     #                                       'utf-8',
     #                                       'iso-8859-15'),
     #                    delimiter=";")
     reader = csv.reader(open(filename, "rb"), delimiter=";")
-    
+
     for main,middle,sub,address in reader:
         if main.strip() != '':
             main2 = main.strip()
@@ -200,18 +201,31 @@ if __name__ == "__main__":
         except:
             print "unable to open logfile"
             sys.exit(1)
-        
+
         try:
             con = EIBConnection()
         except:
             print "Could not instanciate EIBConnection";
             sys.exit(1);
 
-        if con.EIBSocketURL(sys.argv[1]) != 0:
-            print "Could not connect to: %s" %sys.argv[1]
+        tries = 1
+        connected = False
+        while (not connected) and (tries < 5):
+            try:
+                if con.EIBSocketURL(sys.argv[1]) != 0:
+                    print "Could not connect to: %s" %sys.argv[1]
+                    sys.exit(1)
+                else:
+                    connected = True
+            except socket.error:
+                print "failed to connect, retrying in 5 sec..."
+                time.sleep(5)
+                tries += 1
+
+        if not connected:
+            print "Unable to connect, tried %d times, giving up." % tries
             sys.exit(1)
-            
-        
+
         if con.EIBOpenVBusmonitorText() != 0:
             print "Could not open bus monitor";
             # sys.exit(1)
@@ -240,7 +254,7 @@ if __name__ == "__main__":
                 s = parseVbusOutput(b)
             except KnxParseException:
                 # Failed to parse, just print the original instead...
-                
+
                 s  = "Parse error: %s" %b
             if len(s) > 1:
                 outfile.write(s.encode("utf-8") + "\n")
@@ -256,7 +270,7 @@ if __name__ == "__main__":
                 if outfile3:
                     outfile3.close()
                 outfile3 = open(ofname, "a")
-            
+
             outfile3.write(time.asctime(ts) + ":" + b + "\n")
             outfile3.flush()
 
