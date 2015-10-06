@@ -166,7 +166,11 @@ class KnxParser(object):
 
     def storeCachedInput(self, filename, startline):
 
-        of = open(filename, "w")
+        try:
+            of = open(filename, "w")
+        except IOError:
+            print filename
+            return
 
         groupAddrs = self.knxAddrStream.keys()
 
@@ -273,6 +277,7 @@ class KnxParser(object):
         plotter('set grid')
         #plotter('set style fill solid')
         plotter('set key bottom left')
+        plotter('set terminal png')
 
         if len(gdata) < 1:
             print "No data.."
@@ -283,7 +288,6 @@ class KnxParser(object):
             plotter.replot(g)
 
         if genImage != "":
-            plotter('set terminal png color')
             plotter('set output "%s"' %genImage)
             plotter.replot()
         else:
@@ -361,8 +365,8 @@ class KnxLogViewer(object):
 
 
 
-        #print len(lines)
-        #print lines_meta
+        print len(lines)
+        print lines_meta
         #sys.exit(0)
 
 

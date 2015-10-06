@@ -1,4 +1,4 @@
-# coding=latin-1
+# coding=utf-8
 
 import os, string, time
 
@@ -23,6 +23,8 @@ def _getFileNames(threshold):
     filenames = []
     ts = time.localtime()
     tmp = 0
+    global add_message
+    add_message += "thr: %d\n" %threshold
     while tmp < threshold:
         prev_month = _mkinfname(time.localtime(time.mktime(ts) - (3600*24*(threshold-tmp))))
         if prev_month not in filenames:
@@ -30,6 +32,9 @@ def _getFileNames(threshold):
         tmp += 28 # Since all months are more than 28 days. If threshold is large enough
                   # this will cause same month to be added twice, but that is handled below.
 
+    filenames.insert(0,_mkinfname(ts))
+    filenames = list(set(filenames))
+    #add_message += str(filenames)
     return filenames
 
 html_pre = """
@@ -47,7 +52,7 @@ html_post = """
 
 
 floors = { "ute"     : { "rooms" : [ "ute" ] },
-           "etg1"    : { "rooms" : [ "kjøkken", "arbeidsrom", "stue", "vindfang", "bad" ] },
+           "etg1"    : { "rooms" : [ u"kjøkken", "arbeidsrom", "stue", "vindfang", "bad" ] },
            "etg2"    : { "rooms" : [ "soverom", "bad2", "stue2",
                                      "soverom2", "soverom3" ] },
            "kjeller" : { "rooms" : [ "vaskerom", "kjellergang", "kjellerstue",
@@ -58,7 +63,7 @@ floors = { "ute"     : { "rooms" : [ "ute" ] },
 rooms = { "ute"      : { "temperature" : ("3/2/0", "temp"),
                          "want temp"   : ("x/x/x", "temp"),
                          "heating"     : ("x/x/x", "%3")           },
-          "kjøkken"  : { "temperature" : ("1/3/0", "temp"),
+          u"kjøkken"  : { "temperature" : ("1/3/0", "temp"),
                          "want temp"   : ("1/4/0", "temp"),
                          "heating"     : ("1/2/0", "%3")},
           "stue"     : { "temperature" : ("1/3/1", "temp"),
@@ -148,7 +153,14 @@ def _gaddr2imgfilename(gaddr):
 
 def _mkfname(s):
 
-    return s.translate(string.maketrans("æøå", "aea"))
+    s2 = ""
+    for c in s:
+        if ord(c) > 127:
+            s2 += "_"
+        else:
+            s2 += c
+
+    return s2
 
 def index(req):
 
@@ -211,14 +223,14 @@ def _regenImage(filenames, logview_instance, gas, types, imgfile, addHorLine=Non
             s = os.stat(f)
             if imgtime < s.st_mtime:
                 doit = True
-		#add_message = "REGENERATED IMAGE"
+		#add_message += "REGENERATED IMAGE"
 	    else:
-		#add_message = "USING LAST IMAGE"
+		#add_message += "USING LAST IMAGE"
 		pass
     except OSError:
         # File probably does not exist...
         doit = True
- 	#add_message = "GENERATED IMAGE"
+ 	#add_message += "GENERATED IMAGE"
 
     if doit:
         if logview_instance == None:
