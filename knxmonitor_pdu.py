@@ -1,3 +1,6 @@
+from sys import exit
+from KnxParseException import KnxParseException
+
 class KnxPdu(object):
 
     def __init__(self, devdict, groupdict, pdu_text):
@@ -10,11 +13,11 @@ class KnxPdu(object):
 
         try:
             s, rest = self.text.split(" ", 1) #[:self.text.find(" ")]
-            
+
             # Sanity check
-            
+
             a,b,c = s.split(".")
-            
+
             if int(a) < 0 or int(a) > 0x1F:
                 raise KnxParseException
             if int(b) < 0 or int(b) > 0x1F:
@@ -25,7 +28,7 @@ class KnxPdu(object):
             # Something failed, but we only want to cause
             # one type of exception...
             raise KnxParseException
-    
+
         try:
             s = "%s(%s)" %(self.devDict[s]["Beskrivelse"], s)
         except KeyError:
@@ -36,7 +39,7 @@ class KnxPdu(object):
         # Receiving group address
         tmp, toaddr, rest = rest.split(" ", 2) #s[:s.find(" ")]
         self.toaddr = unicode(toaddr)
-        
+
         #print rest
         # Value
 
@@ -63,31 +66,12 @@ class KnxPdu(object):
     #hex    0C        8F
     #bin  0000 1100  1000 1111
     #
-    # (0,01*M*)2^E 
+    # (0,01*M*)2^E
     #
     # M = 100 1000 1111
     # E = 1
     #dec 23,34
     #
-    def val2tempOld(self, val):
-        
-        if len(val) != 5:
-            self.errorExit("error, value is not 16bit: %s" %val)
-
-        z,x = val.split(" ")
-        
-        e = (int(z,16) & 0x78) >> 3
-        m = (int(z,16) & 0x7)<<8 | int(x,16)
-        
-        val2 = (0.01*float(m))*math.pow(2, e)
-        
-        #if val2 < 10:
-        #    print val
-        #    print e
-        #    print z
-        return val2.__format__(".2f")
-    
-
     def val2temp(self, val):
         z,x = val.split(" ")
         i = (int(z,16)*256) + int(x,16)
@@ -102,12 +86,6 @@ class KnxPdu(object):
         else:
             m2 = m
         val2 = float((1<<e)*0.01*m2)
-        if s == 10:
-            print "e %x" %e
-            print "%X" %m
-            print "%X (%d, %d)" %(m2,m2,val2)
-            print "%f" %val2
-            sys.exit(1)
         #print "e = %x" %e
         return val2.__format__(".2f")
 
@@ -119,18 +97,18 @@ class KnxPdu(object):
     #dec  156 / 2.55 = 61.17%
     #
     def val2percent(self, val, scaling):
-        
+
         if len(val) != 2:
             self.errorExit("error, value is not 8bit: %s" %val)
 
         s = int(scaling[1:]) if scaling != "%" else 1
 
         f = (float(int(val, 16)) / 2.55)/s
-        
+
         return f.__format__(".2f")
 
- 
-    #  
+
+    #
     # Tid:
     #
     # hex    75         32      00
@@ -140,16 +118,16 @@ class KnxPdu(object):
 
         if len(val) != 8:
             self.errorExit("error, value is not 24bit: %s" %val)
-            
+
         dh,m,s = val.split(" ")
 
         s = int(s,16) & 0x3f
         m = int(m,16) & 0x3f
         h = int(dh,16) & 0x1f
         d = (int(dh,16) & 0xe0) >> 5
-        
+
         days = ["no day","mon","tue","wed","thu","fri","sat","sun"]
-        
+
         return "%s %s:%s:%s" %(days[d],h,m,s)
 
     def val2onoff(self, val):
@@ -165,15 +143,19 @@ class KnxPdu(object):
         else:
             return "1"
 
-        
+    def errorExit(self, str):
+
+        print "error: %s" %(str)
+        raise KnxParseException
+
     def getFrom(self):
-            
+
         return self.fromadr
 
     def getTo(self):
-        
+
         return self.toaddr #unicode(self.toaddr)
-    
+
     def getValue(self, pdutype):
 
         value = self.value #unicode(s)
@@ -191,11 +173,11 @@ class KnxPdu(object):
                 s = self.val2time(value)
             elif pdutype == "onoff":
                 # print s
-                s = self.val2onoff(value)                
+                s = self.val2onoff(value)
             else:
                 s = value
         else:
             s = value
 
-            
+
         return s
