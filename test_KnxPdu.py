@@ -1,7 +1,7 @@
 import unittest
 
-from KnxParseException import KnxParseException
-from knxmonitor_pdu import KnxPdu
+from Knx.KnxParseException import KnxParseException
+from Knx.KnxPdu import KnxPdu
 
 class TestStringMethods(unittest.TestCase):
 

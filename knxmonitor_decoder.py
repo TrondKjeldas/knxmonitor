@@ -9,10 +9,10 @@ from optparse import OptionParser, OptionValueError
 import Gnuplot
 import hashlib
 
-from KnxParseException import KnxParseException
+from Knx.KnxParseException import KnxParseException
 
-from knxmonitor_stream import KnxAddressStream, setVerbose as stream_setVerbose
-from knxmonitor_pdu    import KnxPdu
+from Knx.KnxAddressStream import KnxAddressStream, setVerbose as stream_setVerbose
+from Knx.KnxPdu import KnxPdu
 
 
 
