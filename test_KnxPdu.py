@@ -3,7 +3,7 @@ import unittest
 from Knx.KnxParseException import KnxParseException
 from Knx.KnxPdu import KnxPdu
 
-class TestStringMethods(unittest.TestCase):
+class TestKnxPdu(unittest.TestCase):
 
     def setUp(self):
 
