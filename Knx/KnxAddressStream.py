@@ -1,4 +1,6 @@
-from time import asctime, mktime
+from time import asctime, mktime, strptime
+
+from Knx.KnxParseException import KnxParseException
 
 verbose = True
 
@@ -9,7 +11,7 @@ def printVerbose(str):
 def setVerbose(v):
     global verbose
     verbose = v
-    
+
 class KnxAddressStream(object):
 
     def __init__(self, address, addressInfo, type, flanksOnly):
@@ -26,9 +28,9 @@ class KnxAddressStream(object):
     def errorExit(self, str):
 
         print "%s: %s" %(self.address, str)
-        sys.exit(1)
+        raise KnxParseException
 
-            
+
     def addTelegram(self, seq, timestamp, pdu):
 
         sender = pdu.getFrom()
@@ -53,7 +55,7 @@ class KnxAddressStream(object):
         # Check if we have more telegrams to print...
         if self.nextidx >= len(self.telegrams):
            return False
-           
+
         seq, ts, sender, value = self.telegrams[self.nextidx]
 
         #
@@ -84,13 +86,13 @@ class KnxAddressStream(object):
             return False
         # Not done yet
         return True
-        
+
     def printTelegrams(self, printseq):
 
         # Check if we have more telegrams to print...
         if self.nextidx >= len(self.telegrams):
            return False
-           
+
         seq, ts, sender, value = self.telegrams[self.nextidx]
 
         #
@@ -103,7 +105,7 @@ class KnxAddressStream(object):
         receiver = self.addrInfo["sub"]
 
         #print "entering: %8s -> %s   %s" %(self.address, printseq, self.telegrams[self.nextidx])
-        
+
         #
         # Ok, if we get this far we are supposed to print something
         #
@@ -111,7 +113,7 @@ class KnxAddressStream(object):
         # If only printing changes, we must check if a value has changed
         if sender not in self.lastValue.keys():
             self.lastValue[sender] = None
-            
+
         if not self.flanksOnly or (self.flanksOnly and value != self.lastValue[sender]):
             self.lastValue[sender] = value
 
@@ -143,7 +145,7 @@ class KnxAddressStream(object):
                 #print "(%s) %s: %50s -> %60s(%s): %s" %(seq,ts, sender, receiver.decode("utf-8"),
                 #                                        self.address, value)
                 raise err
-                    
+
         # Do we have more to print?
         self.nextidx += 1
         if self.nextidx >= len(self.telegrams):
@@ -159,17 +161,17 @@ class KnxAddressStream(object):
                      "style"  : "linespoints" }
 
         for t in self.telegrams:
-            
+
             seq, ts, sender, value = t
 
             skip = False
-            
+
             try:
                 timedata = mktime(ts)
             except ValueError:
                 printVerbose("timestamp error: %s" %ts)
                 skip = True
-            
+
             if self.type == "time":
                 try:
                     val = mktime(strptime("2010 "+value,
