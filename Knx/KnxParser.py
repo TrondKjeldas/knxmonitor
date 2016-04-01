@@ -1,16 +1,14 @@
-import xml.etree.ElementTree as ET
 from time import time, mktime, strptime
-
-
-from UnicodeReader import UnicodeReader
+import Gnuplot
 
 from Knx.KnxPdu import KnxPdu
 from Knx.KnxAddressStream import KnxAddressStream
+from Knx.KnxAddressCollection import KnxAddressCollection
 
 class KnxParser(object):
 
-    devDict   = {}
-    groupDict = {}
+    devDict   = KnxAddressCollection()
+    groupDict = KnxAddressCollection()
 
     knxAddrStream = {}
 
@@ -19,39 +17,7 @@ class KnxParser(object):
                  flanksOnly = False, types = None):
 
         # Load device and address info
-        self.loadGroupAddrs(groupaddrfilename, dumpaddressinfo, types, flanksOnly)
-        self.loadDeviceAddrs(devicesfilename)
-
-    def loadGroupAddrs(self, filename, dump, types, flanksOnly):
-
-        #reader = csv.reader(open(filename, "rb"), delimiter=";")
-        reader = UnicodeReader(open(filename, "rb"), delimiter=";")
-        for main,middle,sub,address in reader:
-            gdict = { "main" : main,
-                      "middle" : middle,
-                      "sub" : sub,
-                      "address" : address }
-
-            # Sanity check, skip non-valid addresses
-            # print address
-            try:
-                a,b,c = address.split("/")
-
-                if int(a) < 0 or int(a) > 0x1F:
-                    continue
-                if int(b) < 0 or int(b) > 0x7:
-                    continue
-                if int(c) < 0 or int(c) > 0xFF:
-                    continue
-            except ValueError:
-                continue
-
-
-            self.groupDict[address] = gdict
-
-        if dump:
-            self.dumpGaTable()
-            sys.exit(0)
+        self.groupDict.loadGroupAddrs(open(groupaddrfilename), dumpaddressinfo)
 
         # Populate streams dictionary
         for k in self.groupDict.keys():
@@ -62,38 +28,7 @@ class KnxParser(object):
             self.knxAddrStream[k] = KnxAddressStream(k, self.groupDict[k],
                                                      t, flanksOnly)
 
-
-    def loadDeviceAddrs(self, filename):
-
-        root = ET.parse(filename).getroot()
-
-        # First find the layout
-        layout = {}
-        cnames = root.find("columns").findall("colName")
-        for cn in cnames:
-            # print cn.attrib["nr"] + ": " + cn.text
-            # layout[cn.text] = cn.attrib["nr"]
-            layout[cn.attrib["nr"]] = cn.text
-
-        # Then read in the device info, and build device dictionary
-        rows = root.find("rows").findall("row")
-        for row in rows:
-            ddict = {}
-            cols = row.findall("colValue")
-            for c in cols:
-                ddict[layout[c.attrib["nr"]]] = c.text
-            self.devDict[ddict["Adresse"]] = ddict
-
-    def dumpGaTable(self):
-
-        print "Group addresses:"
-        keys = self.groupDict.keys()
-        keys.sort()
-        for k in keys:
-            print "%8s - %s %s %s" %(self.groupDict[k]["address"],
-                                     self.groupDict[k]["main"],
-                                     self.groupDict[k]["middle"],
-                                     self.groupDict[k]["sub"])
+        self.devDict.loadDeviceAddrs(open(devicesfilename))
 
     def setTimeBase(self, basetime):
 

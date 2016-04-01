@@ -22,19 +22,6 @@ class TestKnxParser(unittest.TestCase):
                         "1/1/17" : "%%"})
         self.assertIsInstance(p, KnxParser)
 
-    def test_loadGroupAddrs(self):
-        pass
-
-    def test_loadDeviceAddrs(self):
-        pass
-
-    def test_dumpGaTable(self):
-
-        try:
-            self.parser.dumpGaTable()
-        except:
-            self.fail("dumpGaTable raised exception")
-
     def test_setTimeBase(self):
 
         basetime = mktime(strptime("Fri Sep  4 06:15:03 2015",
