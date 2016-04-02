@@ -85,6 +85,8 @@ class TestKnxAddressStream(unittest.TestCase):
         # Tested implicitly by test_StoreCachedInput
         pass
 
+
+    @unittest.skip("Cache functionality not finished yet.")
     def test_storeCachedInput(self):
 
         s = KnxAddressStream("1/1/17", self.groupdict["1/1/17"], "temp", False)
@@ -94,6 +96,7 @@ class TestKnxAddressStream(unittest.TestCase):
 
         s.prepareSynchronizedPrints()
         of = StringIO()
+        of.name = "testfile"
         self.assertTrue(s.storeCachedInput(1, of))
         self.assertTrue(s.storeCachedInput(10, of))
         self.assertTrue(s.storeCachedInput(11, of))

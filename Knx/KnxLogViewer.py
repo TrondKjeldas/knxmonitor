@@ -12,13 +12,13 @@ class KnxLogViewer(object):
         try:
             inf = infile
         except IOError:
-            print "%s: Unable to read file: %s" %(sys.argv[0], str(infile))
+            print "%s: Unable to read file: %s" %(sys.argv[0], infile.name)
             sys.exit(1);
         except:
             op.print_help()
             sys.exit(1);
 
-        print "Reading file: %s" % str(infile)
+        print "Reading file: %s" % infile.name
         l =  inf.readlines()
         inf.close()
 
@@ -38,7 +38,7 @@ class KnxLogViewer(object):
             # sanity check...
             if len(clines) == len(l):
                 # Ok, seems good...
-                print "Using cached input for file %s" %infilename
+                print "Using cached input for file %s" %infile.name
                 return (None, clines)
         except IOError:
             # No luck in getting cached input, just use the new...
@@ -47,7 +47,7 @@ class KnxLogViewer(object):
         return (cachename, l)
 
 
-    def __init__(self, devicesfilename, groupaddrfilename, infilenames,
+    def __init__(self, devicesfilename, groupaddrfilename, infiles,
                  dumpGAtable, types, flanksOnly, tail, groupAddressSet = None,
                  hourly_avg = False, start_time=None):
 
@@ -65,10 +65,10 @@ class KnxLogViewer(object):
         lines =  []
         lines_meta = []
         start = 1
-        for infilename in infilenames:
-            cachename, ll = self._readLinesFromFileOrCache(infilename)
+        for infile in infiles:
+            cachename, ll = self._readLinesFromFileOrCache(infile)
             lines.extend(ll)
-            lines_meta.append( (infilename, cachename,
+            lines_meta.append( (infile.name, cachename,
                                 start, start + len(ll) ) )
             start = len(ll)
 
@@ -166,11 +166,16 @@ class KnxLogViewer(object):
                     print "update cache file for %s (%s) at %s" %(meta[0],
                                                                   meta[1],
                                                                   lineNo)
-                    self.knx.storeCachedInput(meta[1], meta[2])
+                    try:
+                        of = open(meta[1], "w")
+                    except IOError:
+                        print meta[1]
+                    else:
+                        self.knx.storeCachedInput(of, meta[2])
                 # Shift meta data to new file...
                 try:
                     meta = lines_meta.pop(0)
-                    print "new meta: " + str(meta)
+                    #print "new meta: " + str(meta)
                 except:
                     print "no more meta (%s)" %lineNo
                     meta = (None, None, None, None)

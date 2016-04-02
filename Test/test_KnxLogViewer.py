@@ -9,6 +9,7 @@ class TestKnxLogViewer(unittest.TestCase):
     def setUp(self):
 
         self.logfile = StringIO()
+        self.logfile.name = "testfile"
         self.logfile.write(
         """Mon Aug 31 23:56:48 2015:LPDU: BC 11 0D 12 01 E2 00 80 00 2E :L_Data low from 1.1.13 to 2/2/1 hops: 06 T_DATA_XXX_REQ A_GroupValue_Write 00
 Mon Aug 31 23:56:51 2015:LPDU: BC 11 1E 02 00 E2 00 80 00 2C :L_Data low from 1.1.30 to 0/2/0 hops: 06 T_DATA_XXX_REQ A_GroupValue_Write 00

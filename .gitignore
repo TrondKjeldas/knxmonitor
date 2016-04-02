@@ -1,3 +1,4 @@
 *.pyc
 .AppleDouble
 *,cover
+*.hex

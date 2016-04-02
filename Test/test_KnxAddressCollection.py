@@ -9,17 +9,22 @@ class TestKnxAddressCollection(unittest.TestCase):
     def setUp(self):
 
         self.gafile = StringIO()
-        self.gafile.write('\"Main\";\"Middle\";\"Sub\";\"Address\"\n'\
-        '\"U.etg\"; ; ;\"0/-/-\"\n'\
-         ';\"Lys av/på\"; ;\"0/0/-\"\n'\
-         '; ;\"Av/på lys, vaskerom\";\"0/0/1\"\n'\
-         '; ;\"Av/på lys, kjellergang\";\"0/0/2\"\n'\
-         '; ;\"Av/på spot\'er kjellerstue 1\";\"0/0/3\"\n'\
-         '; ;\"Av/på spot\'er kjellerstue 2\";\"0/0/4\"\n'\
-         '; ;\"Av/på lys hobbyrom (stikk)\";\"0/0/5\"')
+        self.gafile.name = "testfile"
+        self.gafile.write("""\"Main\";\"Middle\";\"Sub\";\"Address\"
+        \"U.etg\"; ; ;\"0/-/-\"
+        ;\"Lys av/på\"; ;\"0/0/-\"
+        ; ;\"Av/på lys, vaskerom\";\"1/2/3\"
+        ; ;\"Av/på lys, kjellergang\";\"4/5/6\"
+        ; ;\"Av/på spot'er kjellerstue 1\";\"7/5/9\"
+        ; ;\"Av/på spot'er kjellerstue 2\";\"31/6/12\"
+        ; ;\"Av/på lys hobbyrom (stikk)\";\"31/7/255\"
+        ; ;\"Av/på lys hobbyrom (stikk)\";\"32/7/255\"
+        ; ;\"Av/på lys hobbyrom (stikk)\";\"31/8/255\"
+        ; ;\"Av/på lys hobbyrom (stikk)\";\"31/7/256\"""")
         self.gafile.seek(0)
 
         self.devfile = StringIO()
+        self.devfile.name = "testfile"
         self.devfile.write(
             """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
             <root>
@@ -53,6 +58,8 @@ class TestKnxAddressCollection(unittest.TestCase):
         c = KnxAddressCollection()
         c.loadGroupAddrs(self.gafile, True)
         self.assertIsInstance(c, KnxAddressCollection)
+
+        self.assertEqual(len(c), 5)
 
     def test_dumpGaTable(self):
 

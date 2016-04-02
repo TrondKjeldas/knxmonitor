@@ -5,6 +5,16 @@ from Knx.KnxPdu import KnxPdu
 from Knx.KnxAddressStream import KnxAddressStream
 from Knx.KnxAddressCollection import KnxAddressCollection
 
+verbose = True
+
+def printVerbose(str):
+    if verbose:
+        print str
+
+def setVerbose(v):
+    global verbose
+    verbose = v
+
 class KnxParser(object):
 
     devDict   = KnxAddressCollection()
@@ -48,13 +58,7 @@ class KnxParser(object):
         except KeyError:
             printVerbose("unknown address, skipping: %s" %pdu.getTo())
 
-    def storeCachedInput(self, filename, startline):
-
-        try:
-            of = open(filename, "w")
-        except IOError:
-            print filename
-            return
+    def storeCachedInput(self, file, startline):
 
         groupAddrs = self.knxAddrStream.keys()
 
@@ -66,14 +70,14 @@ class KnxParser(object):
         while more:
             more = False
             for g in groupAddrs:
-                hasMore = self.knxAddrStream[g].storeCachedInput(seq, of)
+                hasMore = self.knxAddrStream[g].storeCachedInput(seq, file)
                 more = more or hasMore
 
 
             # Step sequence number
             seq += 1
 
-        of.close()
+        file.close()
 
 
     def getStreamMinMaxValues(self, groupAddr):
@@ -102,7 +106,6 @@ class KnxParser(object):
             for g in groupAddrs:
                 hasMore = self.knxAddrStream[g].printTelegrams(seq)
                 more = more or hasMore
-
 
             # Step sequence number
             seq += 1
@@ -161,17 +164,18 @@ class KnxParser(object):
         plotter('set grid')
         #plotter('set style fill solid')
         plotter('set key bottom left')
-        plotter('set terminal png')
 
         if len(gdata) < 1:
             print "No data.."
             return
 
+        plotter('set terminal x11')
         plotter.plot(gdata[0])
         for g in gdata[1:]:
             plotter.replot(g)
 
         if genImage != "":
+            plotter('set terminal png')
             plotter('set output "%s"' %genImage)
             plotter.replot()
         else:
