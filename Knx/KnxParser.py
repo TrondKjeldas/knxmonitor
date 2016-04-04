@@ -37,6 +37,8 @@ class KnxParser(object):
                 t = None
             self.knxAddrStream[k] = KnxAddressStream(k, self.groupDict[k],
                                                      t, flanksOnly)
+            self.knxAddrStream[k].prepareSynchronizedPrints()
+
 
         self.devDict.loadDeviceAddrs(open(devicesfilename))
 
@@ -62,21 +64,20 @@ class KnxParser(object):
 
         groupAddrs = self.knxAddrStream.keys()
 
-        for g in groupAddrs:
-            self.knxAddrStream[g].prepareSynchronizedPrints()
-
         seq = startline
         more = True
+        hasMore = { g:True for g in groupAddrs }
         while more:
             more = False
             for g in groupAddrs:
-                hasMore = self.knxAddrStream[g].storeCachedInput(seq, file)
-                more = more or hasMore
+                if hasMore[g]:
+                    hasMore[g] = self.knxAddrStream[g].storeCachedInput(seq, file)
+                more = more or hasMore[g]
 
 
             # Step sequence number
             seq += 1
-
+        print "Done storeing cache file %s" %file.name
         file.close()
 
 

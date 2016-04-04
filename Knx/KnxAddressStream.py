@@ -52,6 +52,10 @@ class KnxAddressStream(object):
 
     def storeCachedInput(self, printseq, storefile):
 
+        # Check if we have ANY telegrams to print..
+        if len(self.telegrams) == 0:
+            return False
+
         # Check if we have more telegrams to print...
         if self.nextidx >= len(self.telegrams):
            return False

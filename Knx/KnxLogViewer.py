@@ -1,5 +1,6 @@
 from time import time, mktime, strptime
 import hashlib
+import sys
 
 from Knx.KnxParseException import KnxParseException
 from Knx.KnxParser import KnxParser
@@ -40,9 +41,11 @@ class KnxLogViewer(object):
                 # Ok, seems good...
                 print "Using cached input for file %s" %infile.name
                 return (None, clines)
+            else:
+                print "Cached file found, but invalid length (%d != %d)" %(len(clines), len(l))
         except IOError:
             # No luck in getting cached input, just use the new...
-            pass
+            print "No cached input for file %s found..." %infile.name
 
         return (cachename, l)
 
@@ -66,17 +69,11 @@ class KnxLogViewer(object):
         lines_meta = []
         start = 1
         for infile in infiles:
-            cachename, ll = self._readLinesFromFileOrCache(infile)
-            lines.extend(ll)
+            cachename, newLines = self._readLinesFromFileOrCache(infile)
+            lines.extend(newLines)
             lines_meta.append( (infile.name, cachename,
-                                start, start + len(ll) ) )
-            start = len(ll)
-
-
-
-        print len(lines)
-        print lines_meta
-        #sys.exit(0)
+                                start, len(newLines) ) )
+            start += len(newLines)
 
 
         print "Creating parser..."
@@ -111,8 +108,8 @@ class KnxLogViewer(object):
         #
         basetime = 0
         lineNo = 0
-        meta = lines_meta.pop(0)
-        #print meta
+        origfilename, cachefilename, startLine, numLines = lines_meta.pop(0)
+
         for line in lines:
             # Skip empty lines...
             if len(line.strip()) < 1:
@@ -133,7 +130,8 @@ class KnxLogViewer(object):
 
             # Differentiate between parsing new files and loading cached input
             if line[:2] == "@@":
-                print "loading: %s" %line.strip().decode("utf-8")
+                pass
+                #print "loading: %s" %line.strip().decode("utf-8")
             else:
                 # Split timestamp from rest...
                 try:
@@ -145,7 +143,6 @@ class KnxLogViewer(object):
                     if basetime == 0:
                         basetime = mktime(strptime(timestamp,
                                                 "%a %b %d %H:%M:%S %Y"))
-                        # print timestamp
                         self.knx.setTimeBase(basetime)
                 except ValueError:
                     printVerbose("timestamp error: %s" %timestamp)
@@ -161,24 +158,23 @@ class KnxLogViewer(object):
             # Check if we are into a new file, in which case we should
             # potentially update the cache file for the last file...
             # Note that the --tail option disables creation of cache files
-            if (tail == 0) and lineNo == meta[3]:
-                if meta[1] != None:
-                    print "update cache file for %s (%s) at %s" %(meta[0],
-                                                                  meta[1],
+            if (tail == 0) and lineNo == startLine + numLines - 1:
+                if cachefilename != None:
+                    print "update cache file for %s (%s) at %s" %(origfilename,
+                                                                  cachefilename,
                                                                   lineNo)
                     try:
-                        of = open(meta[1], "w")
+                        of = open(cachefilename, "w")
                     except IOError:
-                        print meta[1]
+                        print cachefilename
                     else:
-                        self.knx.storeCachedInput(of, meta[2])
+                        self.knx.storeCachedInput(of, startLine)
                 # Shift meta data to new file...
                 try:
-                    meta = lines_meta.pop(0)
-                    #print "new meta: " + str(meta)
+                    origfilename, cachefilename, startLine, numLines = lines_meta.pop(0)
                 except:
-                    print "no more meta (%s)" %lineNo
-                    meta = (None, None, None, None)
+                    print "Last file done, line no (%s)" %lineNo
+                    origfilename, cachefilename, startLine, numLines = (None, None, None, None)
 
 
             if lineNo % 10000 == 0:
