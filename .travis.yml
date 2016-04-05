@@ -2,15 +2,18 @@ language: python
 python:
   - "2.7"
 
+virtualenv:
+    system_site_packages: true
+
 # command to install dependencies
 before_install:
-  #- sudo apt-get -qq update
-  #- sudo apt-get install -y python-gnuplot gnuplot
+  - sudo apt-get -qq update
+  - sudo apt-get install -y python-gnuplot gnuplot
 
 install:
   - pip install coverage
-  - pip search gnuplot
-  - pip install gnuplot-py
+  #- pip search gnuplot
+  #- pip install gnuplot-py
 
 # command to run tests
 script: coverage run -m unittest discover -s Test/
