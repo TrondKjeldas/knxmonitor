@@ -3,9 +3,11 @@ import sys
 import codecs
 from time import time
 from optparse import OptionParser, OptionValueError
+import cson
+from os.path import expanduser
 
-from Knx.KnxAddressStream import setVerbose as stream_setVerbose
 from Knx.KnxLogViewer import KnxLogViewer
+from Knx.KnxAddressStream import setVerbose as stream_setVerbose
 
 verbose = False
 
@@ -106,9 +108,27 @@ def main():
     # All output variants will likly support utf-8...
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 
-    infiles = [ open(f, "rb") for f in options.infilenames]
+    try:
+        infiles = [ open(f, "rb") for f in options.infilenames]
+    except Exception as e:
+        print "Error: %s" %e
+        op.print_help()
+        sys.exit(1)
 
-    knx = KnxLogViewer("enheter.xml", "groupaddresses.csv",
+    # Load config file, if available
+    cfgfile = ".knxmonitor.cson"
+    try:
+        print "Trying: %s" %cfgfile
+        cfg = cson.loads(open("%s" %cfgfile).read())
+    except IOError:
+        try:
+            print "Trying: ~/%s" %cfgfile
+            cfg = cson.loads(open(expanduser("~/%s" % cfgfile)).read())
+        except IOError:
+            print "No .knxmonitor.cson file found, using default values for config"
+            cfg = { 'unitfile' : 'enheter.xml', 'groupfile' : 'groupaddresses.csv' }
+
+    knx = KnxLogViewer(cfg['unitfile'], cfg['groupfile'],
                        infiles, options.dumpGAtable,
                        types, options.flanksOnly, options.tail,
                        None, options.hourly_avg)
