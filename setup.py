@@ -107,8 +107,8 @@ setup(
     # pip to create the appropriate form of executable for the target platform.
     entry_points={
         'console_scripts': [
-            'knxmonitor=knxmonitor.knxmonitor.main',
-            'knxdecode=knxmonitor.knxmonitor_decoder.main',
+            'knxmonitor=knxmonitor.knxmonitor:main',
+            'knxdecode=knxmonitor.knxmonitor_decoder:main',
         ],
     },
 )

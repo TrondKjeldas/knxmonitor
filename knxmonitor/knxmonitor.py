@@ -181,7 +181,7 @@ def loadDeviceAddrs(filename):
         if len(addr) > 0  and len(desc) > 0:
             devDict[addr] = desc
 
-if __name__ == "__main__":
+def main():
 
     if len(sys.argv) != 2:
         print "usage: %s url" % sys.argv[0];
@@ -275,3 +275,8 @@ if __name__ == "__main__":
             outfile3.flush()
 
         con.EIBClose()
+
+if __name__ == "__main__":
+
+    main()
+    

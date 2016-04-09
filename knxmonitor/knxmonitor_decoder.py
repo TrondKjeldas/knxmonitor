@@ -15,7 +15,7 @@ def printVerbose(str):
     if verbose:
         print str
 
-if __name__ == "__main__":
+def main():
 
     groupAddrs = []
     types      = {}
@@ -125,3 +125,8 @@ if __name__ == "__main__":
 
 # Bad 2 etg
 # python knxmonitor_decoder.py -i knx_log.hex.1 -i knx_log.hex  -g 2/6/0 % -g 2/3/0 temp -g 3/2/0 temp -f -p
+
+
+if __name__ == "__main__":
+
+    main()
