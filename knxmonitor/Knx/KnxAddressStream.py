@@ -1,6 +1,6 @@
 from time import asctime, mktime, strptime
 
-from Knx.KnxParseException import KnxParseException
+from knxmonitor.Knx.KnxParseException import KnxParseException
 
 verbose = True
 

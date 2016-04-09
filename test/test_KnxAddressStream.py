@@ -2,9 +2,9 @@ import unittest
 from time import mktime, strptime
 from StringIO import StringIO
 
-from Knx.KnxParseException import KnxParseException
-from Knx.KnxPdu import KnxPdu
-from Knx.KnxAddressStream import KnxAddressStream
+from knxmonitor.Knx.KnxParseException import KnxParseException
+from knxmonitor.Knx.KnxPdu import KnxPdu
+from knxmonitor.Knx.KnxAddressStream import KnxAddressStream
 
 class TestKnxAddressStream(unittest.TestCase):
 

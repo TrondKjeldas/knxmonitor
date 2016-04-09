@@ -2,8 +2,8 @@ from time import time, mktime, strptime
 import hashlib
 import sys
 
-from Knx.KnxParseException import KnxParseException
-from Knx.KnxParser import KnxParser
+from knxmonitor.Knx.KnxParseException import KnxParseException
+from knxmonitor.Knx.KnxParser import KnxParser
 
 
 class KnxLogViewer(object):

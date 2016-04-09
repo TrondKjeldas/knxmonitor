@@ -1,9 +1,9 @@
 from time import time, mktime, strptime
 import Gnuplot
 
-from Knx.KnxPdu import KnxPdu
-from Knx.KnxAddressStream import KnxAddressStream
-from Knx.KnxAddressCollection import KnxAddressCollection
+from knxmonitor.Knx.KnxPdu import KnxPdu
+from knxmonitor.Knx.KnxAddressStream import KnxAddressStream
+from knxmonitor.Knx.KnxAddressCollection import KnxAddressCollection
 
 verbose = True
 

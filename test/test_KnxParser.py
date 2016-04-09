@@ -1,7 +1,7 @@
 import unittest
 from time import mktime, strptime
 
-from Knx.KnxParser import KnxParser
+from knxmonitor.Knx.KnxParser import KnxParser
 
 class TestKnxParser(unittest.TestCase):
 

@@ -2,7 +2,7 @@
 import unittest
 from StringIO import StringIO
 
-from Knx.KnxAddressCollection import KnxAddressCollection
+from knxmonitor.Knx.KnxAddressCollection import KnxAddressCollection
 
 class TestKnxAddressCollection(unittest.TestCase):
 

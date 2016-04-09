@@ -1,5 +1,5 @@
 from sys import exit
-from Knx.KnxParseException import KnxParseException
+from knxmonitor.Knx.KnxParseException import KnxParseException
 
 class KnxPdu(object):
 

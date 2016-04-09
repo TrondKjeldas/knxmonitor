@@ -2,7 +2,7 @@ import unittest
 from StringIO import StringIO
 
 
-from Knx.KnxLogViewer import KnxLogViewer
+from knxmonitor.Knx.KnxLogViewer import KnxLogViewer
 
 class TestKnxLogViewer(unittest.TestCase):
 

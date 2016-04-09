@@ -1,7 +1,7 @@
 import sys
 import xml.etree.ElementTree as ET
 
-from UnicodeReader import UnicodeReader
+from knxmonitor.UnicodeReader import UnicodeReader
 
 
 class KnxAddressCollection(dict):
