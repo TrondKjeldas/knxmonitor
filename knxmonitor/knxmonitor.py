@@ -6,6 +6,7 @@ import getopt
 import socket
 import cson
 import time
+import errno
 
 from EIBConnection import EIBBuffer
 from EIBConnection import EIBConnection
@@ -61,8 +62,11 @@ def main2(argv):
             sys.exit(1)
 
         if con.EIBOpenVBusmonitorText() != 0:
-            print "Could not open bus monitor";
-            # sys.exit(1)
+            # For some reason this always "fails" with EBUSY,
+            # hence just ignore that particular error
+            if con.errno != errno.EBUSY:
+                print "Could not open bus monitor";
+                sys.exit(1)
 
         log = KnxLogFileHandler()
 
@@ -74,8 +78,6 @@ def main2(argv):
                 print "Read failed"
                 sys.exit(1)
 
-            #timestamp = time.ctime(time.time())
-            #ts = time.strptime(timestamp, "%a %b %d %H:%M:%S %Y")
             ts = time.localtime()
 
             b = ""

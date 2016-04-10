@@ -4,3 +4,5 @@
 *.hex
 *.egg-info
 *.coverage
+build
+dist
