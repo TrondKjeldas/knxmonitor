@@ -1,0 +1,10 @@
+#
+# Configuration for knxmonitor/knxdecode/knxsonos
+
+# Common settings
+groupfile : "/home/trond/Projects/knxmonitor/groupaddresses.csv"
+unitfile  : "/home/trond/Projects/knxmonitor/enheter.xml"
+
+
+# Specific for knxmonitor
+fileformat : "old"
