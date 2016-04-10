@@ -1,7 +1,7 @@
 import unittest
 
-from Knx.KnxParseException import KnxParseException
-from Knx.KnxPdu import KnxPdu
+from knxmonitor.Knx.KnxParseException import KnxParseException
+from knxmonitor.Knx.KnxPdu import KnxPdu
 
 class TestKnxPdu(unittest.TestCase):
 
