@@ -18,7 +18,8 @@ class TestKnxLogFileHandler(unittest.TestCase):
         f = KnxLogFileHandler()
         self.assertIsInstance(f, KnxLogFileHandler)
 
-        mock_file = mock.Mock()
+        mock_file = mock.Mock(name="file1")
+        mock_file2 = mock.Mock(name="file2")
         mock_open.return_value = mock_file
         mock_access.return_value = False
 
@@ -29,28 +30,30 @@ class TestKnxLogFileHandler(unittest.TestCase):
         mock_time.return_value = t
 
         # Test open new file, no file open from before
-        f.getFileToUse()
-        f.getFileToUse()
+        self.assertEqual(f.getFileToUse(), mock_file)
+        self.assertEqual(f.getFileToUse(), mock_file)
         self.assertFalse(mock_file.close.called)
         mock_open.assert_called_once_with("knx_log_May_2005.hex", "a")
 
         # Test open new file, other file open
         mock_open.reset_mock()
+        mock_open.return_value = mock_file2
         t.tm_year = 2006
         t.tm_mon = 6
         mock_time.return_value = t
-        f.getFileToUse()
-        f.getFileToUse()
+        self.assertEqual(f.getFileToUse(), mock_file2)
+        self.assertEqual(f.getFileToUse(), mock_file2)
         self.assertTrue(mock_file.close.called)
         mock_open.assert_called_once_with("knx_log_June_2006.hex", "a")
 
         # Test open existing file
         mock_open.reset_mock()
+        mock_open.return_value = mock_file
         t.tm_year = 2006
         t.tm_mon = 7
         mock_time.return_value = t
         mock_access.return_value = True
-        f.getFileToUse()
+        self.assertEqual(f.getFileToUse(), mock_file)
         self.assertTrue(mock_file.close.called)
         mock_open.assert_called_once_with("knx_log_July_2006.hex", "a")
 
