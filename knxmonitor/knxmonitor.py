@@ -1,16 +1,15 @@
 #!/usr/bin/env python
-
 import sys
 import os
+from os.path import expanduser
 import getopt
 import socket
+import cson
 
 #import eibclient.eibclient
 #from eibclient.common import *
 from EIBConnection import EIBBuffer
 from EIBConnection import EIBConnection
-
-
 
 import xml.etree.ElementTree as ET
 import csv
@@ -181,20 +180,33 @@ def loadDeviceAddrs(filename):
         if len(addr) > 0  and len(desc) > 0:
             devDict[addr] = desc
 
-def main():
+def main2(argv):
 
-    if len(sys.argv) != 2:
-        print "usage: %s url" % sys.argv[0];
+    if len(argv) != 2:
+        print "usage: %s url" % argv[0];
         sys.exit(1);
 
     mons = [ "January", "February", "March", "April", "May", "June", "July",
              "August", "September", "October", "November", "December" ]
     mon = 100
 
-    loadGroupAddrs("../knxmonitor/groupaddresses.csv")
-    loadDeviceAddrs("../knxmonitor/enheter.xml")
+    # Load config file, if available
+    cfgfile = ".knxmonitor.cson"
+    try:
+        print "Trying: %s" %cfgfile
+        cfg = cson.loads(open("%s" %cfgfile).read())
+    except IOError:
+        try:
+            print "Trying: ~/%s" %cfgfile
+            cfg = cson.loads(open(expanduser("~/%s" % cfgfile)).read())
+        except IOError:
+            print "No .knxmonitor.cson file found, using default values for config"
+            cfg = { 'unitfile' : 'enheter.xml', 'groupfile' : 'groupaddresses.csv' }
 
-    if sys.argv[1] != "simul":
+    loadGroupAddrs(cfg['groupfile'])
+    loadDeviceAddrs(cfg['unitfile'])
+
+    if argv[1] != "simul":
         try:
             outfile = open("knx_log.txt", "a")
             outfile2 = open("knx_log_new.hex", "a")
@@ -212,8 +224,8 @@ def main():
         connected = False
         while (not connected) and (tries < 5):
             try:
-                if con.EIBSocketURL(sys.argv[1]) != 0:
-                    print "Could not connect to: %s" %sys.argv[1]
+                if con.EIBSocketURL(argv[1]) != 0:
+                    print "Could not connect to: %s" %argv[1]
                     sys.exit(1)
                 else:
                     connected = True
@@ -276,7 +288,9 @@ def main():
 
         con.EIBClose()
 
+def main():
+    main2(sys.argv)
+
 if __name__ == "__main__":
 
-    main()
-    
+    main(sys.argv)

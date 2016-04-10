@@ -17,7 +17,7 @@ def printVerbose(str):
     if verbose:
         print str
 
-def main():
+def main2(argv=sys.argv):
 
     groupAddrs = []
     types      = {}
@@ -137,6 +137,10 @@ def main():
         knx.plotLog(groupAddrs, "")
     else:
         knx.printLog(groupAddrs)
+
+
+def main():
+    main2()
 
 
 # All temperatures:
