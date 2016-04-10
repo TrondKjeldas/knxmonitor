@@ -20,7 +20,7 @@ class KnxLogFileHandler(object):
 
             # Close existing file
             if self.currentFile:
-                currentFile.close()
+                self.currentFile.close()
 
             # Calculate filename
             self.mon = ts.tm_mon
