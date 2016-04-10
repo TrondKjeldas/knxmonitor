@@ -10,15 +10,13 @@ import time
 from EIBConnection import EIBBuffer
 from EIBConnection import EIBConnection
 
+from Knx.KnxLogFileHandler import KnxLogFileHandler
+
 def main2(argv):
 
     if len(argv) != 2:
         print "usage: %s url" % argv[0];
         sys.exit(1);
-
-    mons = [ "January", "February", "March", "April", "May", "June", "July",
-             "August", "September", "October", "November", "December" ]
-    mon = 100
 
     # Load config file, if available
     cfgfile = ".knxmonitor.cson"
@@ -66,7 +64,8 @@ def main2(argv):
             print "Could not open bus monitor";
             # sys.exit(1)
 
-        outfile3 = None
+        log = KnxLogFileHandler()
+
         buf = EIBBuffer()
         while 1:
             length = con.EIBGetBusmonitorPacket (buf)
@@ -85,18 +84,9 @@ def main2(argv):
 
             print time.asctime(ts) + ":" + b
 
-            if ts.tm_mon != mon:
-                # New file!
-                mon = ts.tm_mon
-                ofname = "knx_log_%s_%s.hex" %(mons[mon-1], ts.tm_year)
-                print "New file: %s" %ofname
-
-                if outfile3:
-                    outfile3.close()
-                outfile3 = open(ofname, "a")
-
-            outfile3.write(time.asctime(ts) + ":" + b + "\n")
-            outfile3.flush()
+            outfile = log.getFileToUse()
+            outfile.write(time.asctime(ts) + ":" + b + "\n")
+            outfile.flush()
 
         con.EIBClose()
 
