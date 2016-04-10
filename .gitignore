@@ -2,3 +2,5 @@
 .AppleDouble
 *,cover
 *.hex
+*.egg-info
+*.coverage
