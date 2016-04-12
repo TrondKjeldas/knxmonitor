@@ -19,7 +19,7 @@ class KnxPdu(object):
 
         # Do parsing up front...
         text = pdu_text[pdu_text.find(" from ") + 6:]
-        print "hei! #%s#" %text
+
         try:
             s, rest = text.split(" ", 1)  # [:self.text.find(" ")]
 
