@@ -1,5 +1,6 @@
-from time import time, mktime, strptime
+from time import time, mktime, strptime, localtime
 import Gnuplot
+import ujson as json
 
 from knxmonitor.Knx.KnxPdu import KnxPdu
 from knxmonitor.Knx.KnxAddressStream import KnxAddressStream
@@ -24,7 +25,7 @@ class KnxParser(object):
 
     def __init__(self, devicesfilename,
                  groupaddrfilename, dumpaddressinfo = False,
-                 flanksOnly = False, types = None):
+                 flanksOnly = False, types = {}):
 
         # Load device and address info
         self.groupDict.loadGroupAddrs(open(groupaddrfilename), dumpaddressinfo)
@@ -42,9 +43,26 @@ class KnxParser(object):
 
         self.devDict.loadDeviceAddrs(open(devicesfilename))
 
+        self.basetime = 0
+
     def setTimeBase(self, basetime):
 
         self.basetime = basetime
+
+    def parseJson(self, seq, text):
+
+        pdu = KnxPdu()
+
+        pdu.fromSerializableObject(json.loads(text))
+
+        tstamp = localtime(pdu.getTimestamp())
+
+        if self.basetime == 0:
+            self.basetime = mktime(tstamp)
+        try:
+            self.knxAddrStream[pdu.getTo()].addTelegram(seq, tstamp, pdu)
+        except KeyError:
+            printVerbose("unknown address, skipping: %s" %pdu.getTo())
 
     def parseVbusOutput(self, seq, timestamp, text):
 

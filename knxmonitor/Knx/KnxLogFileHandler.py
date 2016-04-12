@@ -12,7 +12,7 @@ class KnxLogFileHandler(object):
 
         self.currentFile = None
 
-    def getFileToUse(self):
+    def getFileToUse(self, filetype = 'hex'):
 
         ts = time.localtime()
 
@@ -25,7 +25,7 @@ class KnxLogFileHandler(object):
             # Calculate filename
             self.mon = ts.tm_mon
 
-            self.name = "knx_log_%s_%s.hex" %(self.mons[self.mon-1], ts.tm_year)
+            self.name = "knx_log_%s_%s.%s" %(self.mons[self.mon-1], ts.tm_year, filetype)
 
             if os.access(self.name, os.F_OK):
                 print "Continuing file: %s" %self.name

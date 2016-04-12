@@ -4,14 +4,17 @@ import os
 from os.path import expanduser
 import getopt
 import socket
-import cson
 import time
 import errno
+import ujson as json
 
 from EIBConnection import EIBBuffer
 from EIBConnection import EIBConnection
 
+import Configuration
+
 from Knx.KnxLogFileHandler import KnxLogFileHandler
+from Knx.KnxPdu import KnxPdu
 
 def main2(argv):
 
@@ -20,20 +23,7 @@ def main2(argv):
         sys.exit(1);
 
     # Load config file, if available
-    cfgfile = ".knxmonitor.cson"
-    try:
-        print "Trying: %s" %cfgfile
-        cfg = cson.loads(open("%s" %cfgfile).read())
-    except IOError:
-        try:
-            print "Trying: ~/%s" %cfgfile
-            cfg = cson.loads(open(expanduser("~/%s" % cfgfile)).read())
-        except IOError:
-            print "No .knxmonitor.cson file found, using default values for config"
-            cfg = { 'unitfile' : 'enheter.xml', 'groupfile' : 'groupaddresses.csv' }
-
-    #loadGroupAddrs(cfg['groupfile'])
-    #loadDeviceAddrs(cfg['unitfile'])
+    Configuration.load()
 
     if argv[1] != "simul":
 
@@ -71,6 +61,7 @@ def main2(argv):
         log = KnxLogFileHandler()
 
         buf = EIBBuffer()
+        seq = 0
         while 1:
             length = con.EIBGetBusmonitorPacket (buf)
 
@@ -79,15 +70,30 @@ def main2(argv):
                 sys.exit(1)
 
             ts = time.localtime()
+            seq += 1
 
             b = ""
             for x in buf.buffer:
                 b += chr(x)
 
-            print time.asctime(ts) + ":" + b
+            if Configuration.Cfg['fileformat'] == 'hex':
 
-            outfile = log.getFileToUse()
-            outfile.write(time.asctime(ts) + ":" + b + "\n")
+                print time.asctime(ts) + ":" + b
+
+                outfile = log.getFileToUse('hex')
+                outfile.write(time.asctime(ts) + ":" + b + "\n")
+
+            elif Configuration.Cfg['fileformat'] == 'json':
+
+                pdu = KnxPdu({}, {}, b, time.asctime(ts))
+                s = pdu.toSerializableObject()
+
+                j = json.dumps(s, sort_keys=True, separators=(',',':'))
+                print j
+
+                outfile = log.getFileToUse('json')
+                outfile.write(j)
+
             outfile.flush()
 
         con.EIBClose()

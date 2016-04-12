@@ -1,4 +1,5 @@
 from sys import argv
+import cProfile
 
 try:
     module_to_run = argv[1]
@@ -12,4 +13,5 @@ except Exception as e:
     print "usage: 'python -m knxmonitor <filename>'"
     print "        the function 'main' in the specified file will be run"
 
+#cProfile.run('main2(argv)', None, 'cumtime')
 main2(argv)

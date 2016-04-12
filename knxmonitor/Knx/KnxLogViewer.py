@@ -109,6 +109,7 @@ class KnxLogViewer(object):
         basetime = 0
         lineNo = 0
         origfilename, cachefilename, startLine, numLines = lines_meta.pop(0)
+        cachefilename = None
 
         for line in lines:
             # Skip empty lines...
@@ -129,7 +130,9 @@ class KnxLogViewer(object):
             lineNo += 1
 
             # Differentiate between parsing new files and loading cached input
-            if line[:2] == "@@":
+            if line[0] == "{":
+                self.knx.parseJson(lineNo, line)
+            elif line[:2] == "@@":
                 pass
                 #print "loading: %s" %line.strip().decode("utf-8")
             else:
@@ -172,6 +175,7 @@ class KnxLogViewer(object):
                 # Shift meta data to new file...
                 try:
                     origfilename, cachefilename, startLine, numLines = lines_meta.pop(0)
+                    cachefilename = None
                 except:
                     print "Last file done, line no (%s)" %lineNo
                     origfilename, cachefilename, startLine, numLines = (None, None, None, None)
