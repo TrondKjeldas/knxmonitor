@@ -25,82 +25,80 @@ def main2(argv):
     # Load config file, if available
     Configuration.load()
 
-    if argv[1] != "simul":
+    try:
+        con = EIBConnection()
+    except:
+        print "Could not instanciate EIBConnection";
+        sys.exit(1);
 
+    tries = 1
+    connected = False
+    while (not connected) and (tries < 5):
         try:
-            con = EIBConnection()
-        except:
-            print "Could not instanciate EIBConnection";
-            sys.exit(1);
+            if con.EIBSocketURL(argv[1]) != 0:
+                print "Could not connect to: %s" %argv[1]
+                sys.exit(1)
+            else:
+                connected = True
+        except socket.error:
+            print "failed to connect, retrying in 5 sec..."
+            time.sleep(5)
+            tries += 1
 
-        tries = 1
-        connected = False
-        while (not connected) and (tries < 5):
-            try:
-                if con.EIBSocketURL(argv[1]) != 0:
-                    print "Could not connect to: %s" %argv[1]
-                    sys.exit(1)
-                else:
-                    connected = True
-            except socket.error:
-                print "failed to connect, retrying in 5 sec..."
-                time.sleep(5)
-                tries += 1
+    if not connected:
+        print "Unable to connect, tried %d times, giving up." % tries
+        sys.exit(1)
 
-        if not connected:
-            print "Unable to connect, tried %d times, giving up." % tries
+    if con.EIBOpenVBusmonitorText() != 0:
+        # For some reason this always "fails" with EBUSY,
+        # hence just ignore that particular error
+        if con.errno != errno.EBUSY:
+            print "Could not open bus monitor";
             sys.exit(1)
 
-        if con.EIBOpenVBusmonitorText() != 0:
-            # For some reason this always "fails" with EBUSY,
-            # hence just ignore that particular error
-            if con.errno != errno.EBUSY:
-                print "Could not open bus monitor";
-                sys.exit(1)
+    log = KnxLogFileHandler()
 
-        log = KnxLogFileHandler()
+    buf = EIBBuffer()
+    seq = 0
+    while 1:
+        length = con.EIBGetBusmonitorPacket (buf)
 
-        buf = EIBBuffer()
-        seq = 0
-        while 1:
-            length = con.EIBGetBusmonitorPacket (buf)
+        if length == 0:
+            print "Read failed"
+            sys.exit(1)
 
-            if length == 0:
-                print "Read failed"
-                sys.exit(1)
+        ts = time.localtime()
+        seq += 1
 
-            ts = time.localtime()
-            seq += 1
+        b = ""
+        for x in buf.buffer:
+            b += chr(x)
 
-            b = ""
-            for x in buf.buffer:
-                b += chr(x)
+        if Configuration.Cfg['fileformat'] == 'hex':
 
-            if Configuration.Cfg['fileformat'] == 'hex':
+            print time.asctime(ts) + ":" + b
 
-                print time.asctime(ts) + ":" + b
+            outfile = log.getFileToUse('hex')
+            outfile.write(time.asctime(ts) + ":" + b + "\n")
 
-                outfile = log.getFileToUse('hex')
-                outfile.write(time.asctime(ts) + ":" + b + "\n")
+        elif Configuration.Cfg['fileformat'] == 'json':
 
-            elif Configuration.Cfg['fileformat'] == 'json':
+            pdu = KnxPdu({}, {}, b, time.asctime(ts))
+            s = pdu.toSerializableObject()
 
-                pdu = KnxPdu({}, {}, b, time.asctime(ts))
-                s = pdu.toSerializableObject()
+            j = json.dumps(s, sort_keys=True, separators=(',',':'))
+            print j
 
-                j = json.dumps(s, sort_keys=True, separators=(',',':'))
-                print j
+            outfile = log.getFileToUse('json')
+            outfile.write(j)
 
-                outfile = log.getFileToUse('json')
-                outfile.write(j)
+        outfile.flush()
 
-            outfile.flush()
-
-        con.EIBClose()
+    con.EIBClose()
 
 def main():
     main2(sys.argv)
 
 if __name__ == "__main__":
 
-    main(sys.argv)
+    main()
