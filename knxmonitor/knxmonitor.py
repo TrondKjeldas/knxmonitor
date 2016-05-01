@@ -6,7 +6,8 @@ import getopt
 import socket
 import time
 import errno
-import ujson as json
+#import ujson as json
+import json as json
 
 from EIBConnection import EIBBuffer
 from EIBConnection import EIBConnection
@@ -56,7 +57,8 @@ def main2(argv):
             print "Could not open bus monitor";
             sys.exit(1)
 
-    log = KnxLogFileHandler()
+    hexlog = KnxLogFileHandler()
+    jsonlog = KnxLogFileHandler()
 
     buf = EIBBuffer()
     seq = 0
@@ -74,14 +76,14 @@ def main2(argv):
         for x in buf.buffer:
             b += chr(x)
 
-        if Configuration.Cfg['fileformat'] == 'hex':
+        if 'hex' in Configuration.Cfg['fileformat']:
 
             print time.asctime(ts) + ":" + b
 
-            outfile = log.getFileToUse('hex')
+            outfile = hexlog.getFileToUse('hex')
             outfile.write(time.asctime(ts) + ":" + b + "\n")
 
-        elif Configuration.Cfg['fileformat'] == 'json':
+        if 'json' in Configuration.Cfg['fileformat']:
 
             pdu = KnxPdu({}, {}, b, time.asctime(ts))
             s = pdu.toSerializableObject()
@@ -89,8 +91,8 @@ def main2(argv):
             j = json.dumps(s, sort_keys=True, separators=(',',':'))
             print j
 
-            outfile = log.getFileToUse('json')
-            outfile.write(j)
+            outfile = jsonlog.getFileToUse('json')
+            outfile.write(j+'\n')
 
         outfile.flush()
 

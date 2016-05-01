@@ -55,7 +55,13 @@ class KnxParser(object):
 
         pdu.fromSerializableObject(json.loads(text))
 
-        tstamp = localtime(pdu.getTimestamp())
+        ts = pdu.getTimestamp()
+        try:
+            # First try as if timestamp is number
+            tstamp = localtime(ts)
+        except TypeError:
+            # Maybe it is "full" timestamp format
+            tstamp = strptime(ts, "%a %b %d %H:%M:%S %Y")
 
         if self.basetime == 0:
             self.basetime = mktime(tstamp)

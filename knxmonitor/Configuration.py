@@ -4,7 +4,7 @@ import cson
 Cfg = {
     'unitfile': 'enheter.xml',
     'groupfile': 'groupaddresses.csv',
-    'fileformat' : 'hex'
+    'fileformat' : ['hex']
 }
 
 

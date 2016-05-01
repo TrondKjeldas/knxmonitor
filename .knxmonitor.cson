@@ -7,5 +7,4 @@ unitfile  : "/home/trond/Projects/knxmonitor/enheter.xml"
 
 
 # Specific for knxmonitor
-#fileformat : "hex"
-fileformat : "json"
+fileformat : ["json", 'hex']
