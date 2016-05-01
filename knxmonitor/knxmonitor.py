@@ -57,8 +57,10 @@ def main2(argv):
             print "Could not open bus monitor";
             sys.exit(1)
 
-    hexlog = KnxLogFileHandler()
-    jsonlog = KnxLogFileHandler()
+    if 'hex' in Configuration.Cfg['fileformat']:
+        hexlog = KnxLogFileHandler()
+    if 'json' in Configuration.Cfg['fileformat']:
+        jsonlog = KnxLogFileHandler()
 
     buf = EIBBuffer()
     seq = 0
@@ -82,6 +84,7 @@ def main2(argv):
 
             outfile = hexlog.getFileToUse('hex')
             outfile.write(time.asctime(ts) + ":" + b + "\n")
+            outfile.flush()
 
         if 'json' in Configuration.Cfg['fileformat']:
 
@@ -93,8 +96,7 @@ def main2(argv):
 
             outfile = jsonlog.getFileToUse('json')
             outfile.write(j+'\n')
-
-        outfile.flush()
+            outfile.flush()
 
     con.EIBClose()
 
