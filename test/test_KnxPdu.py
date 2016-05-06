@@ -105,19 +105,20 @@ class TestKnxPdu(unittest.TestCase):
 
     def test_getValue_temp(self):
 
-        pdu = KnxPdu(self.devdict, self.groupdict, "Fri Sep  4 06:19:47 2015:LPDU: BC 11 1B 03 03 E3 00 80 0C 83 A5 :L_Data low from 1.1.27 to 0/3/3 hops: 06 T_DATA_XXX_REQ A_GroupValue_Write 0C 83")
-        self.assertEqual(pdu.getValue("temp"), '23.10')
-        pdu = KnxPdu(self.devdict, self.groupdict, "Fri Sep  4 06:19:47 2015:LPDU: BC 11 1B 03 03 E3 00 80 0C 83 A5 :L_Data low from 1.1.27 to 0/3/3 hops: 06 T_DATA_XXX_REQ A_GroupValue_Write 01 23")
-        self.assertEqual(pdu.getValue("temp"), '2.91')
-        pdu = KnxPdu(self.devdict, self.groupdict, "Fri Sep  4 06:19:47 2015:LPDU: BC 11 1B 03 03 E3 00 80 0C 83 A5 :L_Data low from 1.1.27 to 0/3/3 hops: 06 T_DATA_XXX_REQ A_GroupValue_Write 0F ED")
-        self.assertEqual(pdu.getValue("temp"), '40.58')
-
-        pdu = KnxPdu(self.devdict, self.groupdict, "Fri Sep  4 06:19:47 2015:LPDU: BC 11 1B 03 03 E3 00 80 0C 83 A5 :L_Data low from 1.1.27 to 0/3/3 hops: 06 T_DATA_XXX_REQ A_GroupValue_Write 8F ED")
-        self.assertEqual(pdu.getValue("temp"), '-0.38')
-        pdu = KnxPdu(self.devdict, self.groupdict, "Fri Sep  4 06:19:47 2015:LPDU: BC 11 1B 03 03 E3 00 80 0C 83 A5 :L_Data low from 1.1.27 to 0/3/3 hops: 06 T_DATA_XXX_REQ A_GroupValue_Write 90 ED")
-        self.assertEqual(pdu.getValue("temp"), '-72.44')
-        pdu = KnxPdu(self.devdict, self.groupdict, "Fri Sep  4 06:19:47 2015:LPDU: BC 11 1B 03 03 E3 00 80 0C 83 A5 :L_Data low from 1.1.27 to 0/3/3 hops: 06 T_DATA_XXX_REQ A_GroupValue_Write FF ED")
-        self.assertEqual(pdu.getValue("temp"), '-6225.92')
+        pdu = KnxPdu(self.devdict, self.groupdict, "Fri Sep  4 06:19:47 2015:LPDU: BC 11 1B 03 03 E3 00 80 0C 83 A5 :L_Data low from 1.1.27 to 0/3/3 hops: 06 T_DATA_XXX_REQ A_GroupValue_Write 00 00")
+        self.assertEqual(pdu.getValue("temp"), '0.00')
+        pdu = KnxPdu(self.devdict, self.groupdict, "Fri Sep  4 06:19:47 2015:LPDU: BC 11 1B 03 03 E3 00 80 0C 83 A5 :L_Data low from 1.1.27 to 0/3/3 hops: 06 T_DATA_XXX_REQ A_GroupValue_Write 07 E2")
+        self.assertEqual(pdu.getValue("temp"), '20.18')
+        pdu = KnxPdu(self.devdict, self.groupdict, "Fri Sep  4 06:19:47 2015:LPDU: BC 11 1B 03 03 E3 00 80 0C 83 A5 :L_Data low from 1.1.27 to 0/3/3 hops: 06 T_DATA_XXX_REQ A_GroupValue_Write 02 A8")
+        self.assertEqual(pdu.getValue("temp"), '6.80')
+        pdu = KnxPdu(self.devdict, self.groupdict, "Fri Sep  4 06:19:47 2015:LPDU: BC 11 1B 03 03 E3 00 80 0C 83 A5 :L_Data low from 1.1.27 to 0/3/3 hops: 06 T_DATA_XXX_REQ A_GroupValue_Write 87 9C")
+        self.assertEqual(pdu.getValue("temp"), '-1.00')
+        pdu = KnxPdu(self.devdict, self.groupdict, "Fri Sep  4 06:19:47 2015:LPDU: BC 11 1B 03 03 E3 00 80 0C 83 A5 :L_Data low from 1.1.27 to 0/3/3 hops: 06 T_DATA_XXX_REQ A_GroupValue_Write 8A 24")
+        self.assertEqual(pdu.getValue("temp"), '-30.00')
+        pdu = KnxPdu(self.devdict, self.groupdict, "Fri Sep  4 06:19:47 2015:LPDU: BC 11 1B 03 03 E3 00 80 0C 83 A5 :L_Data low from 1.1.27 to 0/3/3 hops: 06 T_DATA_XXX_REQ A_GroupValue_Write F8 00")
+        self.assertEqual(pdu.getValue("temp"), '-671088.64')
+        pdu = KnxPdu(self.devdict, self.groupdict, "Fri Sep  4 06:19:47 2015:LPDU: BC 11 1B 03 03 E3 00 80 0C 83 A5 :L_Data low from 1.1.27 to 0/3/3 hops: 06 T_DATA_XXX_REQ A_GroupValue_Write 7F FF")
+        self.assertEqual(pdu.getValue("temp"), '670760.96')
 
     def test_getValue_time(self):
 
