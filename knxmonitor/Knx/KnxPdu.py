@@ -79,14 +79,11 @@ class KnxPdu(object):
         e = (i & 0x7800) >> 11
         m = i & 0x7FF
         if s == 1:
-            m2 = (~(m-1)) & 0x7ff
-            #print m2
+            m2 = 2048 - m
             m2 = -m2
-            #print m2
         else:
             m2 = m
-        val2 = float((1<<e)*0.01*m2)
-        #print "e = %x" %e
+        val2 = float((1 << e) * 0.01 * m2)
         return val2.__format__(".2f")
 
 
