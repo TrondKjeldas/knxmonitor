@@ -208,3 +208,7 @@ class KnxLogViewer(object):
     def printLog(self, groupAddrs):
 
         self.knx.printStreams(groupAddrs)
+
+    def printJSON(self, groupAddrs):
+
+        self.knx.printStreams(groupAddrs, "JSON")

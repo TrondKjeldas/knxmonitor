@@ -1,4 +1,5 @@
 from time import asctime, mktime, strptime
+import ujson as json
 
 from knxmonitor.Knx.KnxParseException import KnxParseException
 
@@ -22,6 +23,7 @@ class KnxAddressStream(object):
         self.flanksOnly = flanksOnly
         self.maxVal    = None
         self.minVal    = None
+        self.format    = "text"
 
         self.telegrams = []
 
@@ -44,6 +46,10 @@ class KnxAddressStream(object):
                     self.maxVal = value
 
         self.telegrams.append((seq, timestamp, sender, value))
+
+    def setOutputFormat(self, format):
+
+        self.format = format
 
     def prepareSynchronizedPrints(self):
 
@@ -128,9 +134,19 @@ class KnxAddressStream(object):
 
             try:
                 ts2 = asctime(ts)
-                outstr = "%s: %50s -> %60s(%s): %s" %(ts2, sender, receiver,
+
+                if self.format == "text":
+                    outstr = "%s: %50s -> %60s(%s): %s" %(ts2, sender, receiver,
                                                       self.address, value)
-                print outstr
+                    print outstr
+                elif self.format == "JSON":
+
+                  try:
+                    print json.dumps( { "name" : "KNX",
+                                        receiver : float(value),
+                                        "tim" : mktime(ts) } )
+                  except:
+                    pass
             except UnicodeEncodeError,err:
                 #print "%s"%ts.decode("utf-8")
                 #print "%s"%sender

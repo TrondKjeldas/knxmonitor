@@ -84,6 +84,9 @@ def main2(argv=sys.argv):
     op.add_option("-p", "--plot", dest="plot", action="store_true",
                   help="plot chart of data")
 
+    op.add_option("-j", "--json", dest="JSON", action="store_true",
+                  help="produce JSON output")
+
     op.add_option("-v", "--verbose", dest="verbose", action="store_true",
                   help="print more information, warnings, and error messages")
 
@@ -95,7 +98,7 @@ def main2(argv=sys.argv):
                   action="store_true",
                   help="Average temperatures within the hour")
 
-    options, args = op.parse_args()
+    options, args = op.parse_args(args=argv)
 
     #print options
     #print groupAddrs
@@ -135,8 +138,11 @@ def main2(argv=sys.argv):
 
     if options.plot:
         knx.plotLog(groupAddrs, "")
+    elif options.JSON:
+        knx.printJSON(groupAddrs)
     else:
         knx.printLog(groupAddrs)
+
 
 
 def main():

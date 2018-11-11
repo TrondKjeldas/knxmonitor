@@ -91,13 +91,14 @@ class KnxParser(object):
             return None,None
 
 
-    def printStreams(self, groupAddrs):
+    def printStreams(self, groupAddrs, format = "text"):
 
         if groupAddrs == None:
             # Logically, "none" means all :)
             groupAddrs = self.knxAddrStream.keys()
 
         for g in groupAddrs:
+            self.knxAddrStream[g].setOutputFormat(format)
             self.knxAddrStream[g].prepareSynchronizedPrints()
 
         seq = 0
