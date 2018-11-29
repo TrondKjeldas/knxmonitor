@@ -1,0 +1,1090 @@
+{
+  "2\/2\/4" : {
+    "info" : "Varme sov øst 2.etg",
+    "DPT" : "DPT5.001"
+  },
+  "1\/0\/10" : {
+    "info" : "Av\/på lys, spot'er stue 1 etg (sør)",
+    "DPT" : "DPT1.001"
+  },
+  "3\/5\/15" : {
+    "info" : "Tilbakemld lysverdi stue 2 etg (sør)",
+    "DPT" : "DPT5.001"
+  },
+  "0\/0\/5" : {
+    "info" : "Av\/på lys hobbyrom (stikk)",
+    "DPT" : "DPT1.001"
+  },
+  "1\/4\/4" : {
+    "info" : "Skal temp bad 1.etg",
+    "DPT" : "DPT9.001"
+  },
+  "2\/1\/31" : {
+    "info" : "Dimm lys tak sov øst",
+    "DPT" : "DPT3.007"
+  },
+  "2\/0\/4" : {
+    "info" : "Av\/på lys WC 2 etg",
+    "DPT" : "DPT1.001"
+  },
+  "2\/1\/7" : {
+    "info" : "Lysverdi bad 2 etg (badekar)",
+    "DPT" : "DPT5.001"
+  },
+  "0\/1\/2" : {
+    "info" : "Dimm spot'er kjellerstue 2",
+    "DPT" : "DPT3.007"
+  },
+  "3\/5\/21" : {
+    "info" : "Tilbakemld lysverdi spot'er gang 1 etg",
+    "DPT" : "DPT5.001"
+  },
+  "1\/3\/5" : {
+    "info" : "Er-temp vindfang 1.etg",
+    "DPT" : "DPT9.001"
+  },
+  "1\/1\/11" : {
+    "info" : "Dimm, stue, dobbel kontakt nord",
+    "DPT" : "DPT3.007"
+  },
+  "6\/0\/4" : {
+    "info" : "Overlast\/kortslutning, utgang 5",
+    "DPT" : "DPT1.005"
+  },
+  "1\/5\/0" : {
+    "info" : "Set temp kjøkken 1.etg",
+    "DPT" : "DPT9.001"
+  },
+  "3\/0\/4" : {
+    "info" : "Værstasjon, lysstyrkeføler skumringsverdi",
+    "DPT" : "DPT9.004"
+  },
+  "6\/0\/6" : {
+    "info" : "Nettutfall",
+    "DPT" : "DPT1.005"
+  },
+  "3\/5\/12" : {
+    "info" : "Tilbakemld lysverdi gang 2 etg",
+    "DPT" : "DPT5.001"
+  },
+  "0\/1\/5" : {
+    "info" : "Lysverdi kjellergang",
+    "DPT" : "DPT5.001"
+  },
+  "1\/1\/14" : {
+    "info" : "Lysverdi  spot'er vindfang",
+    "DPT" : "DPT5.001"
+  },
+  "1\/1\/17" : {
+    "info" : "Dimm lys, spot'er stue 1 etg (sør)",
+    "DPT" : "DPT3.007"
+  },
+  "2\/1\/0" : {
+    "info" : "Dimm lys bad 2.etg (alle)",
+    "DPT" : "DPT3.007"
+  },
+  "1\/0\/8" : {
+    "info" : "Av\/på lys, spot'er gang 1 etg",
+    "DPT" : "DPT1.001"
+  },
+  "3\/5\/22" : {
+    "info" : "Tilbakemld lysverdi spot'er trapp 1 etg",
+    "DPT" : "DPT5.001"
+  },
+  "2\/2\/2" : {
+    "info" : "Varme stue 2.etg",
+    "DPT" : "DPT5.001"
+  },
+  "1\/3\/4" : {
+    "info" : "Er-temp bad 1.etg",
+    "DPT" : "DPT9.001"
+  },
+  "2\/3\/1" : {
+    "info" : "Er-temp hovedsoverom 2.etg",
+    "DPT" : "DPT9.001"
+  },
+  "2\/0\/9" : {
+    "info" : "Av\/på lys stue 2 etg (vest)",
+    "DPT" : "DPT1.001"
+  },
+  "2\/1\/25" : {
+    "info" : "Lysverdi hovedsov  (sør)",
+    "DPT" : "DPT5.001"
+  },
+  "1\/1\/3" : {
+    "info" : "dimm lys kjøkken, spot'er bardisk",
+    "DPT" : "DPT3.007"
+  },
+  "1\/1\/24" : {
+    "info" : "Lysverdi LED stue 1 etg",
+    "DPT" : "DPT5.001"
+  },
+  "1\/0\/3" : {
+    "info" : "Av\/på lys, spot'er bardisk",
+    "DPT" : "DPT1.001"
+  },
+  "0\/2\/2" : {
+    "info" : "Varme  hobbyrom",
+    "DPT" : "DPT5.001"
+  },
+  "1\/1\/29" : {
+    "info" : "Lysverdi, spot'er bad 1 etg",
+    "DPT" : "DPT5.001"
+  },
+  "0\/2\/7" : {
+    "info" : "Tilbakemelding innstilt verdi,  hjemmekino",
+    "DPT" : "DPT5.001"
+  },
+  "3\/0\/9" : {
+    "info" : "Lysverdi utelys spot'er over inngangsdør",
+    "DPT" : "DPT5.001"
+  },
+  "3\/5\/26" : {
+    "info" : "Tilbakemld lysverdi spot'er arbeidsrom",
+    "DPT" : "DPT5.001"
+  },
+  "7\/1\/0" : {
+    "info" : "Av\/på stikk 1, garasje",
+    "DPT" : "DPT1.001"
+  },
+  "2\/6\/1" : {
+    "info" : "posisjon forstillingsorgan, hovedsoverom 2 etg",
+    "DPT" : "DPT5.001"
+  },
+  "0\/3\/1" : {
+    "info" : "Er-temp kjellerstue",
+    "DPT" : "DPT9.001"
+  },
+  "7\/1\/2" : {
+    "info" : "Av\/på stikk 3, garasje",
+    "DPT" : "DPT1.001"
+  },
+  "2\/0\/11" : {
+    "info" : "Av\/på gang+trapp 2 etg",
+    "DPT" : "DPT1.001"
+  },
+  "1\/1\/9" : {
+    "info" : "Lysverdi, kjøkken, spot'er spiseavdeling",
+    "DPT" : "DPT5.001"
+  },
+  "0\/2\/10" : {
+    "info" : "Tilbakemelding innstilt verdi,  kjellerstue",
+    "DPT" : "DPT5.001"
+  },
+  "2\/6\/9" : {
+    "info" : "status forstillingsorgan, sov øst 2 etg",
+    "DPT" : "DPT1.009"
+  },
+  "3\/5\/9" : {
+    "info" : "Tilbakemld lysverdi WC 2etg",
+    "DPT" : "DPT5.001"
+  },
+  "2\/1\/5" : {
+    "info" : "Lysverdi bad 2 etg (speil)",
+    "DPT" : "DPT5.001"
+  },
+  "3\/5\/19" : {
+    "info" : "Tilbakemld lysverdi hovedsov (nord)",
+    "DPT" : "DPT5.001"
+  },
+  "0\/4\/0" : {
+    "info" : "Skal temp gang kjeller",
+    "DPT" : "DPT9.001"
+  },
+  "1\/1\/10" : {
+    "info" : "Lysverdi, kjøkken under benk",
+    "DPT" : "DPT5.001"
+  },
+  "2\/1\/12" : {
+    "info" : "Dimm lys stue 2 etg (sør)",
+    "DPT" : "DPT3.007"
+  },
+  "2\/6\/4" : {
+    "info" : "posisjon forstillingsorgan, sov øst 2 etg",
+    "DPT" : "DPT5.001"
+  },
+  "1\/0\/12" : {
+    "info" : "Av\/på lys, LED stue 1 etg",
+    "DPT" : "DPT1.001"
+  },
+  "0\/4\/1" : {
+    "info" : "Skal temp kjellerstue",
+    "DPT" : "DPT9.001"
+  },
+  "3\/5\/16" : {
+    "info" : "Tilbakemld lysverdi stue 2 etg (vest)",
+    "DPT" : "DPT5.001"
+  },
+  "2\/1\/22" : {
+    "info" : "Dimm lys hovedsov (nord)",
+    "DPT" : "DPT3.007"
+  },
+  "2\/0\/2" : {
+    "info" : "Av\/på lys bad 2.etg (rom\/dusj)",
+    "DPT" : "DPT1.001"
+  },
+  "2\/0\/5" : {
+    "info" : "Av\/på lys gang 2.etg",
+    "DPT" : "DPT1.001"
+  },
+  "2\/1\/8" : {
+    "info" : "Lysverdi WC 2 etg",
+    "DPT" : "DPT5.001"
+  },
+  "0\/5\/1" : {
+    "info" : "Set temp kjellerstue",
+    "DPT" : "DPT9.001"
+  },
+  "0\/4\/3" : {
+    "info" : "Skal temp vaskerom kjeller",
+    "DPT" : "DPT9.001"
+  },
+  "3\/0\/2" : {
+    "info" : "Værstasjon, lysstyrkeføler nord",
+    "DPT" : "DPT9.004"
+  },
+  "3\/4\/0" : {
+    "info" : "Varmemodus",
+    "DPT" : "DPT20.102"
+  },
+  "1\/0\/1" : {
+    "info" : "Av\/på lys kjøkken, spot'er ved benker",
+    "DPT" : "DPT1.001"
+  },
+  "3\/0\/10" : {
+    "info" : "Av\/på utelys, alt",
+    "DPT" : "DPT1.001"
+  },
+  "2\/0\/1" : {
+    "info" : "Av\/på lys bad 2.etg, speil",
+    "DPT" : "DPT1.001"
+  },
+  "2\/0\/17" : {
+    "info" : "Av\/på lys tak sov øst",
+    "DPT" : "DPT1.001"
+  },
+  "1\/2\/3" : {
+    "info" : "Varme arbeidsrom",
+    "DPT" : "DPT5.001"
+  },
+  "2\/6\/5" : {
+    "info" : "status forstillingsorgan, bad 2 etg",
+    "DPT" : "DPT1.009"
+  },
+  "1\/1\/18" : {
+    "info" : "Dimm lys, spot'er stue 1 etg (nord)",
+    "DPT" : "DPT3.007"
+  },
+  "1\/3\/0" : {
+    "info" : "Er-temp kjøkken 1.etg",
+    "DPT" : "DPT9.001"
+  },
+  "3\/5\/23" : {
+    "info" : "Tilbakemld lysverdi spot'er stue 1 etg (sør)",
+    "DPT" : "DPT5.001"
+  },
+  "1\/0\/13" : {
+    "info" : "Av\/på lys, spot'er stue 1 etg (alle)",
+    "DPT" : "DPT1.001"
+  },
+  "0\/2\/1" : {
+    "info" : "Varme  hjemmekino",
+    "DPT" : "DPT5.001"
+  },
+  "1\/1\/6" : {
+    "info" : "Lysverdi, kjøkken, spot'er ved benker",
+    "DPT" : "DPT5.001"
+  },
+  "1\/1\/28" : {
+    "info" : "Dimm lys, spot'er bad 1 etg",
+    "DPT" : "DPT3.007"
+  },
+  "1\/2\/6" : {
+    "info" : "Tilbakemelding innstilt verdi, stue",
+    "DPT" : "DPT5.001"
+  },
+  "3\/0\/6" : {
+    "info" : "Av\/på utelys spot'er over inngangsdør",
+    "DPT" : "DPT1.001"
+  },
+  "1\/4\/0" : {
+    "info" : "Skal temp kjøkken 1.etg",
+    "DPT" : "DPT9.001"
+  },
+  "1\/1\/7" : {
+    "info" : "Lysverdi, kjøkken, lampe over spisebord",
+    "DPT" : "DPT5.001"
+  },
+  "1\/2\/16" : {
+    "info" : "Tvangsstyring, varmeaktuator kjøkken",
+    "DPT" : "DPT1.003"
+  },
+  "0\/4\/2" : {
+    "info" : "Skal temp hobbyrom kjeller",
+    "DPT" : "DPT9.001"
+  },
+  "2\/2\/0" : {
+    "info" : "Varme bad 2.etg",
+    "DPT" : "DPT5.001"
+  },
+  "1\/1\/23" : {
+    "info" : "Lysverdi spot'er stue 1 etg (nord)",
+    "DPT" : "DPT5.001"
+  },
+  "2\/3\/4" : {
+    "info" : "Er-temp sov øst 2.etg",
+    "DPT" : "DPT9.001"
+  },
+  "2\/0\/0" : {
+    "info" : "Av\/på lys bad 2.etg (alle)",
+    "DPT" : "DPT1.001"
+  },
+  "0\/5\/3" : {
+    "info" : "Set temp vaskerom kjeller",
+    "DPT" : "DPT9.001"
+  },
+  "3\/5\/7" : {
+    "info" : "Tilbakemld lysverdi bad 2.etg (rom\/dusj)",
+    "DPT" : "DPT5.001"
+  },
+  "2\/1\/6" : {
+    "info" : "Lysverdi bad 2 etg (rom\/dusj)",
+    "DPT" : "DPT5.001"
+  },
+  "0\/1\/3" : {
+    "info" : "Lysverdi spot'er kjellerstue 1",
+    "DPT" : "DPT5.001"
+  },
+  "1\/5\/5" : {
+    "info" : "Set temp vindfang 1.etg",
+    "DPT" : "DPT9.001"
+  },
+  "2\/1\/28" : {
+    "info" : "Lysverdi hovedsov (sør+nord)",
+    "DPT" : "DPT5.001"
+  },
+  "2\/1\/15" : {
+    "info" : "Lysverdi over trapp 2 etg",
+    "DPT" : "DPT5.001"
+  },
+  "1\/0\/0" : {
+    "info" : "Av\/på lys kjøkken 1.etg (alle)",
+    "DPT" : "DPT1.001"
+  },
+  "2\/1\/11" : {
+    "info" : "Dimm lys stue 2 etg (nord)",
+    "DPT" : "DPT3.007"
+  },
+  "2\/2\/3" : {
+    "info" : "Varme sov vest 2.etg",
+    "DPT" : "DPT5.001"
+  },
+  "2\/1\/18" : {
+    "info" : "Lysverdi stue 3 etg (vest)",
+    "DPT" : "DPT5.001"
+  },
+  "2\/0\/13" : {
+    "info" : "Av\/på lys hovedsov (nord)",
+    "DPT" : "DPT1.001"
+  },
+  "2\/1\/10" : {
+    "info" : "Dimm lys over trapp 2 etg",
+    "DPT" : "DPT3.007"
+  },
+  "1\/1\/5" : {
+    "info" : "Dimm lys, kjøkken under benk",
+    "DPT" : "DPT3.007"
+  },
+  "5\/0\/2" : {
+    "info" : "Ventilasjonsvifte lav",
+    "DPT" : "DPT1.002"
+  },
+  "1\/2\/14" : {
+    "info" : "Tvangstyring, varmeaktuator 1 etg",
+    "DPT" : "DPT1.003"
+  },
+  "1\/1\/20" : {
+    "info" : "Lysverdi spot'er gang 1 etg",
+    "DPT" : "DPT5.001"
+  },
+  "1\/1\/4" : {
+    "info" : "dimm lys kjøkken, spot'er spiseavdeling",
+    "DPT" : "DPT3.007"
+  },
+  "0\/3\/2" : {
+    "info" : "Er-temp hobbyrom kjeller",
+    "DPT" : "DPT9.001"
+  },
+  "1\/1\/22" : {
+    "info" : "Lysverdi spot'er stue 1 etg (sør)",
+    "DPT" : "DPT5.001"
+  },
+  "3\/5\/1" : {
+    "info" : "Tilbakemld lysverdi kjøkken, spot'er ved benker",
+    "DPT" : "DPT5.001"
+  },
+  "3\/5\/5" : {
+    "info" : "Tilbakemld lysverdi bad 2.etg (speil)",
+    "DPT" : "DPT5.001"
+  },
+  "0\/0\/1" : {
+    "info" : "Av\/på lys, vaskerom",
+    "DPT" : "DPT1.001"
+  },
+  "3\/0\/7" : {
+    "info" : "Dimm utelys spot'er over inngangsdør",
+    "DPT" : "DPT3.007"
+  },
+  "1\/1\/15" : {
+    "info" : "Dimm lys , spot'er gang 1 etg",
+    "DPT" : "DPT3.007"
+  },
+  "0\/0\/2" : {
+    "info" : "Av\/på lys, kjellergang",
+    "DPT" : "DPT1.001"
+  },
+  "1\/0\/2" : {
+    "info" : "Av\/på lys kjøkken, lampe over spisebord",
+    "DPT" : "DPT1.001"
+  },
+  "7\/2\/0" : {
+    "info" : "Tilbakemld av\/på, garasje utelys ",
+    "DPT" : "DPT1.001"
+  },
+  "7\/0\/0" : {
+    "info" : "Av\/på utelys, garasje",
+    "DPT" : "DPT1.001"
+  },
+  "1\/1\/27" : {
+    "info" : "Lysverdi, spot'er  arbeidsrom",
+    "DPT" : "DPT5.001"
+  },
+  "2\/1\/13" : {
+    "info" : "Dimm lys stue 2 etg (vest)",
+    "DPT" : "DPT3.007"
+  },
+  "2\/0\/3" : {
+    "info" : "Av\/på lys bad 2.etg (badekar)",
+    "DPT" : "DPT1.001"
+  },
+  "3\/5\/4" : {
+    "info" : "Tilbakemld lysverdi kjøkken, spot'er spiseavdeling",
+    "DPT" : "DPT5.001"
+  },
+  "1\/5\/2" : {
+    "info" : "Set temp stue langs kant 1.etg",
+    "DPT" : "DPT9.001"
+  },
+  "2\/1\/26" : {
+    "info" : "Lysverdi hovedsov (nord)",
+    "DPT" : "DPT5.001"
+  },
+  "3\/7\/0" : {
+    "info" : "Alt lys av (ikke utelys på vegg foran\/bak)",
+    "DPT" : "DPT1.001"
+  },
+  "5\/0\/0" : {
+    "info" : "Ventilasjonsvifte høy",
+    "DPT" : "DPT1.002"
+  },
+  "3\/5\/29" : {
+    "info" : "Tilbakemld lys kjellergang",
+    "DPT" : "DPT5.001"
+  },
+  "2\/0\/6" : {
+    "info" : "Av\/på lys over trapp 2 etg",
+    "DPT" : "DPT1.001"
+  },
+  "3\/0\/3" : {
+    "info" : "Værstasjon, lysstyrkeføler øst",
+    "DPT" : "DPT9.004"
+  },
+  "1\/1\/13" : {
+    "info" : "Dimm lys spot'er vindfang",
+    "DPT" : "DPT3.007"
+  },
+  "3\/5\/2" : {
+    "info" : "Tilbakemld lysverdi kjøkken, lampe over spisebord",
+    "DPT" : "DPT5.001"
+  },
+  "2\/3\/0" : {
+    "info" : "Er-temp bad 2.etg",
+    "DPT" : "DPT9.001"
+  },
+  "3\/1\/0" : {
+    "info" : "Vindstyrke i m\/s",
+    "DPT" : "DPT9.005"
+  },
+  "3\/5\/24" : {
+    "info" : "Tilbakemld lysverdi spot'er stue 1 etg (nord)",
+    "DPT" : "DPT5.001"
+  },
+  "2\/5\/0" : {
+    "info" : "Set temp bad 2.etg",
+    "DPT" : "DPT9.001"
+  },
+  "1\/1\/1" : {
+    "info" : "dimm lys kjøkken, spot'er ved benker",
+    "DPT" : "DPT3.007"
+  },
+  "1\/1\/16" : {
+    "info" : "Dimm lys, spot'er trapp 1 etg",
+    "DPT" : "DPT3.007"
+  },
+  "0\/2\/14" : {
+    "info" : "Tvangsstyring, varmeaktuator kjeller",
+    "DPT" : "DPT1.003"
+  },
+  "1\/4\/1" : {
+    "info" : "Skal temp stue 1.etg",
+    "DPT" : "DPT9.001"
+  },
+  "2\/6\/6" : {
+    "info" : "status forstillingsorgan, hovedsoverom 2 etg",
+    "DPT" : "DPT1.009"
+  },
+  "2\/1\/2" : {
+    "info" : "Dimm lys bad 2.etg (rom\/dusj)",
+    "DPT" : "DPT3.007"
+  },
+  "2\/1\/9" : {
+    "info" : "Dimm lys gang 2 etg",
+    "DPT" : "DPT3.007"
+  },
+  "3\/5\/25" : {
+    "info" : "Tilbakemld lysverdi LED stue 1 etg",
+    "DPT" : "DPT5.001"
+  },
+  "0\/3\/3" : {
+    "info" : "Er-temp vaskerom kjeller",
+    "DPT" : "DPT9.001"
+  },
+  "1\/0\/6" : {
+    "info" : "Av\/på lys, stue, dobbel kontakt nord",
+    "DPT" : "DPT1.001"
+  },
+  "1\/0\/18" : {
+    "info" : "Av\/på lys, speil bad 1 etg",
+    "DPT" : "DPT1.001"
+  },
+  "2\/1\/4" : {
+    "info" : "Dimm lys WC 2 etg",
+    "DPT" : "DPT3.007"
+  },
+  "0\/5\/0" : {
+    "info" : "Set temp gang kjeller",
+    "DPT" : "DPT9.001"
+  },
+  "1\/1\/26" : {
+    "info" : "Dimm spot'er arbeidsrom",
+    "DPT" : "DPT3.007"
+  },
+  "7\/2\/1" : {
+    "info" : "Tilbakemld av\/på, garasje stikk 1",
+    "DPT" : "DPT1.001"
+  },
+  "2\/4\/3" : {
+    "info" : "Skal temp sov vest 2.etg",
+    "DPT" : "DPT9.001"
+  },
+  "2\/4\/1" : {
+    "info" : "Skal temp hovedsoverom 2.etg",
+    "DPT" : "DPT9.001"
+  },
+  "2\/3\/3" : {
+    "info" : "Er-temp sov vest 2.etg",
+    "DPT" : "DPT9.001"
+  },
+  "0\/2\/11" : {
+    "info" : "Tilbakemelding innstilt verdi,  kjellerstue kant",
+    "DPT" : "DPT5.001"
+  },
+  "2\/4\/2" : {
+    "info" : "Skal temp stue 2.etg",
+    "DPT" : "DPT9.001"
+  },
+  "0\/2\/5" : {
+    "info" : "Varme  kjellerstue langs kant",
+    "DPT" : "DPT5.001"
+  },
+  "1\/2\/8" : {
+    "info" : "Tilbakemelding innstilt verdi, arbeidsrom",
+    "DPT" : "DPT5.001"
+  },
+  "2\/1\/29" : {
+    "info" : "Dimm stikk stue bak sofa",
+    "DPT" : "DPT3.007"
+  },
+  "0\/2\/13" : {
+    "info" : "Alle ventiler stengt, varmeaktuator kjeller",
+    "DPT" : "DPT1.002"
+  },
+  "0\/1\/0" : {
+    "info" : "Dimm lys kjellergang",
+    "DPT" : "DPT3.007"
+  },
+  "3\/5\/30" : {
+    "info" : "Tilbakemld stikk stue 2 etg bak sofa",
+    "DPT" : "DPT5.001"
+  },
+  "3\/5\/32" : {
+    "info" : "Tilbakemld lysverdi bad 1 etg",
+    "DPT" : "DPT5.001"
+  },
+  "2\/1\/1" : {
+    "info" : "Dimm lys bad 2.etg, speil",
+    "DPT" : "DPT3.007"
+  },
+  "1\/3\/3" : {
+    "info" : "Er-temp arbeidsrom 1.etg",
+    "DPT" : "DPT9.001"
+  },
+  "2\/0\/12" : {
+    "info" : "Av\/på lys hovedsov (sør)",
+    "DPT" : "DPT1.001"
+  },
+  "2\/1\/30" : {
+    "info" : "Lysverdi stikk stue bak sofa",
+    "DPT" : "DPT5.001"
+  },
+  "2\/0\/8" : {
+    "info" : "Av\/på lys stue 2  etg (sør)",
+    "DPT" : "DPT1.001"
+  },
+  "0\/0\/3" : {
+    "info" : "Av\/på spot'er kjellerstue 1",
+    "DPT" : "DPT1.001"
+  },
+  "3\/5\/10" : {
+    "info" : "Tilbakemld lysverdi stue dobbelkontakt nord",
+    "DPT" : "DPT5.001"
+  },
+  "1\/5\/3" : {
+    "info" : "Set temp arbeidsrom 1.etg",
+    "DPT" : "DPT9.001"
+  },
+  "1\/2\/11" : {
+    "info" : "Tilbakemelding innstilt verdi, kjøkken",
+    "DPT" : "DPT5.001"
+  },
+  "1\/0\/7" : {
+    "info" : "Av\/på lys spot'er vindfang",
+    "DPT" : "DPT1.001"
+  },
+  "0\/2\/8" : {
+    "info" : "Tilbakemelding innstilt verdi,  hobbyrom",
+    "DPT" : "DPT5.001"
+  },
+  "1\/1\/19" : {
+    "info" : "Dimm lys, LED stue 1 etg",
+    "DPT" : "DPT3.007"
+  },
+  "0\/3\/0" : {
+    "info" : "Er-temp gang kjeller",
+    "DPT" : "DPT9.001"
+  },
+  "1\/0\/17" : {
+    "info" : "Av\/på lys, spot'er bad 1 etg",
+    "DPT" : "DPT1.001"
+  },
+  "2\/1\/20" : {
+    "info" : "Dimm gang+trapp 2 etg",
+    "DPT" : "DPT3.007"
+  },
+  "0\/5\/2" : {
+    "info" : "Set temp hobbyrom kjeller",
+    "DPT" : "DPT9.001"
+  },
+  "0\/0\/4" : {
+    "info" : "Av\/på spot'er kjellerstue 2",
+    "DPT" : "DPT1.001"
+  },
+  "3\/0\/1" : {
+    "info" : "Værstasjon, lysstyrkeføler vest",
+    "DPT" : "DPT9.004"
+  },
+  "3\/5\/8" : {
+    "info" : "Tilbakemld lysverdi kjøkken, under skap",
+    "DPT" : "DPT5.001"
+  },
+  "7\/2\/3" : {
+    "info" : "Tilbakemld av\/på, garasje stikk 3",
+    "DPT" : "DPT1.001"
+  },
+  "2\/3\/2" : {
+    "info" : "Er-temp stue 2.etg",
+    "DPT" : "DPT9.001"
+  },
+  "0\/2\/4" : {
+    "info" : "Varme  kjellerstue",
+    "DPT" : "DPT5.001"
+  },
+  "1\/0\/11" : {
+    "info" : "Av\/på lys, spot'er stue 1 etg (nord)",
+    "DPT" : "DPT1.001"
+  },
+  "1\/2\/10" : {
+    "info" : "Tilbakemelding innstilt verdi, vindfang",
+    "DPT" : "DPT5.001"
+  },
+  "3\/5\/13" : {
+    "info" : "Tilbakemld lysverdi over trapp 2 etg",
+    "DPT" : "DPT5.001"
+  },
+  "6\/0\/1" : {
+    "info" : "Overlast\/kortslutning, utgang 2",
+    "DPT" : "DPT1.005"
+  },
+  "2\/1\/19" : {
+    "info" : "Dimm stue 2 etg (alle)",
+    "DPT" : "DPT3.007"
+  },
+  "7\/2\/2" : {
+    "info" : "Tilbakemld av\/på, garasje stikk 2",
+    "DPT" : "DPT1.001"
+  },
+  "1\/1\/21" : {
+    "info" : "Lysverdi spot'er trapp 1 etg",
+    "DPT" : "DPT5.001"
+  },
+  "1\/2\/2" : {
+    "info" : "Varme stue langs kant",
+    "DPT" : "DPT5.001"
+  },
+  "3\/5\/28" : {
+    "info" : "Tilbakemld lysverdi spot'er kjellerstue 2",
+    "DPT" : "DPT5.001"
+  },
+  "2\/1\/27" : {
+    "info" : "Lysverdi garderobe hovedsov",
+    "DPT" : "DPT5.001"
+  },
+  "1\/0\/4" : {
+    "info" : "Av\/på lys, spot'er spiseavdeling",
+    "DPT" : "DPT1.001"
+  },
+  "0\/2\/3" : {
+    "info" : "Varme  vaskerom",
+    "DPT" : "DPT5.001"
+  },
+  "1\/2\/17" : {
+    "info" : "Tvangsstyring, varmeaktuator stue 1etg",
+    "DPT" : "DPT1.003"
+  },
+  "2\/0\/15" : {
+    "info" : "Av\/på lys hovedsov (nord+sør)",
+    "DPT" : "DPT1.001"
+  },
+  "3\/5\/11" : {
+    "info" : "Tilbakemld lysverdi utelys spoter over inngangsdør",
+    "DPT" : "DPT5.001"
+  },
+  "2\/6\/8" : {
+    "info" : "status forstillingsorgan, sov vest 2 etg",
+    "DPT" : "DPT1.009"
+  },
+  "2\/1\/16" : {
+    "info" : "Lysverdi stue 2 etg (nord)",
+    "DPT" : "DPT5.001"
+  },
+  "1\/2\/4" : {
+    "info" : "Varme bad 1.etg",
+    "DPT" : "DPT5.001"
+  },
+  "2\/1\/3" : {
+    "info" : "Dimm lys bad 2.etg (badekar)",
+    "DPT" : "DPT3.007"
+  },
+  "2\/5\/3" : {
+    "info" : "Set temp sov vest 2.etg",
+    "DPT" : "DPT9.001"
+  },
+  "5\/0\/1" : {
+    "info" : "Ventilasjonsvifte normal",
+    "DPT" : "DPT1.002"
+  },
+  "2\/0\/16" : {
+    "info" : "Av\/på stikk stue bak sofa",
+    "DPT" : "DPT1.001"
+  },
+  "0\/2\/9" : {
+    "info" : "Tilbakemelding innstilt verdi,  vaskerom",
+    "DPT" : "DPT5.001"
+  },
+  "1\/0\/5" : {
+    "info" : "Av\/på lys, kjøkken under benk",
+    "DPT" : "DPT1.001"
+  },
+  "3\/6\/0" : {
+    "info" : "Klokke fra Infoterm",
+    "DPT" : "DPT10.001"
+  },
+  "2\/0\/10" : {
+    "info" : "Av\/på lys stue 2 etg (alle)",
+    "DPT" : "DPT1.001"
+  },
+  "2\/1\/14" : {
+    "info" : "Lysverdi gang 2 etg",
+    "DPT" : "DPT5.001"
+  },
+  "3\/5\/20" : {
+    "info" : "Tilbakemld lysverdi garderobe hovedsov",
+    "DPT" : "DPT5.001"
+  },
+  "6\/0\/3" : {
+    "info" : "Overlast\/kortslutning, utgang 4",
+    "DPT" : "DPT1.005"
+  },
+  "2\/1\/24" : {
+    "info" : "Dimm lys hovedsov (sør+nord)",
+    "DPT" : "DPT3.007"
+  },
+  "2\/5\/1" : {
+    "info" : "Set temp hovedsoverom 2.etg",
+    "DPT" : "DPT9.001"
+  },
+  "2\/2\/5" : {
+    "info" : "Tvangsstyring, varmeaktuator 2 etg",
+    "DPT" : "DPT1.003"
+  },
+  "0\/1\/4" : {
+    "info" : "Lysverdi spot'er kjellerstue 2",
+    "DPT" : "DPT5.001"
+  },
+  "2\/5\/4" : {
+    "info" : "Set temp sov øst 2.etg",
+    "DPT" : "DPT9.001"
+  },
+  "2\/4\/0" : {
+    "info" : "Skal temp bad 2.etg",
+    "DPT" : "DPT9.001"
+  },
+  "1\/2\/9" : {
+    "info" : "Tilbakemelding innstilt verdi, bad 1.etg",
+    "DPT" : "DPT5.001"
+  },
+  "1\/4\/5" : {
+    "info" : "Skal temp vindfang 1.etg",
+    "DPT" : "DPT9.001"
+  },
+  "6\/0\/2" : {
+    "info" : "Overlast\/kortslutning, utgang 3",
+    "DPT" : "DPT1.005"
+  },
+  "1\/4\/3" : {
+    "info" : "Skal temp arbeidsrom 1.etg",
+    "DPT" : "DPT9.001"
+  },
+  "3\/5\/18" : {
+    "info" : "Tilbakemld lysverdi hovedsov (sør)",
+    "DPT" : "DPT5.001"
+  },
+  "2\/2\/1" : {
+    "info" : "Varme hovedsoverom 2.etg",
+    "DPT" : "DPT5.001"
+  },
+  "1\/2\/13" : {
+    "info" : "Alle ventiler stengt, varmeaktuator 1 etg",
+    "DPT" : "DPT1.002"
+  },
+  "1\/2\/0" : {
+    "info" : "Varme kjøkken",
+    "DPT" : "DPT5.001"
+  },
+  "2\/0\/14" : {
+    "info" : "Av\/på lys garderobe hovedsov",
+    "DPT" : "DPT1.001"
+  },
+  "3\/5\/6" : {
+    "info" : "Tilbakemld lysverdi bad 2.etg (badekar)",
+    "DPT" : "DPT5.001"
+  },
+  "2\/1\/23" : {
+    "info" : "Dimm lys garderobe hovedsov",
+    "DPT" : "DPT3.007"
+  },
+  "1\/5\/4" : {
+    "info" : "Set temp bad 1.etg",
+    "DPT" : "DPT9.001"
+  },
+  "1\/2\/15" : {
+    "info" : "Overlast eller alarm, varme kjøkken",
+    "DPT" : "DPT1.005"
+  },
+  "1\/0\/14" : {
+    "info" : "Av\/på lys, spot'er arbeidsrom",
+    "DPT" : "DPT1.001"
+  },
+  "6\/0\/5" : {
+    "info" : "Overlast\/kortslutning, utgang 6",
+    "DPT" : "DPT1.005"
+  },
+  "2\/6\/3" : {
+    "info" : "posisjon forstillingsorgan, sov vest 2 etg",
+    "DPT" : "DPT5.001"
+  },
+  "0\/2\/12" : {
+    "info" : "Overlast eller alarm, varmeaktuator kjeller",
+    "DPT" : "DPT1.005"
+  },
+  "0\/2\/0" : {
+    "info" : "Varme gang",
+    "DPT" : "DPT5.001"
+  },
+  "6\/0\/0" : {
+    "info" : "Overlast\/kortslutning, utgang 1",
+    "DPT" : "DPT1.005"
+  },
+  "1\/2\/7" : {
+    "info" : "Tilbakemelding innstilt verdi, stue langs kant",
+    "DPT" : "DPT5.001"
+  },
+  "3\/7\/1" : {
+    "info" : "Lysscener",
+    "DPT" : "DPT17.001"
+  },
+  "3\/0\/8" : {
+    "info" : "Lysverdi utelys vegg foran\/bak",
+    "DPT" : "DPT5.001"
+  },
+  "1\/1\/8" : {
+    "info" : "Lysverdi, kjøkken, spot'er bardisk",
+    "DPT" : "DPT5.001"
+  },
+  "3\/5\/31" : {
+    "info" : "tilbakemld lys av\/på garderobe hovedsov",
+    "DPT" : "DPT1.001"
+  },
+  "1\/1\/0" : {
+    "info" : "Dimm lys kjøkken 1.etg (alle)",
+    "DPT" : "DPT3.007"
+  },
+  "3\/5\/14" : {
+    "info" : "Tilbakemld lysverdi stue 2 etg (nord)",
+    "DPT" : "DPT5.001"
+  },
+  "2\/1\/17" : {
+    "info" : "Lysverdi stue 2 etg (sør)",
+    "DPT" : "DPT5.001"
+  },
+  "3\/0\/5" : {
+    "info" : "Dimm utelys vegg foran\/bak",
+    "DPT" : "DPT3.007"
+  },
+  "1\/1\/12" : {
+    "info" : "lysverdi, stue, dobbel kontakt nord",
+    "DPT" : "DPT5.001"
+  },
+  "3\/0\/0" : {
+    "info" : "Av\/på utelys vegg foran\/bak",
+    "DPT" : "DPT1.001"
+  },
+  "1\/1\/2" : {
+    "info" : "dimm lys  kjøkken, lampe over spisebord",
+    "DPT" : "DPT3.007"
+  },
+  "2\/6\/2" : {
+    "info" : "posisjon forstillingsorgan, loftsstue 2 etg",
+    "DPT" : "DPT5.001"
+  },
+  "1\/2\/5" : {
+    "info" : "Varme vindfang",
+    "DPT" : "DPT5.001"
+  },
+  "2\/6\/0" : {
+    "info" : "posisjon forstillingsorgan, bad 2 etg",
+    "DPT" : "DPT5.001"
+  },
+  "2\/1\/21" : {
+    "info" : "Dimm lys hovedsov (sør)",
+    "DPT" : "DPT3.007"
+  },
+  "1\/0\/15" : {
+    "info" : "Av\/på lys, LED stue",
+    "DPT" : "DPT1.001"
+  },
+  "1\/1\/25" : {
+    "info" : "Dimm lys, spot'er stue 1 etg (alle)",
+    "DPT" : "DPT3.007"
+  },
+  "1\/5\/1" : {
+    "info" : "Set temp stue 1.etg",
+    "DPT" : "DPT9.001"
+  },
+  "3\/5\/17" : {
+    "info" : "Tilbakemld lysverdi vindfang",
+    "DPT" : "DPT5.001"
+  },
+  "2\/0\/7" : {
+    "info" : "Av\/på lys stue 2 etg  (nord)",
+    "DPT" : "DPT1.001"
+  },
+  "1\/2\/1" : {
+    "info" : "Varme stue",
+    "DPT" : "DPT5.001"
+  },
+  "1\/3\/1" : {
+    "info" : "Er-temp stue 1.etg",
+    "DPT" : "DPT9.001"
+  },
+  "3\/5\/0" : {
+    "info" : "Tilbakemld lysverdi utelys",
+    "DPT" : "DPT5.001"
+  },
+  "3\/5\/3" : {
+    "info" : "Tilbakemld lysverdi kjøkken, spot'er ved bardisk",
+    "DPT" : "DPT5.001"
+  },
+  "0\/2\/6" : {
+    "info" : "Tilbakemelding innstilt verdi, gang",
+    "DPT" : "DPT5.001"
+  },
+  "0\/1\/1" : {
+    "info" : "Dimm spot'er kjellerstue 1",
+    "DPT" : "DPT3.007"
+  },
+  "1\/0\/16" : {
+    "info" : "Av\/på lys arbeidsrom (stikk)",
+    "DPT" : "DPT1.001"
+  },
+  "2\/4\/4" : {
+    "info" : "Skal temp sov øst 2.etg",
+    "DPT" : "DPT9.001"
+  },
+  "1\/3\/2" : {
+    "info" : "Er-temp stue langs kant 1.etg",
+    "DPT" : "DPT9.001"
+  },
+  "7\/1\/1" : {
+    "info" : "Av\/på stikk 2, garasje",
+    "DPT" : "DPT1.001"
+  },
+  "1\/4\/2" : {
+    "info" : "Skal temp stue langs kant 1.etg",
+    "DPT" : "DPT9.001"
+  },
+  "2\/5\/2" : {
+    "info" : "Set temp stue 2.etg",
+    "DPT" : "DPT9.001"
+  },
+  "3\/5\/27" : {
+    "info" : "Tilbakemld lysverdi spot'er kjellerstue 1",
+    "DPT" : "DPT5.001"
+  },
+  "1\/0\/9" : {
+    "info" : "Av\/på lys, spot'er trapp 1 etg",
+    "DPT" : "DPT1.001"
+  },
+  "1\/2\/12" : {
+    "info" : "Overlast eller alarm, varmeaktuator 1 etg",
+    "DPT" : "DPT1.005"
+  },
+  "3\/2\/0" : {
+    "info" : "Utetemperatur",
+    "DPT" : "DPT9.001"
+  },
+  "2\/6\/7" : {
+    "info" : "status forstillingsorgan, loftsstue 2 etg",
+    "DPT" : "DPT1.009"
+  }
+}

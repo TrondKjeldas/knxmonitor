@@ -1,5 +1,8 @@
 from time import time, mktime, strptime
-import Gnuplot
+try:
+  import Gnuplot
+except:
+  print "Warning: gnuplot not available"
 
 from knxmonitor.Knx.KnxPdu import KnxPdu
 from knxmonitor.Knx.KnxAddressStream import KnxAddressStream

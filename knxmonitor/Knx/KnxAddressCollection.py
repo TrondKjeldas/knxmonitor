@@ -1,5 +1,6 @@
 import sys
 import xml.etree.ElementTree as ET
+import cson
 
 from knxmonitor.UnicodeReader import UnicodeReader
 
@@ -66,3 +67,19 @@ class KnxAddressCollection(dict):
             for c in cols:
                 ddict[layout[c.attrib["nr"]]] = c.text
             dict.__setitem__(self, ddict["Adresse"], ddict)
+
+    def loadDptTable(self, file):
+
+      t = cson.parser.load(file)
+      for a in t.keys():
+        info = t[a]['info']
+        if t[a]["DPT"][:5] == "DPT1.":
+          dict.__setitem__(self, a, (info,"onoff"))
+        elif t[a]["DPT"][:5] == "DPT5.":
+          dict.__setitem__(self, a, (info,"%"))
+        elif t[a]["DPT"][:5] == "DPT9.":
+          dict.__setitem__(self, a, (info,"temp"))
+        else:
+          # Unhandled, for now
+          #print t[a]
+          pass
