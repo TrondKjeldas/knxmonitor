@@ -45,6 +45,8 @@ class KnxParser(object):
 
         self.devDict.loadDeviceAddrs(open(devicesfilename))
 
+        self.cache = []
+
     def setTimeBase(self, basetime):
 
         self.basetime = basetime
@@ -60,26 +62,20 @@ class KnxParser(object):
         tstamp = strptime(timestamp, "%a %b %d %H:%M:%S %Y")
         try:
             self.knxAddrStream[pdu.getTo()].addTelegram(seq, tstamp, pdu)
+
+            # Also add PDU to cache stream...
+            self.cache.append((seq, tstamp, pdu))
+
         except KeyError:
             printVerbose("unknown address, skipping: %s" %pdu.getTo())
 
+
     def storeCachedInput(self, file, startline):
 
-        groupAddrs = self.knxAddrStream.keys()
 
-        seq = startline
-        more = True
-        hasMore = { g:True for g in groupAddrs }
-        while more:
-            more = False
-            for g in groupAddrs:
-                if hasMore[g]:
-                    hasMore[g] = self.knxAddrStream[g].storeCachedInput(seq, file)
-                more = more or hasMore[g]
+        for seq, tstamp, pdu in self.cache:
+          pdu.storeCacheLine(tstamp, file)
 
-
-            # Step sequence number
-            seq += 1
         print "Done storeing cache file %s" %file.name
         file.close()
 

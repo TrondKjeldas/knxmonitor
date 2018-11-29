@@ -1,4 +1,6 @@
 from sys import exit
+from time import asctime
+
 from knxmonitor.Knx.KnxParseException import KnxParseException
 
 class KnxPdu(object):
@@ -149,8 +151,14 @@ class KnxPdu(object):
 
         return self.fromadr
 
-    def getTo(self):
+    def getTo(self, long = False):
 
+        if long:
+          try:
+            return u"%s(%s)" %(self.groupDict[self.toaddr]['sub'],
+                              self.toaddr)
+          except:
+            pass
         return self.toaddr #unicode(self.toaddr)
 
     def getValue(self, pdutype):
@@ -178,3 +186,10 @@ class KnxPdu(object):
 
 
         return s
+
+    def storeCacheLine(self, tstamp, file):
+        s = u"@@;%s;%s;%s;%s;;\n" %(asctime(tstamp),
+                                              self.getFrom(),
+                                              self.getTo(True),
+                                              self.value)
+        file.write(s.encode("utf-8"))

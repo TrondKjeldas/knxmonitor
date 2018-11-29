@@ -25,29 +25,36 @@ class KnxLogViewer(object):
 
         # Ok, so now we have the file content. However, parsing it
         # is expensive, so look for an already parsed cache of the file.
-        # The cache files are named using the md5 of the original file,
-        # so get that first...
+        # The cache files first line is the MD5 sum of the infile, which
+        # we use to see if the cache is up to date. If it is not, re-parse
+        # the whole in file and update cache. Future enhancement could be
+        # to use the part of the cache file that is already there.
 
         hsh = hashlib.md5()
         for ll in l:
             hsh.update(ll)
+        infile_md5 = hsh.hexdigest()
 
-        cachename = hsh.hexdigest()+".hex"
+        cachename = infile.name.replace(".hex",".cache")
         try:
             inf = open(cachename, "r")
             clines = inf.readlines()
-            # sanity check...
-            if len(clines) == len(l):
+
+            cache_md5 = clines.pop(0).strip()
+
+            if cache_md5 == infile_md5:
                 # Ok, seems good...
                 print "Using cached input for file %s" %infile.name
-                return (None, clines)
+                return (None, infile_md5, clines)
             else:
-                print "Cached file found, but invalid length (%d != %d)" %(len(clines), len(l))
+                print "Cached file found, but hash mismatch"
+                print "FILE:  %s" %infile_md5
+                print "CACHE: %s" %cache_md5
         except IOError:
             # No luck in getting cached input, just use the new...
             print "No cached input for file %s found..." %infile.name
 
-        return (cachename, l)
+        return (cachename, infile_md5, l)
 
 
     def __init__(self, devicesfilename, groupaddrfilename, infiles,
@@ -69,9 +76,9 @@ class KnxLogViewer(object):
         lines_meta = []
         start = 1
         for infile in infiles:
-            cachename, newLines = self._readLinesFromFileOrCache(infile)
+            cachename, hash, newLines = self._readLinesFromFileOrCache(infile)
             lines.extend(newLines)
-            lines_meta.append( (infile.name, cachename,
+            lines_meta.append( (infile.name, cachename, hash,
                                 start, len(newLines) ) )
             start += len(newLines)
 
@@ -108,7 +115,7 @@ class KnxLogViewer(object):
         #
         basetime = 0
         lineNo = 0
-        origfilename, cachefilename, startLine, numLines = lines_meta.pop(0)
+        origfilename, cachefilename, hash, startLine, numLines = lines_meta.pop(0)
 
         for line in lines:
             # Skip empty lines...
@@ -160,6 +167,7 @@ class KnxLogViewer(object):
             # Note that the --tail option disables creation of cache files
             if (tail == 0) and lineNo == startLine + numLines - 1:
                 if cachefilename != None:
+
                     print "update cache file for %s (%s) at %s" %(origfilename,
                                                                   cachefilename,
                                                                   lineNo)
@@ -168,13 +176,16 @@ class KnxLogViewer(object):
                     except IOError:
                         print cachefilename
                     else:
+                        # write hash at first line
+                        of.write("%s\n" % hash)
                         self.knx.storeCachedInput(of, startLine)
+
                 # Shift meta data to new file...
                 try:
-                    origfilename, cachefilename, startLine, numLines = lines_meta.pop(0)
+                    origfilename, cachefilename, hash, startLine, numLines = lines_meta.pop(0)
                 except:
                     print "Last file done, line no (%s)" %lineNo
-                    origfilename, cachefilename, startLine, numLines = (None, None, None, None)
+                    origfilename, cachefilename, hash, startLine, numLines = (None, None, None, None, None)
 
 
             if lineNo % 10000 == 0:

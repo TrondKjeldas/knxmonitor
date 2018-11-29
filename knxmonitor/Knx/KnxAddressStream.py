@@ -56,47 +56,6 @@ class KnxAddressStream(object):
         self.nextidx = 0
         self.lastValue = {}
 
-    def storeCachedInput(self, printseq, storefile):
-
-        # Check if we have ANY telegrams to print..
-        if len(self.telegrams) == 0:
-            return False
-
-        # Check if we have more telegrams to print...
-        if self.nextidx >= len(self.telegrams):
-           return False
-
-        seq, ts, sender, value = self.telegrams[self.nextidx]
-
-        #
-        # Check if its our turn to print...
-        #
-        if seq != printseq:
-            # Nope
-            return True
-
-        receiver = self.addrInfo["sub"]
-
-        #
-        # Ok, if we get this far we are supposed to print something
-        #
-
-        if len(sender)>50:
-            self.errorExit("to long sender: %s(%d)" %(sender, len(sender)))
-        if len(receiver)>60:
-            self.errorExit("to long receiver: %s(%d)" %(receiver, len(receiver)))
-        ts2 = asctime(ts)
-        outstr = "@@;%s;%s;%s(%s);%s;;\n" %(ts2, sender, receiver,
-                                            self.address, value)
-        storefile.write(outstr.encode("utf-8"))
-
-        # Do we have more to print?
-        self.nextidx += 1
-        if self.nextidx >= len(self.telegrams):
-            return False
-        # Not done yet
-        return True
-
     def printTelegrams(self, printseq):
 
         # Check if we have more telegrams to print...
