@@ -8,7 +8,6 @@ unitfile  : "/home/trond/Projects/knxmonitor/enheter.xml"
 
 # Specific for knxmonitor
 fileformat : "old"
-
-#dptfile: "/Users/trond/Projects/knxmonitor/groupaddresses.dptmap"
+dptfile: "groupaddresses.dptmap"
 
 #push2influx: "TS-653B:8094"

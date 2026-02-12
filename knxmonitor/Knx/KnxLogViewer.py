@@ -1,6 +1,7 @@
 from time import time, mktime, strptime
 import hashlib
 import sys
+import os.path
 
 from knxmonitor.Knx.KnxParseException import KnxParseException
 from knxmonitor.Knx.KnxParser import KnxParser
@@ -35,7 +36,7 @@ class KnxLogViewer(object):
             hsh.update(ll)
         infile_md5 = hsh.hexdigest()
 
-        cachename = infile.name.replace(".hex",".cache")
+        cachename = os.path.basename(infile.name.replace(".hex",".cache"))
         try:
             inf = open(cachename, "r")
             clines = inf.readlines()
