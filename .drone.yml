@@ -1,0 +1,16 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+  - name: test
+    image: python:2.7-slim
+    commands:
+      - pip install --upgrade pip setuptools wheel
+      - pip install -e '.[test]'
+      - make test
+
+trigger:
+  event:
+    - push
+    - pull_request
