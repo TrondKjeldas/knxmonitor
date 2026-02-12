@@ -8,6 +8,7 @@ steps:
     commands:
       - pip install --upgrade pip setuptools wheel
       - pip install -e '.[test]'
+      - pip install --no-cache-dir mock funcsigs coverage
       - coverage run -m unittest discover -s test/
       - coverage report -m || true
 
