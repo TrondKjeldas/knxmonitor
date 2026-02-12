@@ -6,6 +6,7 @@ steps:
   - name: test
     image: python:2.7-slim
     commands:
+      - apt-get update && apt-get install -y --no-install-recommends make ca-certificates
       - pip install --upgrade pip setuptools wheel
       - pip install -e '.[test]'
       - make test
